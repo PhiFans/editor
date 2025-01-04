@@ -44,23 +44,28 @@ export class GameAudio {
   }
 }
 
+const audio = new GameAudio();
+export default audio;
+
 // Automatically resume AudioContext
-const resumeAudio = () => resumeAudioCtx(GlobalAudioCtx);
+const _resumeAudio = () => {
+  resumeAudioCtx(GlobalAudioCtx).catch(() => void 0);
+};
 const handleWindowLoaded = () => {
   window.removeEventListener('load', handleWindowLoaded);
 
   if (GlobalAudioCtx.state === 'running') return;
-  window.addEventListener('pointerdown', resumeAudio);
-  window.addEventListener('pointerover', resumeAudio);
-  window.addEventListener('pointerleave', resumeAudio);
+  window.addEventListener('pointerdown', _resumeAudio);
+  window.addEventListener('pointerover', _resumeAudio);
+  window.addEventListener('pointerleave', _resumeAudio);
 };
 
 GlobalAudioCtx.addEventListener('statechange', () => {
   if (GlobalAudioCtx.state !== 'running') return;
 
   console.info('[Audio]', 'Resume audio success');
-  window.removeEventListener('pointerdown', resumeAudio);
-  window.removeEventListener('pointerover', resumeAudio);
-  window.removeEventListener('pointerleave', resumeAudio);
+  window.removeEventListener('pointerdown', _resumeAudio);
+  window.removeEventListener('pointerover', _resumeAudio);
+  window.removeEventListener('pointerleave', _resumeAudio);
 });
 window.addEventListener('load', handleWindowLoaded);

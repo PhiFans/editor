@@ -22,12 +22,14 @@ export class GameAudioChannel {
 
   startTicker() {
     if (this.isTickerStarted) return;
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.ticker.add(this.calcTick);
     this.isTickerStarted = true;
   }
 
   stopTicker() {
     if (!this.isTickerStarted) return;
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.ticker.remove(this.calcTick);
     this.isTickerStarted = false;
   }

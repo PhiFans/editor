@@ -20,11 +20,12 @@ export class GameAudioClock {
     this.baseOffset = baseOffset * 1000;
 
     this.calcTick = this.calcTick.bind(this);
-    this.init();
+    this.init().catch(() => void 0);
   }
 
   private async init() {
     this.audioCtx.addEventListener('statechange', () => {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       if (this.audioCtx.state === 'running') this.ticker.add(this.calcTick);
     });
 
