@@ -1,7 +1,9 @@
+import ChartJudgeline from './Judgeline';
 import { NoteType } from './types';
 import { BeatArray } from '@/utils/types';
 
 export default class ChartNote {
+  line: ChartJudgeline;
   type: NoteType;
   beat: BeatArray;
   positionX: number;
@@ -14,6 +16,7 @@ export default class ChartNote {
   floorPosition: number;
 
   constructor(
+    line: ChartJudgeline,
     type: NoteType,
     beat: BeatArray,
     positionX: number,
@@ -21,6 +24,7 @@ export default class ChartNote {
 
     holdEndBeat?: BeatArray
   ) {
+    this.line = line;
     this.type = type;
     this.beat = beat;
     this.positionX = positionX;
