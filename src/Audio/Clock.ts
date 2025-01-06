@@ -17,7 +17,7 @@ export default class AudioClock {
   constructor(audioCtx: AudioContext, ticker: Ticker, baseOffset: number = 0) {
     this.audioCtx = audioCtx;
     this.ticker = ticker;
-    this.baseOffset = baseOffset * 1000;
+    this.baseOffset = baseOffset;
 
     this.calcTick = this.calcTick.bind(this);
     this.init().catch(() => void 0);
@@ -36,7 +36,7 @@ export default class AudioClock {
   private calcTick() {
     const { audioCtx, baseOffset, offsets } = this;
     const realTime = performance.now();
-    const delta = realTime - (audioCtx.currentTime * 1000) - baseOffset;
+    const delta = realTime - audioCtx.currentTime - baseOffset;
 
     offsets.push(delta);
     this.sum += delta;

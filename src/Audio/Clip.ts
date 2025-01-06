@@ -25,16 +25,16 @@ export default class AudioClip {
 
   constructor(audioCtx: AudioContext, clock: AudioClock, audioBuffer: AudioBuffer, channel: Nullable<AudioChannel> = null) {
     this.source = audioBuffer;
-    this.duration = this.source.duration * 1000;
+    this.duration = this.source.duration;
     this._channel = channel;
 
     this.audioCtx = audioCtx;
     this.clock = clock;
   }
 
-  static from(file: File): Promise<AudioClip> {return new Promise((res, rej) => {
+  static from(file: File, channel?: AudioChannel): Promise<AudioClip> {return new Promise((res, rej) => {
     ReadFileAsAudioBuffer(file)
-      .then((buffer) => res(new AudioClip(Audio.audioCtx, Audio.clock, buffer)))
+      .then((buffer) => res(new AudioClip(Audio.audioCtx, Audio.clock, buffer, channel)))
       .catch((e) => rej(e));
   })}
 
@@ -52,7 +52,7 @@ export default class AudioClip {
     } else {
       const pausedTime = this.pauseTime - this.startTime;
       this.startTime = this.clock.time - pausedTime;
-      this.buffer.start(0, pausedTime / 1000);
+      this.buffer.start(0, pausedTime);
     }
 
     this.pauseTime = NaN;
@@ -86,7 +86,7 @@ export default class AudioClip {
 
     const isPlayingBefore = this.status === EAudioClipStatus.PLAY;
     this.pause();
-    this.startTime = this.pauseTime - (time * 1000);
+    this.startTime = this.pauseTime - time;
 
     if (this.startTime > this.pauseTime) this.startTime = this.pauseTime;
     if (isPlayingBefore) this.play();
@@ -103,6 +103,12 @@ export default class AudioClip {
 
   set channel(channel: Nullable<AudioChannel>) {
     this._channel = channel;
+  }
+
+  get time() {
+    if (isNaN(this.startTime)) return 0;
+    else if (isNaN(this.pauseTime)) return this.clock.time - this.startTime;
+    else return this.pauseTime - this.startTime;
   }
 
   get speed() {
