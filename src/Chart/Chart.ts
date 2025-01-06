@@ -1,3 +1,5 @@
+import Audio from '@/Audio/Audio';
+import AudioClip from '@/Audio/Clip';
 import ChartBPM from './BPM';
 import ChartJudgeline from './Judgeline';
 import ChartNote from './Note';
@@ -12,9 +14,15 @@ export default class Chart {
   lines: ChartJudgeline[] = [];
   notes: ChartNote[] = [];
 
+  audioClip!: AudioClip;
+
   constructor(info: ChartInfo, audio: File, background: File) {
     this.info = info;
     this.audio = audio;
     this.background = background;
+
+    AudioClip.from(audio, Audio.channels.music)
+      .then((clip) => this.audioClip = clip)
+      .catch((e) => { throw e });
   }
 }
