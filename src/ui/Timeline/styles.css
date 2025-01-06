@@ -1,0 +1,88 @@
+.timeline-container {
+  height: calc(100vh - 60px);
+}
+
+.timeline {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1px solid black;
+}
+
+.timeline-list-item {
+  --height: 30px;
+
+  position: relative;
+  height: var(--height);
+  line-height: var(--height);
+}
+
+.timeline-content-container {
+  --base-scale: 10;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+}
+
+.timeline-content {
+  min-width: 100%;
+  min-height: 100%;
+  width: calc(var(--time-length, 120) * var(--base-scale) * 1px);
+}
+
+.timeline-content-time-meter {
+  outline: 1px solid black;
+}
+
+.timeline-content-key {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  left: calc(var(--point-time) * var(--base-scale) * 1px);
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.timeline-time-seeker {
+  --current-time: 3;
+
+  position: absolute;
+  top: 8px;
+  left: calc(var(--current-time) * var(--base-scale) * 1px);
+  width: 2px;
+  height: calc(100% - 8px);
+  background: red;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.timeline-time-seeker .timeline-time-seeker-handle {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 10px;
+  height: 24px;
+  background: linear-gradient(
+        45deg,
+        transparent 0,
+        transparent 4px,
+        red 4px,
+        red 100%
+      )
+      top left,
+    linear-gradient(315deg, transparent 0, transparent 4px, red 4px, red 100%)
+      top right;
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+  transform: translateX(-40%);
+  cursor: ew-resize;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
