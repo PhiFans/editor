@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Ticker } from 'pixi.js';
 import App from '@/App/App';
 import { setCSSProperties } from "@/utils/ui";
 import { TimelineItem } from './Timeline';
@@ -21,13 +22,14 @@ const TimelineContent: React.FC<TimelineContentProps> = ({
   const containerRef = useRef(null);
 
   useEffect(() => {
-    const clockId = setInterval(() => {
-      if (!App.chart) return;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      setCurrentTime(App.time);
-    }, 0);
+    const ticker = Ticker.shared;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const updateTime = () => setCurrentTime(App.time);
+    ticker.add(updateTime);
 
-    return () => clearInterval(clockId);
+    return () => {
+      ticker.remove(updateTime);
+    };
   }, []);
 
   return (
