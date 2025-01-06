@@ -1,27 +1,27 @@
 import { Nullable } from '@/utils/types';
-import { GameAudioChannel } from './channel';
-import { GameAudioClock } from './clock';
+import AudioChannel from './Channel';
+import AudioClock from './Clock';
 
-export enum EGameAudioClipStatus {
+export enum EAudioClipStatus {
   STOP = 0,
   PLAY = 1,
   PAUSE = 2,
 }
 
-export class GameAudioClip {
+export default class AudioClip {
   readonly source: AudioBuffer;
   readonly duration: number;
 
-  private channel: Nullable<GameAudioChannel> = null;
+  private channel: Nullable<AudioChannel> = null;
   private buffer?: AudioBufferSourceNode;
   private readonly audioCtx: AudioContext;
-  readonly clock: GameAudioClock;
+  readonly clock: AudioClock;
 
-  status: EGameAudioClipStatus = EGameAudioClipStatus.STOP;
+  status: EAudioClipStatus = EAudioClipStatus.STOP;
   startTime: number = NaN;
   pauseTime: number = NaN;
 
-  constructor(audioCtx: AudioContext, clock: GameAudioClock, audioBuffer: AudioBuffer, channel: Nullable<GameAudioChannel> = null) {
+  constructor(audioCtx: AudioContext, clock: AudioClock, audioBuffer: AudioBuffer, channel: Nullable<AudioChannel> = null) {
     this.source = audioBuffer;
     this.duration = this.source.duration * 1000;
     this.channel = channel;
@@ -30,7 +30,7 @@ export class GameAudioClip {
     this.clock = clock;
   }
 
-  setChannel(channel: GameAudioChannel) {
+  setChannel(channel: AudioChannel) {
     this.channel = channel;
   }
 
@@ -40,7 +40,7 @@ export class GameAudioClip {
 
   play() {
     if (!this.channel) throw new Error('Cannot play a clip directly without any channel');
-    if (this.status === EGameAudioClipStatus.PLAY) return;
+    if (this.status === EAudioClipStatus.PLAY) return;
 
     this.buffer = this.audioCtx.createBufferSource();
     this.buffer.buffer = this.source;
@@ -56,25 +56,25 @@ export class GameAudioClip {
     }
 
     this.pauseTime = NaN;
-    this.status = EGameAudioClipStatus.PLAY;
+    this.status = EAudioClipStatus.PLAY;
     this.buffer.onended = () => this.stop();
   }
 
   pause() {
-    if (this.status !== EGameAudioClipStatus.PLAY) return;
+    if (this.status !== EAudioClipStatus.PLAY) return;
 
     this.disconnectBuffer();
     this.pauseTime = this.clock.time;
-    this.status = EGameAudioClipStatus.PAUSE;
+    this.status = EAudioClipStatus.PAUSE;
   }
 
   stop() {
-    if (this.status === EGameAudioClipStatus.STOP) return;
+    if (this.status === EAudioClipStatus.STOP) return;
 
     this.disconnectBuffer();
     this.startTime = NaN;
     this.pauseTime = NaN;
-    this.status = EGameAudioClipStatus.STOP;
+    this.status = EAudioClipStatus.STOP;
   }
 
   /**
@@ -82,9 +82,9 @@ export class GameAudioClip {
    * @param {number} time Seek seconds
    */
   seek(time: number) {
-    if (this.status === EGameAudioClipStatus.STOP) return;
+    if (this.status === EAudioClipStatus.STOP) return;
 
-    const isPlayingBefore = this.status === EGameAudioClipStatus.PLAY;
+    const isPlayingBefore = this.status === EAudioClipStatus.PLAY;
     this.pause();
     this.startTime = this.pauseTime - (time * 1000);
 

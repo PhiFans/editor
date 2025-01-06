@@ -1,16 +1,16 @@
 import { Ticker } from 'pixi.js';
-import { GameAudio } from '.';
-import { GameAudioClip } from './clip';
+import { Audio } from './Audio';
+import AudioClip from './Clip';
 
-export class GameAudioChannel {
+export default class AudioChannel {
   private readonly audioCtx: AudioContext;
   private readonly ticker: Ticker;
   readonly gain: GainNode;
-  readonly playlist: Array<GameAudioClip> = [];
+  readonly playlist: Array<AudioClip> = [];
 
   private isTickerStarted = false;
 
-  constructor(audio: GameAudio, ticker: Ticker) {
+  constructor(audio: Audio, ticker: Ticker) {
     this.audioCtx = audio.audioCtx;
     this.ticker = ticker;
 

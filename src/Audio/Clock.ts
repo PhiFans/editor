@@ -1,7 +1,7 @@
 import { Ticker } from 'pixi.js';
 import { resumeAudioCtx } from './utils';
 
-export class GameAudioClock {
+export default class AudioClock {
   /**
    * The current audio time.
    */

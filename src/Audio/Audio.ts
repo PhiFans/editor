@@ -1,22 +1,22 @@
 import { Ticker } from 'pixi.js';
-import { GameAudioClock } from './clock';
+import AudioClock from './Clock';
+import AudioChannel from './Channel';
+import AudioClip from './Clip';
 import { resumeAudioCtx } from './utils';
-import { GameAudioChannel } from './channel';
-import { GameAudioClip } from './clip';
 
 const AudioCtx = window.AudioContext;
 const GlobalAudioCtx = new AudioCtx({ latencyHint: 'interactive' });
 const GlobalAudioTicker = new Ticker();
-const GlobalAudioClock = new GameAudioClock(GlobalAudioCtx, GlobalAudioTicker, GlobalAudioCtx.baseLatency);
+const GlobalAudioClock = new AudioClock(GlobalAudioCtx, GlobalAudioTicker, GlobalAudioCtx.baseLatency);
 
-export class GameAudio {
+export class Audio {
   readonly audioCtx: AudioContext;
-  readonly clock: GameAudioClock;
+  readonly clock: AudioClock;
 
   readonly masterGain: GainNode;
   readonly channels: {
-    music: GameAudioChannel,
-    effect: GameAudioChannel,
+    music: AudioChannel,
+    effect: AudioChannel,
   };
 
   constructor() {
@@ -26,13 +26,13 @@ export class GameAudio {
     this.masterGain = this.audioCtx.createGain();
     this.masterGain.connect(this.audioCtx.destination);
     this.channels = {
-      music: new GameAudioChannel(this, GlobalAudioTicker),
-      effect: new GameAudioChannel(this, GlobalAudioTicker),
+      music: new AudioChannel(this, GlobalAudioTicker),
+      effect: new AudioChannel(this, GlobalAudioTicker),
     };
   }
 
   static from(buffer: AudioBuffer) {
-    return new GameAudioClip(GlobalAudioCtx, GlobalAudioClock, buffer);
+    return new AudioClip(GlobalAudioCtx, GlobalAudioClock, buffer);
   }
 
   get masterVolume() {
@@ -44,7 +44,7 @@ export class GameAudio {
   }
 }
 
-const audio = new GameAudio();
+const audio = new Audio();
 export default audio;
 
 // Automatically resume AudioContext
