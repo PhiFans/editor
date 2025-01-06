@@ -35,7 +35,7 @@ export default class AudioClock {
 
   private calcTick() {
     const { audioCtx, baseOffset, offsets } = this;
-    const realTime = performance.now();
+    const realTime = performance.now() / 1000;
     const delta = realTime - audioCtx.currentTime - baseOffset;
 
     offsets.push(delta);
