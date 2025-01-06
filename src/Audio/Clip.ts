@@ -32,7 +32,7 @@ export default class AudioClip {
     this.clock = clock;
   }
 
-  static from(file: File): Promise<AudioClip> {return new Promise(async (res, rej) => {
+  static from(file: File): Promise<AudioClip> {return new Promise((res, rej) => {
     ReadFileAsAudioBuffer(file)
       .then((buffer) => res(new AudioClip(Audio.audioCtx, Audio.clock, buffer)))
       .catch((e) => rej(e));

@@ -35,6 +35,12 @@ export default tseslint.config(
       'no-async-promise-executor': [
         'off',
       ],
+      '@typescript-eslint/prefer-promise-reject-errors': [
+        'off',
+      ],
+      '@typescript-eslint/no-misused-promises': [
+        'off',
+      ],
     },
   },
 )
