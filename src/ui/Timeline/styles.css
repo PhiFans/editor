@@ -1,12 +1,26 @@
-.timeline-container {
-  height: calc(100vh - 60px);
-}
-
 .timeline {
+  display: flex;
   position: relative;
   width: 100%;
+  min-height: 100px;
   height: 100%;
   border: 1px solid black;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+.timeline-panel-container {
+  position: relative;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  flex: 1;
+}
+
+.timeline-panel,
+.timeline-panel > * {
+  min-height: 100%;
 }
 
 .timeline-list-item {
@@ -23,7 +37,8 @@
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: scroll;
+  overflow-x: scroll;
+  overflow-y: visible;
 }
 
 .timeline-content {
@@ -48,7 +63,7 @@
 }
 
 .timeline-time-seeker {
-  --current-time: 3;
+  --current-time: 0;
 
   position: absolute;
   top: 8px;

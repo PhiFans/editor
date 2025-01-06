@@ -27,18 +27,22 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps)
 
   return (
     <div className="timeline">
-      <SplitPane
-        split="vertical"
-        size={150}
-        maxSize={400}
-        style={{
-          position: "relative",
-          height: "calc(100% - 26px)",
-        }}
-      >
-        <TimelineList items={items} />
-        <TimelineContent timeLength={timeLength} scale={contentScale} items={items} />
-      </SplitPane>
+      <div className='timeline-panel-container'>
+        <SplitPane
+          split="vertical"
+          size={150}
+          maxSize={400}
+          className='timeline-panel'
+          style={{
+            height: "100%",
+            overflowX: 'hidden',
+            overflowY: 'visible',
+          }}
+        >
+          <TimelineList items={items} />
+          <TimelineContent timeLength={timeLength} scale={contentScale} items={items} />
+        </SplitPane>
+      </div>
     </div>
   );
 };

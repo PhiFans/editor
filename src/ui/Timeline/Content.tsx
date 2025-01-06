@@ -17,7 +17,7 @@ const TimelineContent: React.FC<TimelineContentProps> = ({
   items,
   scale
 }: TimelineContentProps) => {
-  const [currentTime, setCurrentTime] = useState(3);
+  const [currentTime, setCurrentTime] = useState(0);
   const containerRef = useRef(null);
 
   useEffect(() => {
