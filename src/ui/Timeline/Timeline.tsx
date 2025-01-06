@@ -17,11 +17,12 @@ export type TimelineItem = {
 };
 
 export type TimelineProps = {
+  timeLength: number,
   items: TimelineItem[];
   onTimeChange?: (time: number) => void;
 };
 
-const Timeline: React.FC<TimelineProps> = ({ items }: TimelineProps) => {
+const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps) => {
   const contentScale = 50;
 
   return (
@@ -36,7 +37,7 @@ const Timeline: React.FC<TimelineProps> = ({ items }: TimelineProps) => {
         }}
       >
         <TimelineList items={items} />
-        <TimelineContent timeLength={120} scale={contentScale} items={items} />
+        <TimelineContent timeLength={timeLength} scale={contentScale} items={items} />
       </SplitPane>
     </div>
   );

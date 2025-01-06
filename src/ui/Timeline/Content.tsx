@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import App from '@/App/App';
 import { setCSSProperties } from "@/utils/ui";
 import { TimelineItem } from './Timeline';
 import { TimelineKeyInfo } from './Key';
@@ -19,14 +20,15 @@ const TimelineContent: React.FC<TimelineContentProps> = ({
   const [currentTime, setCurrentTime] = useState(3);
   const containerRef = useRef(null);
 
-  // TODO: Sync to audio time
-  // useEffect(() => {
-  //   const clockId = setInterval(() => {
-  //     setCurrentTime(clock.time);
-  //   }, 0);
+  useEffect(() => {
+    const clockId = setInterval(() => {
+      if (!App.chart) return;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      setCurrentTime(App.time);
+    }, 0);
 
-  //   return () => clearInterval(clockId);
-  // }, []);
+    return () => clearInterval(clockId);
+  }, []);
 
   return (
     <div
@@ -74,8 +76,8 @@ const TimelineContent: React.FC<TimelineContentProps> = ({
         timeLength={timeLength}
         scale={scale ?? 10}
         onSeek={(e) => {
-          // TODO: Sync to audio time
-          // clock.seek(e);
+          if (!App.chart) return;
+          App.seek(e);
           setCurrentTime(e);
         }}
       />

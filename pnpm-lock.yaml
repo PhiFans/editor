@@ -14,6 +14,9 @@ importers:
       audio-decode:
         specifier: ^2.2.2
         version: 2.2.2
+      component-emitter:
+        specifier: ^2.0.0
+        version: 2.0.0
       pixi.js:
         specifier: ^8.6.6
         version: 8.6.6
@@ -664,6 +667,10 @@ packages:
 
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+
+  component-emitter@2.0.0:
+    resolution: {integrity: sha512-4m5s3Me2xxlVKG9PkZpQqHQR7bgpnN7joDMJ4yvVkVXngjoITG76IaZmzmywSeRTeTpc6N6r3H3+KyUurV8OYw==}
+    engines: {node: '>=18'}
 
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
@@ -2040,6 +2047,8 @@ snapshots:
       color-name: 1.1.4
 
   color-name@1.1.4: {}
+
+  component-emitter@2.0.0: {}
 
   concat-map@0.0.1: {}
 
