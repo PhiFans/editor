@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@types/node": "^22.10.5",
+    "audio-decode": "^2.2.2",
     "pixi.js": "^8.6.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
