@@ -82,7 +82,12 @@ export default class AudioClip {
    * @param {number} time Seek seconds
    */
   seek(time: number) {
-    if (this.status === EAudioClipStatus.STOP) return;
+    if (this.status === EAudioClipStatus.STOP) {
+      const currentTime = this.clock.time;
+      this.startTime = currentTime - time;
+      this.pauseTime = currentTime;
+      return;
+    }
 
     const isPlayingBefore = this.status === EAudioClipStatus.PLAY;
     this.pause();
