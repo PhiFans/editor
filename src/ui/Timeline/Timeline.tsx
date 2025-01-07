@@ -3,6 +3,8 @@ import TimelineContent from './Content';
 import TimelineList from './List';
 import './styles.css';
 import TimelineFooter from './Footer';
+import App from '@/App/App';
+import { useState } from 'react';
 
 export type TimelineItemProp = {
   name: string;
@@ -24,7 +26,7 @@ export type TimelineProps = {
 };
 
 const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps) => {
-  const contentScale = 50;
+  const [ contentScale, setContentScale ] = useState(50);
 
   return (
     <div className="timeline">
@@ -44,7 +46,32 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps)
           <TimelineContent timeLength={timeLength} scale={contentScale} items={items} />
         </SplitPane>
       </div>
-      <TimelineFooter />
+      <TimelineFooter
+        leftContent={[
+          <button
+            onClick={() => App.chart ? App.chart.play().catch(() => void 0) : void 0}
+            key={'footer-left-play'}
+          >
+            Play
+          </button>,
+          <button
+            onClick={() => App.chart ? App.chart.pause().catch(() => void 0) : void 0}
+            key={'footer-left-pause'}
+          >
+            Pause
+          </button>
+        ]}
+        rightContent={[
+          <input
+            type='range'
+            min={1}
+            max={100}
+            defaultValue={50}
+            onInput={(e) => setContentScale(101 - parseInt((e.nativeEvent.target as HTMLInputElement).value))}
+            key={'footer-right-scale'}
+          />
+        ]}
+      />
     </div>
   );
 };
