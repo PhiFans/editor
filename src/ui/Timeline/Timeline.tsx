@@ -2,6 +2,7 @@ import SplitPane from 'react-split-pane';
 import TimelineContent from './Content';
 import TimelineList from './List';
 import './styles.css';
+import TimelineFooter from './Footer';
 
 export type TimelineItemProp = {
   name: string;
@@ -43,6 +44,7 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps)
           <TimelineContent timeLength={timeLength} scale={contentScale} items={items} />
         </SplitPane>
       </div>
+      <TimelineFooter />
     </div>
   );
 };
