@@ -5,6 +5,7 @@ import ChartBPM from './BPM';
 import ChartJudgeline from './Judgeline';
 import ChartNote from './Note';
 import { ChartInfo } from './types';
+import { ChartNoteProps } from './Note';
 
 export default class Chart {
   info: ChartInfo;
@@ -57,6 +58,17 @@ export default class Chart {
     this.lines.push(newLine);
     this.events.emit('line-list-update', this.lines);
     return newLine;
+  }
+
+  addNote(line: ChartJudgeline | number, noteProps: Omit<ChartNoteProps, 'line'>) {
+    let _line: ChartJudgeline;
+    if (typeof line === 'number') _line = this.lines[line];
+    else _line = line;
+    if (!_line) throw new Error('No such line found');
+
+    const newNote = new ChartNote({ line: _line, ...noteProps });
+    _line.notes.push(newNote);
+    return newNote;
   }
 
   get time() {
