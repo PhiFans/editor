@@ -8,6 +8,7 @@ import { ChartInfo } from './types';
 
 export default class Chart {
   info: ChartInfo;
+  offset: number = 0;
   audio: File;
   background: File;
 
@@ -30,4 +31,48 @@ export default class Chart {
       })
       .catch((e) => { throw e });
   }
+
+  async play() {
+    await this.waitAudio();
+    this.audioClip.play();
+  }
+
+  async pause() {
+    await this.waitAudio();
+    this.audioClip.pause();
+  }
+
+  async stop() {
+    await this.waitAudio();
+    this.audioClip.stop();
+  }
+
+  async seek(seconds: number) {
+    await this.waitAudio();
+    this.audioClip.seek(seconds);
+  }
+
+  addLine() {
+    const newLine = new ChartJudgeline();
+    this.lines.push(newLine);
+    this.events.emit('line-list-update', this.lines);
+    return newLine;
+  }
+
+  get time() {
+    return this.audioClip ? this.audioClip.time : 0;
+  }
+
+  get duration() {
+    return this.audioClip ? this.audioClip.duration : 0;
+  }
+
+  private waitAudio() {return new Promise((res) => {
+    if (this.audioClip) return res(this.audioClip);
+    const clockId = setInterval(() => {
+      if (!this.audioClip) return;
+      res(this.audioClip);
+      clearInterval(clockId);
+    }, 200);
+  })}
 }

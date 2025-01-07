@@ -23,8 +23,10 @@ const TimelineContent: React.FC<TimelineContentProps> = ({
 
   useEffect(() => {
     const ticker = Ticker.shared;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const updateTime = () => setCurrentTime(App.time);
+    const updateTime = () => {
+      if (!App.chart) return;
+      setCurrentTime(App.chart.time);
+    };
     ticker.add(updateTime);
 
     return () => {
@@ -79,7 +81,7 @@ const TimelineContent: React.FC<TimelineContentProps> = ({
         scale={scale ?? 10}
         onSeek={(e) => {
           if (!App.chart) return;
-          App.seek(e);
+          App.chart.seek(e).catch(() => void 0);
           setCurrentTime(e);
         }}
       />

@@ -14,7 +14,6 @@ function App() {
     PopupReadFiles(false)
       .then((files) => {
         if (!files || files.length === 0) return;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         importedMusic = files[0];
       })
       .catch((e) => console.error(e));

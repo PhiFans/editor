@@ -13,42 +13,6 @@ export class App {
     return newChart;
   }
 
-  play() {
-    if (!this.chart) return;
-    if (!this.chart.audioClip) return;
-    this.chart.audioClip.play();
-  }
-
-  pause() {
-    if (!this.chart) return;
-    if (!this.chart.audioClip) return;
-    this.chart.audioClip.pause();
-  }
-
-  stop() {
-    if (!this.chart) return;
-    if (!this.chart.audioClip) return;
-    this.chart.audioClip.stop();
-  }
-
-  seek(seconds: number) {
-    if (!this.chart) return;
-    if (!this.chart.audioClip) return;
-    this.chart.audioClip.seek(seconds);
-  }
-
-  get duration() {
-    if (!this.chart) return 0;
-    if (!this.chart.audioClip) return 0;
-    return this.chart.audioClip.duration;
-  }
-
-  get time() {
-    if (!this.chart) return 0;
-    if (!this.chart.audioClip) return 0;
-    return this.chart.audioClip.time;
-  }
-
   get chart() {
     return this.currentChart;
   }
