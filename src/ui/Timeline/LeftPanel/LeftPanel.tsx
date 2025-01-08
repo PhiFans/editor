@@ -32,7 +32,7 @@ const TimelineLeftPanel: React.FC<TimelineLeftPanelProps> = ({
 
   return <TimelineList>
     {listHead}
-    {lines.map((line, index) => {
+    {lines.map((line, index) => { // TODO: Render line props & add right click menu
       return <TimelineListItem key={index}>
         <div className="timeline-line-name">{`Line #${index}`}</div>
       </TimelineListItem>

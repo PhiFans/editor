@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import SplitPane from 'react-split-pane';
-import TimelineContent from './Content';
-import TimelineList from './List';
-import './styles.css';
+import { Ticker } from 'pixi.js';
 import TimelineFooter from './Footer';
 import App from '@/App/App';
 import ChartJudgeline from '@/Chart/Judgeline';
 import TimelineLeftPanel from './LeftPanel/LeftPanel';
+import TimelineRightPanel from './RightPanel/RightPanel';
+import './styles.css';
 
 export type TimelineItemProp = {
   name: string;
@@ -29,6 +29,7 @@ export type TimelineProps = {
 
 const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps) => {
   const [ lineList, setLineList ] = useState<ChartJudgeline[]>([]);
+  const [ currentTime, setCurrentTime ] = useState(0);
   const [ contentScale, setContentScale ] = useState(50);
 
   useEffect(() => {
@@ -40,6 +41,19 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps)
       App.events.off('chart.lines.added', updateLineList);
     });
   }, [lineList]);
+
+  useEffect(() => {
+    const ticker = Ticker.shared;
+    const updateTime = () => {
+      if (!App.chart) return;
+      setCurrentTime(App.chart.time);
+    };
+    ticker.add(updateTime);
+
+    return () => {
+      ticker.remove(updateTime);
+    };
+  }, []);
 
   return (
     <div className="timeline">
@@ -57,10 +71,19 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps)
           }}
         >
           <TimelineLeftPanel
-            currentTime={0}
+            currentTime={currentTime}
             lines={lineList}
           />
-          <TimelineContent timeLength={timeLength} scale={contentScale} items={items} />
+          <TimelineRightPanel
+            currentTime={currentTime}
+            timeLength={timeLength}
+            scale={contentScale}
+            lines={lineList}
+            onSeek={(e) => {
+              if (!App.chart) return;
+              App.chart.seek(e).catch(() => void 0);
+            }}
+          />
         </SplitPane>
       </div>
       <TimelineFooter
