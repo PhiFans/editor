@@ -14,7 +14,7 @@ const timeToString = (time: number) => {
   const seconds = Math.floor(time) % 60;
   const minutes = Math.floor(time / 60);
   const milliseconds = Math.floor((time - Math.floor(time)) * 1000);
-  return `${FillZero(minutes)}:${FillZero(seconds)}.${FillZero(milliseconds, 4)}`;
+  return `${FillZero(minutes)}:${FillZero(seconds)}.${FillZero(milliseconds, 3)}`;
 };
 
 const TimelineLeftPanel: React.FC<TimelineLeftPanelProps> = ({
