@@ -5,7 +5,7 @@ export type TimelineListItemProps = {
   height?: number | string,
   className?: string,
   style?: React.CSSProperties,
-  children?: JSX.Element,
+  children?: React.ReactNode,
 };
 
 const TimelineListItem: React.FC<TimelineListItemProps> = ({
