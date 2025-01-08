@@ -1,3 +1,8 @@
+span.hr {
+  margin: 0px 4px;
+  color: grey;
+}
+
 /* Default styles of react-split-pane */
 .SplitPane {
   width: 100%;

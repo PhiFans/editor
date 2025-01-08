@@ -1,15 +1,16 @@
+import { useEffect, useState } from 'react';
 import SplitPane from 'react-split-pane';
 import TimelineContent from './Content';
 import TimelineList from './List';
 import './styles.css';
 import TimelineFooter from './Footer';
 import App from '@/App/App';
-import { useState } from 'react';
+import ChartJudgeline from '@/Chart/Judgeline';
 
 export type TimelineItemProp = {
   name: string;
-  minValue: number;
-  maxValue: number;
+  minValue?: number;
+  maxValue?: number;
   defaultValue: number;
 };
 
@@ -26,7 +27,18 @@ export type TimelineProps = {
 };
 
 const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps) => {
+  const [ lineList, setLineList ] = useState<ChartJudgeline[]>([]);
   const [ contentScale, setContentScale ] = useState(50);
+
+  useEffect(() => {
+    const updateLineList = (newLine: ChartJudgeline) => {
+      setLineList([ ...lineList, newLine ]);
+    };
+    App.events.on('chart.lines.added', updateLineList);
+    return (() => {
+      App.events.off('chart.lines.added', updateLineList);
+    });
+  }, [lineList]);
 
   return (
     <div className="timeline">
@@ -42,12 +54,28 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps)
             overflowY: 'visible',
           }}
         >
-          <TimelineList items={items} />
+          <TimelineList
+            items={lineList.map((line, index) => {
+              console.log(line);
+              return {
+                name: `Line #${index}`,
+                props: {},
+                values: {},
+              };
+            })}
+          />
           <TimelineContent timeLength={timeLength} scale={contentScale} items={items} />
         </SplitPane>
       </div>
       <TimelineFooter
         leftContent={[
+          <button
+            onClick={() => App.chart ? App.chart.addLine() : void 0}
+            key={'footer-left-add-line'}
+          >
+            Add line
+          </button>,
+          <span className='hr' key={'footer-hr'}>|</span>,
           <button
             onClick={() => App.chart ? App.chart.play().catch(() => void 0) : void 0}
             key={'footer-left-play'}

@@ -5,7 +5,6 @@ import { PopupReadFiles } from '@/utils/file';
 import { Nullable } from '@/utils/types';
 import { useState } from 'react';
 
-
 function App() {
   const [ timeLength, setTimeLength ] = useState(0);
   let importedMusic: Nullable<File> = null;
@@ -31,7 +30,7 @@ function App() {
       designer: 'test'
     }, importedMusic, importedMusic, true);
     // XXX: This is the stupid way
-    GlobalApp.chart!.events.once('audio-clip-loaded', (clip: AudioClip) => {
+    GlobalApp.events.once('chart.audioClip.loaded', (clip: AudioClip) => {
       setTimeLength(clip.duration);
     });
   };

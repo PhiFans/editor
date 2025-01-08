@@ -1,4 +1,4 @@
-import Emitter from 'component-emitter';
+import App from '@/App/App';
 import Audio from '@/Audio/Audio';
 import AudioClip from '@/Audio/Clip';
 import ChartBPM from './BPM';
@@ -13,7 +13,6 @@ export default class Chart {
   audio: File;
   background: File;
 
-  events = new Emitter();
   bpm: ChartBPM[] = [ new ChartBPM([0, 0, 1], 120) ];
   lines: ChartJudgeline[] = [];
   notes: ChartNote[] = [];
@@ -28,7 +27,7 @@ export default class Chart {
     AudioClip.from(audio, Audio.channels.music)
       .then((clip) => {
         this.audioClip = clip;
-        this.events.emit('audio-clip-loaded', clip);
+        App.events.emit('chart.audioClip.loaded', clip);
       })
       .catch((e) => { throw e });
   }
@@ -56,7 +55,10 @@ export default class Chart {
   addLine() {
     const newLine = new ChartJudgeline();
     this.lines.push(newLine);
-    this.events.emit('line-list-update', this.lines);
+
+    App.events.emit('chart.lines.added', newLine);
+    App.events.emit('chart.lines.updated', this.lines);
+
     return newLine;
   }
 
