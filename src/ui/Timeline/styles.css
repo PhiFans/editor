@@ -30,6 +30,14 @@
   line-height: var(--height);
 }
 
+.timeline-head-current-time {
+  display: flex;
+}
+
+.timeline-head-current-time .current-time {
+  margin: 0px 8px;
+}
+
 .timeline-content-container {
   --base-scale: 10;
 
