@@ -1,8 +1,8 @@
 import React from 'react';
 
 export type TimelineFooterProps = {
-  leftContent?: JSX.Element[];
-  rightContent?: JSX.Element[];
+  leftContent?: React.ReactNode;
+  rightContent?: React.ReactNode;
 };
 
 const TimelineFooter: React.FC<TimelineFooterProps> = ({

@@ -6,6 +6,7 @@ import './styles.css';
 import TimelineFooter from './Footer';
 import App from '@/App/App';
 import ChartJudgeline from '@/Chart/Judgeline';
+import TimelineLeftPanel from './LeftPanel/LeftPanel';
 
 export type TimelineItemProp = {
   name: string;
@@ -55,51 +56,46 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps)
             overflowY: 'visible',
           }}
         >
-          <TimelineList
-            items={lineList.map((line, index) => {
-              console.log(line);
-              return {
-                name: `Line #${index}`,
-                props: {},
-                values: {},
-              };
-            })}
+          <TimelineLeftPanel
+            currentTime={0}
+            lines={lineList}
           />
           <TimelineContent timeLength={timeLength} scale={contentScale} items={items} />
         </SplitPane>
       </div>
       <TimelineFooter
-        leftContent={[
-          <button
-            onClick={() => App.chart ? App.chart.addLine() : void 0}
-            key={'footer-left-add-line'}
-          >
-            Add line
-          </button>,
-          <span className='hr' key={'footer-hr'}>|</span>,
-          <button
-            onClick={() => App.chart ? App.chart.play().catch(() => void 0) : void 0}
-            key={'footer-left-play'}
-          >
-            Play
-          </button>,
-          <button
-            onClick={() => App.chart ? App.chart.pause().catch(() => void 0) : void 0}
-            key={'footer-left-pause'}
-          >
-            Pause
-          </button>
-        ]}
-        rightContent={[
-          <input
-            type='range'
-            min={1}
-            max={100}
-            defaultValue={50}
-            onInput={(e) => setContentScale(101 - parseInt((e.nativeEvent.target as HTMLInputElement).value))}
-            key={'footer-right-scale'}
-          />
-        ]}
+        leftContent={
+          <>
+            <button
+              onClick={() => App.chart ? App.chart.addLine() : void 0}
+            >
+              Add line
+            </button>
+            <span className='hr'>|</span>
+            <button
+              onClick={() => App.chart ? App.chart.play().catch(() => void 0) : void 0}
+            >
+              Play
+            </button>
+            <button
+              onClick={() => App.chart ? App.chart.pause().catch(() => void 0) : void 0}
+            >
+              Pause
+            </button>
+          </>
+        }
+        rightContent={
+          <>
+            <input
+              type='range'
+              min={1}
+              max={100}
+              defaultValue={50}
+              onInput={(e) => setContentScale(101 - parseInt((e.nativeEvent.target as HTMLInputElement).value))}
+              key={'footer-right-scale'}
+            />
+          </>
+        }
       />
     </div>
   );
