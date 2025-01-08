@@ -49,7 +49,8 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps)
           maxSize={400}
           className='timeline-panel'
           style={{
-            height: "100%",
+            position: 'relative',
+            minHeight: '50px',
             overflowX: 'hidden',
             overflowY: 'visible',
           }}
