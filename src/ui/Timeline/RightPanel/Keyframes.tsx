@@ -1,3 +1,4 @@
+import React from 'react';
 import TimelineListItem from '../List/Item';
 
 export type TimelineRightPanelKeyframesProps = {
@@ -19,4 +20,4 @@ const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = 
   </>
 };
 
-export default TimelineRightPanelKeyframes;
+export default React.memo(TimelineRightPanelKeyframes);

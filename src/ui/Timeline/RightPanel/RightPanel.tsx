@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import ChartJudgeline from "@/Chart/Judgeline";
 import TimelineList from "../List/List";
 import TimelineListItem from '../List/Item';
@@ -23,10 +23,11 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   expandedLines,
   onSeek,
 }) => {
-  const listHead = <TimelineListItem
-    className='timeline-right-panel-head'
-    height={'40px'}
-  ></TimelineListItem>;
+  const keyframesMemoed = useMemo(() => {
+    return lines.map((_line, index) => { // TODO: Render keyframes
+      return <Keyframes isExpanded={expandedLines.includes(index)} key={index} />
+    });
+  }, [lines, expandedLines]);
 
   return <div
     className="timeline-content-container"
@@ -40,10 +41,11 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
         '--time-length': timeLength,
       })}
     >
-      {listHead}
-      {lines.map((line, index) => { // TODO: Render keyframes
-        return <Keyframes isExpanded={expandedLines.includes(index)} key={index} />
-      })}
+      <TimelineListItem
+        className='timeline-right-panel-head'
+        height={'40px'}
+      ></TimelineListItem>
+      {keyframesMemoed}
     </TimelineList>
     <TimelineSeeker
       currentTime={currentTime}
@@ -54,4 +56,4 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   </div>
 };
 
-export default TimelineRightPanel;
+export default React.memo(TimelineRightPanel);

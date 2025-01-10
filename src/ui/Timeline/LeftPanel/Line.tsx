@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
 import ChartJudgeline from '@/Chart/Judgeline';
 import TimelineList from '../List/List';
 import TimelineListItem from '../List/Item';
@@ -34,4 +35,4 @@ const TimelineLeftPanelLine: React.FC<TimelineLeftPanelLineProps> = ({
   </TimelineListItem>
 };
 
-export default TimelineLeftPanelLine;
+export default React.memo(TimelineLeftPanelLine);

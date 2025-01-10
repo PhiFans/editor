@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import TimelineList from "../List/List";
 import ChartJudgeline from "@/Chart/Judgeline";
 import TimelineListItem from '../List/Item';
@@ -27,18 +27,8 @@ const TimelineLeftPanel: React.FC<TimelineLeftPanelProps> = ({
   expandedLines,
   onLineExpanded,
 }) => {
-  const listHead = <TimelineListItem
-    className='timeline-left-panel-head'
-    height={'40px'}
-  >
-    <div className="timeline-head-current-time">
-      <div className="current-time">{timeToString(currentTime)}</div>
-    </div>
-  </TimelineListItem>;
-
-  return <TimelineList>
-    {listHead}
-    {lines.map((line, index) => { // TODO: Render line props & add right click menu
+  const lineListMemoed = useMemo(() => {
+    return lines.map((line, index) => { // TODO: Render line props & add right click menu
       return <LeftPanelLine
         line={line}
         name={`Line #${index}`}
@@ -46,8 +36,20 @@ const TimelineLeftPanel: React.FC<TimelineLeftPanelProps> = ({
         onExpandClick={(e) => onLineExpanded(index, e)}
         key={index}
       />
-    })}
+    })
+  }, [lines, expandedLines, onLineExpanded]);
+
+  return <TimelineList>
+    <TimelineListItem
+      className='timeline-left-panel-head'
+      height={'40px'}
+    >
+      <div className="timeline-head-current-time">
+        <div className="current-time">{timeToString(currentTime)}</div>
+      </div>
+    </TimelineListItem>
+    {lineListMemoed}
   </TimelineList>
 };
 
-export default TimelineLeftPanel;
+export default React.memo(TimelineLeftPanel);
