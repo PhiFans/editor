@@ -3,6 +3,7 @@ import ChartJudgeline from "@/Chart/Judgeline";
 import TimelineList from "../List/List";
 import TimelineListItem from '../List/Item';
 import TimelineSeeker from '../Seeker';
+import Keyframes from './Keyframes';
 import { setCSSProperties } from "@/utils/ui";
 
 export type TimelineRightPanelProps = {
@@ -10,6 +11,7 @@ export type TimelineRightPanelProps = {
   timeLength: number,
   scale: number,
   lines: ChartJudgeline[],
+  expandedLines: number[],
   onSeek: (newTime: number) => void,
 };
 
@@ -18,6 +20,7 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   timeLength,
   scale,
   lines,
+  expandedLines,
   onSeek,
 }) => {
   const listHead = <TimelineListItem
@@ -39,9 +42,7 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
     >
       {listHead}
       {lines.map((line, index) => { // TODO: Render keyframes
-        return <TimelineListItem key={index}>
-          <div className="timeline-line-name"></div>
-        </TimelineListItem>
+        return <Keyframes isExpanded={expandedLines.includes(index)} key={index} />
       })}
     </TimelineList>
     <TimelineSeeker

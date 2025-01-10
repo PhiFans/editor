@@ -1,12 +1,16 @@
 import React from "react";
 import TimelineList from "../List/List";
 import ChartJudgeline from "@/Chart/Judgeline";
-import TimelineListItem from "../List/Item";
+import TimelineListItem from '../List/Item';
+import LeftPanelLine from './Line';
 import { FillZero } from "@/utils/math";
+import './styles.css';
 
 export type TimelineLeftPanelProps = {
   currentTime: number,
   lines: ChartJudgeline[],
+  expandedLines: number[],
+  onLineExpanded: (lineIndex: number, isExpanded: boolean) => void,
 };
 
 // XXX: Move to somewhere else?
@@ -20,6 +24,8 @@ const timeToString = (time: number) => {
 const TimelineLeftPanel: React.FC<TimelineLeftPanelProps> = ({
   currentTime,
   lines,
+  expandedLines,
+  onLineExpanded,
 }) => {
   const listHead = <TimelineListItem
     className='timeline-left-panel-head'
@@ -33,9 +39,13 @@ const TimelineLeftPanel: React.FC<TimelineLeftPanelProps> = ({
   return <TimelineList>
     {listHead}
     {lines.map((line, index) => { // TODO: Render line props & add right click menu
-      return <TimelineListItem key={index}>
-        <div className="timeline-line-name">{`Line #${index}`}</div>
-      </TimelineListItem>
+      return <LeftPanelLine
+        line={line}
+        name={`Line #${index}`}
+        isExpanded={expandedLines.includes(index)}
+        onExpandClick={(e) => onLineExpanded(index, e)}
+        key={index}
+      />
     })}
   </TimelineList>
 };

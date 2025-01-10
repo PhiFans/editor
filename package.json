@@ -14,13 +14,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@types/node": "^22.10.5",
     "audio-decode": "^2.2.2",
     "component-emitter": "^2.0.0",
     "pixi.js": "^8.6.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-split-pane": "^0.1.92"
+    "react-split-pane": "^0.1.92",
+    "uuid": "^11.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

@@ -29,8 +29,14 @@ export type TimelineProps = {
 
 const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps) => {
   const [ lineList, setLineList ] = useState<ChartJudgeline[]>([]);
+  const [ expandedLines, setExpandedLines ] = useState<number[]>([]);
   const [ currentTime, setCurrentTime ] = useState(0);
   const [ contentScale, setContentScale ] = useState(50);
+
+  const setLineExpand = (lineId: number, isExpanded: boolean) => {
+    if (isExpanded) setExpandedLines([ ...expandedLines, lineId ]);
+    else setExpandedLines([ ...expandedLines.filter((e) => e !== lineId) ]);
+  };
 
   useEffect(() => {
     const updateLineList = (newLine: ChartJudgeline) => {
@@ -73,12 +79,15 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps)
           <TimelineLeftPanel
             currentTime={currentTime}
             lines={lineList}
+            expandedLines={expandedLines}
+            onLineExpanded={(id, e) => setLineExpand(id, e)}
           />
           <TimelineRightPanel
             currentTime={currentTime}
             timeLength={timeLength}
             scale={contentScale}
             lines={lineList}
+            expandedLines={expandedLines}
             onSeek={(e) => {
               if (!App.chart) return;
               App.chart.seek(e).catch(() => void 0);
