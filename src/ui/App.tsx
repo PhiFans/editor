@@ -44,7 +44,7 @@ function App() {
       </div>
       <div className="">
         <ClockTimeProvider>
-          <Timeline timeLength={timeLength} items={[]} />
+          <Timeline timeLength={timeLength} />
         </ClockTimeProvider>
       </div>
     </>

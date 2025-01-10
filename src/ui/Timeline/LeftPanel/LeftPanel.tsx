@@ -27,9 +27,8 @@ const TimelineLeftPanel: React.FC<TimelineLeftPanelProps> = ({
   onLineExpanded,
 }) => {
   const lineListMemoed = useMemo(() => {
-    return lines.map((line, index) => { // TODO: Render line props & add right click menu
+    return lines.map((_line, index) => { // TODO: Render line props & add right click menu
       return <LeftPanelLine
-        line={line}
         name={`Line #${index}`}
         isExpanded={expandedLines.includes(index)}
         onExpandClick={(e) => onLineExpanded(index, e)}

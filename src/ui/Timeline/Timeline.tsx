@@ -7,26 +7,11 @@ import TimelineLeftPanel from './LeftPanel/LeftPanel';
 import TimelineRightPanel from './RightPanel/RightPanel';
 import './styles.css';
 
-export type TimelineItemProp = {
-  name: string;
-  minValue?: number;
-  maxValue?: number;
-  defaultValue: number;
-};
-
-export type TimelineItem = {
-  name: string;
-  props: Record<string, TimelineItemProp>;
-  values: Record<string, { time: number; value: number }[]>;
-};
-
 export type TimelineProps = {
   timeLength: number,
-  items: TimelineItem[];
-  onTimeChange?: (time: number) => void;
 };
 
-const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps) => {
+const Timeline: React.FC<TimelineProps> = ({ timeLength }: TimelineProps) => {
   const [ lineList, setLineList ] = useState<ChartJudgeline[]>([]);
   const [ expandedLines, setExpandedLines ] = useState<number[]>([]);
   const [ contentScale, setContentScale ] = useState(50);

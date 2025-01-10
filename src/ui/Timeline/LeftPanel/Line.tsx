@@ -1,19 +1,16 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import ChartJudgeline from '@/Chart/Judgeline';
 import TimelineList from '../List/List';
 import TimelineListItem from '../List/Item';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 export type TimelineLeftPanelLineProps = {
-  line: ChartJudgeline,
   name: string,
   isExpanded: boolean,
   onExpandClick: (isExpanded: boolean) => void
 };
 
 const TimelineLeftPanelLine: React.FC<TimelineLeftPanelLineProps> = ({
-  line,
   name,
   isExpanded,
   onExpandClick
