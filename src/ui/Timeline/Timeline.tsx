@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import SplitPane from 'react-split-pane';
-import { Ticker } from 'pixi.js';
 import TimelineFooter from './Footer';
 import App from '@/App/App';
 import ChartJudgeline from '@/Chart/Judgeline';
@@ -30,7 +29,6 @@ export type TimelineProps = {
 const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps) => {
   const [ lineList, setLineList ] = useState<ChartJudgeline[]>([]);
   const [ expandedLines, setExpandedLines ] = useState<number[]>([]);
-  const [ currentTime, setCurrentTime ] = useState(0);
   const [ contentScale, setContentScale ] = useState(50);
 
   const setLineExpand = (lineId: number, isExpanded: boolean) => {
@@ -48,19 +46,6 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps)
     });
   }, [lineList]);
 
-  useEffect(() => {
-    const ticker = Ticker.shared;
-    const updateTime = () => {
-      if (!App.chart) return;
-      setCurrentTime(App.chart.time);
-    };
-    ticker.add(updateTime);
-
-    return () => {
-      ticker.remove(updateTime);
-    };
-  }, []);
-
   return (
     <div className="timeline">
       <div className='timeline-panel-container'>
@@ -77,21 +62,15 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength, items }: TimelineProps)
           }}
         >
           <TimelineLeftPanel
-            currentTime={currentTime}
             lines={lineList}
             expandedLines={expandedLines}
             onLineExpanded={(id, e) => setLineExpand(id, e)}
           />
           <TimelineRightPanel
-            currentTime={currentTime}
             timeLength={timeLength}
             scale={contentScale}
             lines={lineList}
             expandedLines={expandedLines}
-            onSeek={(e) => {
-              if (!App.chart) return;
-              App.chart.seek(e).catch(() => void 0);
-            }}
           />
         </SplitPane>
       </div>

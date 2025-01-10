@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { useClockTime } from '@/ui/contexts/Clock';
 import TimelineList from "../List/List";
 import ChartJudgeline from "@/Chart/Judgeline";
 import TimelineListItem from '../List/Item';
@@ -7,7 +8,6 @@ import { FillZero } from "@/utils/math";
 import './styles.css';
 
 export type TimelineLeftPanelProps = {
-  currentTime: number,
   lines: ChartJudgeline[],
   expandedLines: number[],
   onLineExpanded: (lineIndex: number, isExpanded: boolean) => void,
@@ -22,7 +22,6 @@ const timeToString = (time: number) => {
 };
 
 const TimelineLeftPanel: React.FC<TimelineLeftPanelProps> = ({
-  currentTime,
   lines,
   expandedLines,
   onLineExpanded,
@@ -45,7 +44,7 @@ const TimelineLeftPanel: React.FC<TimelineLeftPanelProps> = ({
       height={'40px'}
     >
       <div className="timeline-head-current-time">
-        <div className="current-time">{timeToString(currentTime)}</div>
+        <div className="current-time">{timeToString(useClockTime())}</div>
       </div>
     </TimelineListItem>
     {lineListMemoed}

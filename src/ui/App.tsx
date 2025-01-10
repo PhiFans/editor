@@ -1,3 +1,4 @@
+import ClockTimeProvider from './contexts/Clock/Provider';
 import Timeline from './Timeline/Timeline';
 import GlobalApp from '@/App/App';
 import AudioClip from '@/Audio/Clip';
@@ -42,7 +43,9 @@ function App() {
         <button onClick={() => onCreateChart()}>Create chart</button>
       </div>
       <div className="">
-        <Timeline timeLength={timeLength} items={[]} />
+        <ClockTimeProvider>
+          <Timeline timeLength={timeLength} items={[]} />
+        </ClockTimeProvider>
       </div>
     </>
   );

@@ -1,4 +1,6 @@
 import React, { useMemo } from 'react';
+import { useClockTime } from '@/ui/contexts/Clock';
+import App from '@/App/App';
 import ChartJudgeline from "@/Chart/Judgeline";
 import TimelineList from "../List/List";
 import TimelineListItem from '../List/Item';
@@ -7,21 +9,17 @@ import Keyframes from './Keyframes';
 import { setCSSProperties } from "@/utils/ui";
 
 export type TimelineRightPanelProps = {
-  currentTime: number,
   timeLength: number,
   scale: number,
   lines: ChartJudgeline[],
   expandedLines: number[],
-  onSeek: (newTime: number) => void,
 };
 
 const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
-  currentTime,
   timeLength,
   scale,
   lines,
   expandedLines,
-  onSeek,
 }) => {
   const keyframesMemoed = useMemo(() => {
     return lines.map((_line, index) => { // TODO: Render keyframes
@@ -48,10 +46,13 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
       {keyframesMemoed}
     </TimelineList>
     <TimelineSeeker
-      currentTime={currentTime}
+      currentTime={useClockTime()}
       timeLength={timeLength}
       scale={scale}
-      onSeek={(e) => onSeek(e)}
+      onSeek={(e) => {
+        if (!App.chart) return;
+        App.chart.seek(e).catch(() => void 0);
+      }}
     />
   </div>
 };
