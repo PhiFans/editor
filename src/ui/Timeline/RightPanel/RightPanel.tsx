@@ -46,12 +46,12 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
       {keyframesMemoed}
     </TimelineList>
     <TimelineSeeker
-      currentTime={useClockTime()}
+      currentTime={useClockTime().beat}
       timeLength={timeLength}
       scale={scale}
       onSeek={(e) => {
         if (!App.chart) return;
-        App.chart.seek(e).catch(() => void 0);
+        App.chart.beatNum = e;
       }}
     />
   </div>

@@ -11,12 +11,14 @@ const ClockTimeProvider: React.FC<ClockTimeProviderProps> = ({
   children
 }: ClockTimeProviderProps) => {
   const [ time, setTime ] = useState(0);
+  const [ beat, setBeat ] = useState(0);
 
   useEffect(() => {
     const ticker = Ticker.shared;
     const updateTime = () => {
       if (!App.chart) return;
       setTime(App.chart.time);
+      setBeat(App.chart.beatNum);
     };
     ticker.add(updateTime);
 
@@ -25,7 +27,10 @@ const ClockTimeProvider: React.FC<ClockTimeProviderProps> = ({
     });
   }, []);
 
-  return <ClockTimeContext.Provider value={time}>
+  return <ClockTimeContext.Provider value={{
+    time: time,
+    beat: beat,
+  }}>
     {children}
   </ClockTimeContext.Provider>
 };

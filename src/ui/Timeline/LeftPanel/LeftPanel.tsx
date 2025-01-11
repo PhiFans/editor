@@ -43,7 +43,7 @@ const TimelineLeftPanel: React.FC<TimelineLeftPanelProps> = ({
       height={'40px'}
     >
       <div className="timeline-head-current-time">
-        <div className="current-time">{timeToString(useClockTime())}</div>
+        <div className="current-time">{timeToString(useClockTime().time)}</div>
       </div>
     </TimelineListItem>
     {lineListMemoed}

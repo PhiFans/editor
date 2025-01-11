@@ -47,11 +47,6 @@ export default class Chart {
     this.audioClip.stop();
   }
 
-  async seek(seconds: number) {
-    await this.waitAudio();
-    this.audioClip.seek(seconds);
-  }
-
   addLine() {
     const newLine = new ChartJudgeline();
     this.lines.push(newLine);
@@ -81,12 +76,24 @@ export default class Chart {
     return this.audioClip ? this.audioClip.time : 0;
   }
 
+  set time(time: number) {
+    this.waitAudio()
+      .then(() => this.audioClip.seek(time))
+      .catch(() => void 0);
+  }
+
   get duration() {
     return this.audioClip ? this.audioClip.duration : 0;
   }
 
   get beatNum() {
     return this.bpm.timeToBeatNum(this.time);
+  }
+
+  set beatNum(beatNum: number) {
+    this.waitAudio()
+      .then(() => this.audioClip.seek(this.bpm.getRealTime(beatNum)))
+      .catch(() => void 0);
   }
 
   get beatDuration() {

@@ -1,7 +1,6 @@
 import ClockTimeProvider from './contexts/Clock/Provider';
 import Timeline from './Timeline/Timeline';
 import GlobalApp from '@/App/App';
-import AudioClip from '@/Audio/Clip';
 import { PopupReadFiles } from '@/utils/file';
 import { Nullable } from '@/utils/types';
 import { useState } from 'react';
@@ -31,8 +30,8 @@ function App() {
       designer: 'test'
     }, importedMusic, importedMusic, true);
     // XXX: This is the stupid way
-    GlobalApp.events.once('chart.audioClip.loaded', (clip: AudioClip) => {
-      setTimeLength(clip.duration);
+    GlobalApp.events.once('chart.audioClip.loaded', () => {
+      setTimeLength(GlobalApp.chart!.beatDuration);
     });
   };
 

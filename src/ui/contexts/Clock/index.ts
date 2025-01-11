@@ -1,6 +1,11 @@
 import { createContext, useContext } from 'react';
 
-const ClockTimeContext = createContext<number>(0);
+type ClockTime = {
+  time: number,
+  beat: number,
+};
+
+const ClockTimeContext = createContext<ClockTime>({ time: 0, beat: 0 });
 
 export const useClockTime = () => useContext(ClockTimeContext);
 
