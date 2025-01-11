@@ -4,6 +4,7 @@
 
 .line-detail .line-info {
   display: flex;
+  padding: 0px 8px;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
@@ -28,7 +29,15 @@
   background: rgba(0, 0, 0, 0.2);
 }
 
+.line-props-expanded {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  box-sizing: content-box;
+}
+
 .line-props-expanded .line-prop {
-  padding: 0px;
+  padding: 0px 8px;
   text-align: right;
+}
+.line-props-expanded .line-prop:last-child {
+  border-bottom: unset;
 }

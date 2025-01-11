@@ -26,15 +26,10 @@
   --height: 30px;
 
   position: relative;
-  padding: 0px 8px;
   min-height: var(--height);
   line-height: calc(var(--height) - 1px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
-}
-
-.timeline-list-item:last-child {
-  border-bottom: unset;
 }
 
 .timeline-head-current-time {

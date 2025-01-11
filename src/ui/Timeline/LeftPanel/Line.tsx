@@ -22,7 +22,7 @@ const TimelineLeftPanelLine: React.FC<TimelineLeftPanelLineProps> = ({
       </button>
       <div className="line-name">{name}</div>
     </div>
-    {isExpanded && <TimelineList className="line-props-expanded">
+    {isExpanded && <TimelineList className="line-props-expanded" style={{ height: 149 }}>
       <TimelineListItem className="line-prop">Speed</TimelineListItem>
       <TimelineListItem className="line-prop">Position X</TimelineListItem>
       <TimelineListItem className="line-prop">Position Y</TimelineListItem>
