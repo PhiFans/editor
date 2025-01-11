@@ -1,7 +1,7 @@
 import App from '@/App/App';
 import Audio from '@/Audio/Audio';
 import AudioClip from '@/Audio/Clip';
-import ChartBPM from './BPM';
+import ChartBPMList from './BPMList';
 import ChartJudgeline from './Judgeline';
 import ChartNote from './Note';
 import { ChartInfo } from './types';
@@ -13,7 +13,7 @@ export default class Chart {
   audio: File;
   background: File;
 
-  bpm: ChartBPM[] = [ new ChartBPM([0, 0, 1], 120) ];
+  bpm: ChartBPMList = new ChartBPMList();
   lines: ChartJudgeline[] = [];
   notes: ChartNote[] = [];
 
