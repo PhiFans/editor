@@ -3,11 +3,13 @@ import { BeatArray } from '@/utils/types';
 
 export default class ChartBPM {
   beat: BeatArray;
+  beatNum: number;
   bpm: number;
 
   time: number ;
   timePerBeat: number;
   endBeat: BeatArray;
+  endBeatNum: number;
   endTime: number;
 
   constructor(beat: BeatArray, bpm: number) {
@@ -15,6 +17,7 @@ export default class ChartBPM {
     if (bpm <= 0) throw new Error('Cannot set a zero/negative BPM!');
 
     this.beat = beat;
+    this.beatNum = BeatArrayToNumber(this.beat);
     this.bpm = bpm;
 
     /**
@@ -24,6 +27,7 @@ export default class ChartBPM {
     this.time = NaN;
     this.timePerBeat = parseDoublePrecist(60 / this.bpm, 6, -1);
     this.endBeat = [ Infinity, 0, 1 ];
+    this.endBeatNum = Infinity;
     this.endTime = Infinity;
   }
 }

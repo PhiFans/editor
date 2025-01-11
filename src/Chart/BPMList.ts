@@ -36,27 +36,18 @@ export default class ChartBPMList extends Array<ChartBPM> {
     if (!bpm) throw new Error(`BPM index #${index} not found`);
 
     if (newBPM) bpm.bpm = newBPM;
-    if (newBeat) bpm.beat = newBeat;
+    if (newBeat) {
+      bpm.beat = newBeat;
+      bpm.beatNum = BeatArrayToNumber(newBeat);
+    }
 
     if (newBPM || newBeat) this.calcRealTime();
     return bpm;
   }
 
-  getRealTime(beat: BeatArray) {
-    const beatNum = BeatArrayToNumber(beat);
-    if (!isFinite(beatNum)) return beatNum;
-
-    for (const bpm of this) {
-      const startBeat = BeatArrayToNumber(bpm.beat);
-      const endBeat = BeatArrayToNumber(bpm.endBeat);
-
-      if (endBeat <= beatNum) continue;
-      if (startBeat > beatNum) break;
-
-      return parseDoublePrecist(bpm.time + (beatNum - startBeat) * bpm.timePerBeat, 6, -1);
-    }
-
-    throw new Error(`Cannot found BPM for beat ${JSON.stringify(beat)}`);
+  getRealTime(beat: BeatArray | number) {
+    if (typeof beat === 'number') return this.getRealTimeByBeatNum(beat);
+    else return this.getRealTimeByBeatNum(BeatArrayToNumber(beat));
   }
 
   timeToBeatNum(time: number) {
@@ -64,7 +55,7 @@ export default class ChartBPMList extends Array<ChartBPM> {
       if (bpm.endTime <= time) continue;
       if (bpm.time > time) break;
 
-      return parseDoublePrecist(BeatArrayToNumber(bpm.beat) + (time - bpm.time) / bpm.timePerBeat, 6, -1);
+      return parseDoublePrecist(bpm.beatNum + (time - bpm.time) / bpm.timePerBeat, 6, -1);
     }
 
     throw new Error(`Cannot found beat number for time ${time}`);
@@ -72,7 +63,10 @@ export default class ChartBPMList extends Array<ChartBPM> {
 
   private calcRealTime() {
     this.sort(BPMSortFn);
-    if (BeatArrayToNumber(this[0].beat) !== 0) this[0].beat = [ 0, 0, 1 ];
+    if (BeatArrayToNumber(this[0].beat) !== 0) {
+      this[0].beat = [ 0, 0, 1 ];
+      this[0].beatNum = 0;
+    }
 
     let currentTimePerBeat = this[0].timePerBeat;
     let bpmChangedBeat = 0;
@@ -82,21 +76,33 @@ export default class ChartBPMList extends Array<ChartBPM> {
       const bpm = this[i];
       const bpmNext = this[i + 1];
 
-      const startBeat = BeatArrayToNumber(bpm.beat);
-
       bpmChangedTime = parseDoublePrecist(bpmChangedTime + (
-        currentTimePerBeat * (startBeat - bpmChangedBeat)
+        currentTimePerBeat * (bpm.beatNum - bpmChangedBeat)
       ), 6, -1);
       bpmChangedBeat = parseDoublePrecist(bpmChangedBeat + (
-        startBeat - bpmChangedBeat
+        bpm.beatNum - bpmChangedBeat
       ), 6, -1);
       currentTimePerBeat = bpm.timePerBeat;
 
       bpm.time = bpmChangedTime;
       bpm.endBeat = bpmNext ? bpmNext.beat : [ Infinity, 0, 1 ];
+      bpm.endBeatNum = bpmNext ? BeatArrayToNumber(bpmNext.beat) : Infinity;
       bpm.endTime = bpmNext ? parseDoublePrecist(bpm.time + (
-        bpm.timePerBeat * (BeatArrayToNumber(bpmNext.beat) - startBeat)
+        bpm.timePerBeat * (bpm.endBeatNum - bpm.beatNum)
       ), 6, -1) : Infinity;
     }
+  }
+
+  private getRealTimeByBeatNum(beat: number) {
+    if (!isFinite(beat)) return beat;
+
+    for (const bpm of this) {
+      if (bpm.endBeatNum <= beat) continue;
+      if (bpm.beatNum > beat) break;
+
+      return parseDoublePrecist(bpm.time + (beat - bpm.beatNum) * bpm.timePerBeat, 6, -1);
+    }
+
+    throw new Error(`Cannot found BPM for beat ${JSON.stringify(beat)}`);
   }
 }
