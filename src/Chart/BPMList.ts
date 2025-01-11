@@ -24,6 +24,8 @@ export default class ChartBPMList extends Array<ChartBPM> {
   }
 
   remove(index: number) {
+    if (this.length === 1) throw new Error('Cannot remove BPM when only one BPM exists.');
+
     this.splice(index, 1);
     this.calcRealTime();
     return this;
@@ -57,6 +59,17 @@ export default class ChartBPMList extends Array<ChartBPM> {
     throw new Error(`Cannot found BPM for beat ${JSON.stringify(beat)}`);
   }
 
+  timeToBeatNum(time: number) {
+    for (const bpm of this) {
+      if (bpm.endTime <= time) continue;
+      if (bpm.time > time) break;
+
+      return parseDoublePrecist(BeatArrayToNumber(bpm.beat) + (time - bpm.time) / bpm.timePerBeat, 6, -1);
+    }
+
+    throw new Error(`Cannot found beat number for time ${time}`);
+  }
+
   private calcRealTime() {
     this.sort(BPMSortFn);
     if (BeatArrayToNumber(this[0].beat) !== 0) this[0].beat = [ 0, 0, 1 ];
@@ -81,6 +94,9 @@ export default class ChartBPMList extends Array<ChartBPM> {
 
       bpm.time = bpmChangedTime;
       bpm.endBeat = bpmNext ? bpmNext.beat : [ Infinity, 0, 1 ];
+      bpm.endTime = bpmNext ? parseDoublePrecist(bpm.time + (
+        bpm.timePerBeat * (BeatArrayToNumber(bpmNext.beat) - startBeat)
+      ), 6, -1) : Infinity;
     }
   }
 }

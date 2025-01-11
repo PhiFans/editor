@@ -8,6 +8,7 @@ export default class ChartBPM {
   time: number ;
   timePerBeat: number;
   endBeat: BeatArray;
+  endTime: number;
 
   constructor(beat: BeatArray, bpm: number) {
     if (BeatArrayToNumber(beat) < 0) throw new Error('Cannot set a negative beat to BPM!');
@@ -23,5 +24,6 @@ export default class ChartBPM {
     this.time = NaN;
     this.timePerBeat = parseDoublePrecist(60 / this.bpm, 6, -1);
     this.endBeat = [ Infinity, 0, 1 ];
+    this.endTime = Infinity;
   }
 }

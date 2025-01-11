@@ -1,6 +1,6 @@
 import App from '@/App/App';
 import Audio from '@/Audio/Audio';
-import AudioClip from '@/Audio/Clip';
+import AudioClip, { EAudioClipStatus } from '@/Audio/Clip';
 import ChartBPMList from './BPMList';
 import ChartJudgeline from './Judgeline';
 import ChartNote from './Note';
@@ -73,12 +73,24 @@ export default class Chart {
     return newNote;
   }
 
+  get status() {
+    return this.audioClip ? this.audioClip.status : EAudioClipStatus.STOP;
+  }
+
   get time() {
     return this.audioClip ? this.audioClip.time : 0;
   }
 
   get duration() {
     return this.audioClip ? this.audioClip.duration : 0;
+  }
+
+  get beatNum() {
+    return this.bpm.timeToBeatNum(this.time);
+  }
+
+  get beatDuration() {
+    return this.bpm.timeToBeatNum(this.duration);
   }
 
   private waitAudio() {return new Promise((res) => {
