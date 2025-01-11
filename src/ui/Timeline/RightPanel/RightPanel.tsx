@@ -8,6 +8,27 @@ import TimelineSeeker from '../Seeker';
 import Keyframes from './Keyframes';
 import { setCSSProperties } from "@/utils/ui";
 
+type KeyframesRowProps = {
+  line: ChartJudgeline,
+  isExpanded: boolean;
+};
+
+const KeyframesRow: React.FC<KeyframesRowProps> = ({
+  line,
+  isExpanded
+}) => {
+  return <>
+    <TimelineListItem />
+    {isExpanded && <>
+      <Keyframes keyframes={line.props.speed} />
+      <Keyframes keyframes={line.props.positionX} />
+      <Keyframes keyframes={line.props.positionY} />
+      <Keyframes keyframes={line.props.rotate} />
+      <Keyframes keyframes={line.props.alpha} />
+    </>}
+  </>
+};
+
 export type TimelineRightPanelProps = {
   timeLength: number,
   scale: number,
@@ -22,8 +43,8 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   expandedLines,
 }) => {
   const keyframesMemoed = useMemo(() => {
-    return lines.map((_line, index) => { // TODO: Render keyframes
-      return <Keyframes isExpanded={expandedLines.includes(index)} key={index} />
+    return lines.map((line, index) => { // TODO: Render keyframes
+      return <KeyframesRow line={line} isExpanded={expandedLines.includes(index)} key={index} />;
     });
   }, [lines, expandedLines]);
 
