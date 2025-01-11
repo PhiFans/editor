@@ -24,6 +24,8 @@ export default class Chart {
     this.audio = audio;
     this.background = background;
 
+    // Init
+    this.addLine();
     AudioClip.from(audio, Audio.channels.music)
       .then((clip) => {
         this.audioClip = clip;
@@ -48,7 +50,7 @@ export default class Chart {
   }
 
   addLine() {
-    const newLine = new ChartJudgeline();
+    const newLine = new ChartJudgeline(this.bpm);
     this.lines.push(newLine);
 
     App.events.emit('chart.lines.added', newLine);
