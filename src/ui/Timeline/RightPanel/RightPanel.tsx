@@ -64,6 +64,15 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   expandedLines,
   tempo,
 }) => {
+  const onHeadClicked = (e: MouseEvent) => {
+    const target = e.target as HTMLDivElement;
+    const rect = target.getBoundingClientRect();
+    const clickAtTime = (e.clientX - rect.x) / scale;
+
+    if (!App.chart) return;
+    App.chart.beatNum = clickAtTime;
+  };
+
   const scaleMemoed = useMemo(() => {
     return new Array(Math.floor(timeLength)).fill(0).map((_, index) => {
       return <BeatScale time={index} tempo={tempo} key={index} />;
@@ -97,6 +106,7 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
       <TimelineListItem
         className='timeline-right-panel-head'
         height={'40px'}
+        onClick={(e) => onHeadClicked(e.nativeEvent)}
       >
         <div className="timeline-scale-container">{scaleMemoed}</div>
       </TimelineListItem>
