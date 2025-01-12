@@ -8,6 +8,7 @@ import TimelineSeeker from '../Seeker';
 import Keyframes from './Keyframes';
 import { setCSSProperties } from "@/utils/ui";
 import ChartJudgelineProps from '@/Chart/JudgelineProps';
+import './styles.css';
 
 type KeyframesRowProps = {
   line: ChartJudgeline,
@@ -51,6 +52,12 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   lines,
   expandedLines,
 }) => {
+  const scaleMemoed = useMemo(() => {
+    return new Array(Math.floor(timeLength)).fill(0).map((_, index) => {
+      return <div className='timeline-scale' style={setCSSProperties({ '--time': index })} key={index}></div>
+    });
+  }, [timeLength]);
+
   const keyframesMemoed = useMemo(() => {
     return lines.map((line, index) => { // TODO: Render keyframes
       return <KeyframesRow line={line} isExpanded={expandedLines.includes(index)} scale={scale} key={index} />;
@@ -72,7 +79,9 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
       <TimelineListItem
         className='timeline-right-panel-head'
         height={'40px'}
-      ></TimelineListItem>
+      >
+        <div className="timeline-scale-container">{scaleMemoed}</div>
+      </TimelineListItem>
       {keyframesMemoed}
     </TimelineList>
     <TimelineSeeker
