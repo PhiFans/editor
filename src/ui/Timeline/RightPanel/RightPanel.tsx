@@ -15,17 +15,26 @@ type KeyframesRowProps = {
   line: ChartJudgeline,
   isExpanded: boolean,
   scale: number,
+  tempo: number,
 };
 
 const KeyframesRow: React.FC<KeyframesRowProps> = ({
   line,
   isExpanded,
   scale,
+  tempo,
 }) => {
   // TODO: Beat
   const onAddKeyframe = (type: keyof ChartJudgelineProps, beat: number) => {
-    const beatRound = Math.round(beat);
-    line.addKeyframe(type, [ beatRound, 0, 1 ], 1, false, 1);
+    let beatFloor = Math.floor(beat);
+    let beatSub = Math.round((beat - beatFloor) * tempo);
+
+    if (beatSub === tempo) {
+      beatFloor += 1;
+      beatSub = 0;
+    }
+
+    line.addKeyframe(type, [ beatFloor, beatSub, tempo ], 1, false, 1);
   };
 
   return <>
@@ -63,9 +72,15 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
 
   const keyframesMemoed = useMemo(() => {
     return lines.map((line, index) => { // TODO: Render keyframes
-      return <KeyframesRow line={line} isExpanded={expandedLines.includes(index)} scale={scale} key={index} />;
+      return <KeyframesRow
+        line={line}
+        isExpanded={expandedLines.includes(index)}
+        scale={scale}
+        tempo={tempo}
+        key={index}
+      />;
     });
-  }, [lines, expandedLines, scale]);
+  }, [lines, expandedLines, scale, tempo]);
 
   return <div
     className="timeline-content-container"

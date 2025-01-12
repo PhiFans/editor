@@ -95,8 +95,7 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength }: TimelineProps) => {
         rightContent={
           <>
             <label>
-              1/
-              <input
+              1/<input
                 type='number'
                 min={1}
                 defaultValue={4}
