@@ -9,6 +9,7 @@ import Keyframes from './Keyframes';
 import { setCSSProperties } from "@/utils/ui";
 import ChartJudgelineProps from '@/Chart/JudgelineProps';
 import './styles.css';
+import BeatScale from './BeatScale';
 
 type KeyframesRowProps = {
   line: ChartJudgeline,
@@ -44,6 +45,7 @@ export type TimelineRightPanelProps = {
   scale: number,
   lines: ChartJudgeline[],
   expandedLines: number[],
+  tempo: number,
 };
 
 const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
@@ -51,12 +53,13 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   scale,
   lines,
   expandedLines,
+  tempo,
 }) => {
   const scaleMemoed = useMemo(() => {
     return new Array(Math.floor(timeLength)).fill(0).map((_, index) => {
-      return <div className='timeline-scale' style={setCSSProperties({ '--time': index })} key={index}></div>
+      return <BeatScale time={index} tempo={tempo} key={index} />;
     });
-  }, [timeLength]);
+  }, [tempo, timeLength]);
 
   const keyframesMemoed = useMemo(() => {
     return lines.map((line, index) => { // TODO: Render keyframes
