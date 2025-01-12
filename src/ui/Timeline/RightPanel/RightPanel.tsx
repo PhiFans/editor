@@ -10,21 +10,23 @@ import { setCSSProperties } from "@/utils/ui";
 
 type KeyframesRowProps = {
   line: ChartJudgeline,
-  isExpanded: boolean;
+  isExpanded: boolean,
+  scale: number,
 };
 
 const KeyframesRow: React.FC<KeyframesRowProps> = ({
   line,
-  isExpanded
+  isExpanded,
+  scale,
 }) => {
   return <>
     <TimelineListItem />
     {isExpanded && <>
-      <Keyframes keyframes={line.props.speed} />
-      <Keyframes keyframes={line.props.positionX} />
-      <Keyframes keyframes={line.props.positionY} />
-      <Keyframes keyframes={line.props.rotate} />
-      <Keyframes keyframes={line.props.alpha} />
+      <Keyframes keyframes={line.props.speed} scale={scale} />
+      <Keyframes keyframes={line.props.positionX} scale={scale} />
+      <Keyframes keyframes={line.props.positionY} scale={scale} />
+      <Keyframes keyframes={line.props.rotate} scale={scale} />
+      <Keyframes keyframes={line.props.alpha} scale={scale} />
     </>}
   </>
 };
@@ -44,9 +46,9 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
 }) => {
   const keyframesMemoed = useMemo(() => {
     return lines.map((line, index) => { // TODO: Render keyframes
-      return <KeyframesRow line={line} isExpanded={expandedLines.includes(index)} key={index} />;
+      return <KeyframesRow line={line} isExpanded={expandedLines.includes(index)} scale={scale} key={index} />;
     });
-  }, [lines, expandedLines]);
+  }, [lines, expandedLines, scale]);
 
   return <div
     className="timeline-content-container"

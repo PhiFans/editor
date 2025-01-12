@@ -2,55 +2,25 @@ import { BeatArray } from '@/utils/types';
 import ChartBPMList from './BPMList';
 import JudgelineProps from './JudgelineProps';
 import Note from './Note';
-import ChartKeyframe from './Keyframe';
-
-const PropsSortFn = (a: ChartKeyframe, b: ChartKeyframe) => a.beatNum - b.beatNum;
+import { EventEmitter } from 'pixi.js';
 
 export default class ChartJudgeline {
   bpm: ChartBPMList;
   props = new JudgelineProps();
   notes: Note[] = [];
+  events: EventEmitter = new EventEmitter();
 
   constructor(bpmList: ChartBPMList) {
     this.bpm = bpmList;
 
-    this.calcPropsTime();
+    this.addKeyframe('speed', [ 0, 0, 1 ], 1, false, 1);
+    this.addKeyframe('positionX', [ 0, 0, 1 ], 0, false, 1);
+    this.addKeyframe('positionY', [ 0, 0, 1 ], 0, false, 1);
+    this.addKeyframe('alpha', [ 0, 0, 1 ], 1, false, 1);
+    this.addKeyframe('rotate', [ 0, 0, 1 ], 0, false, 1);
   }
 
   addKeyframe(type: keyof JudgelineProps, beat: BeatArray, value: number, continuous: boolean, easing: number) {
-    const keyframes = this.props[type];
-    if (!keyframes) throw new Error(`No such keyframe type: ${type}`);
-
-    keyframes.push(
-      new ChartKeyframe(beat, value, continuous, easing)
-    );
-    this.calcPropsTime();
-  }
-
-  private sortProps() {
-    this.props.speed.sort(PropsSortFn);
-    this.props.positionX.sort(PropsSortFn);
-    this.props.positionY.sort(PropsSortFn);
-    this.props.alpha.sort(PropsSortFn);
-    this.props.rotate.sort(PropsSortFn);
-  }
-
-  private calcPropTime(keyframes: ChartKeyframe[]) {
-    for (const keyframe of keyframes) {
-      if (!isNaN(keyframe.time)) continue;
-      keyframe.time = this.bpm.getRealTime(keyframe.beat);
-    }
-
-    return keyframes;
-  }
-
-  private calcPropsTime() {
-    this.sortProps();
-
-    this.props.speed = this.calcPropTime(this.props.speed);
-    this.props.positionX = this.calcPropTime(this.props.positionX);
-    this.props.positionY = this.calcPropTime(this.props.positionY);
-    this.props.alpha = this.calcPropTime(this.props.alpha);
-    this.props.rotate = this.calcPropTime(this.props.rotate);
+    this.props.addKeyframe(type, beat, value, continuous, easing, this.bpm);
   }
 }
