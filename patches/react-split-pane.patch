@@ -1,3 +1,15 @@
 diff --git a/CHANGELOG.md b/CHANGELOG.md
 deleted file mode 100644
 index b77f3a088b94993f9dea34ad3eaf87108ba766ac..0000000000000000000000000000000000000000
+diff --git a/index.d.ts b/index.d.ts
+index d116f54d6da12d24b48e24ff3636c9066059aa58..c52c9747cb6e6fd0cf172f1b37904add11045f63 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -5,6 +5,7 @@ export type Size = string | number;
+ export type Split = 'vertical' | 'horizontal';
+ 
+ export type SplitPaneProps = {
++  children: React.ReactNode[],
+   allowResize?: boolean;
+   className?: string;
+   primary?: 'first' | 'second';

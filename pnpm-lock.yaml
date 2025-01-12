@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   react-split-pane:
-    hash: kyjpfj34qx6xnlpv22nirjdvwu
+    hash: we2kgptptkdh5cuho4fck6fmnu
     path: patches/react-split-pane.patch
 
 importers:
@@ -42,7 +42,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       react-split-pane:
         specifier: ^0.1.92
-        version: 0.1.92(patch_hash=kyjpfj34qx6xnlpv22nirjdvwu)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 0.1.92(patch_hash=we2kgptptkdh5cuho4fck6fmnu)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       uuid:
         specifier: ^11.0.4
         version: 11.0.4
@@ -2859,7 +2859,7 @@ snapshots:
 
   react-lifecycles-compat@3.0.4: {}
 
-  react-split-pane@0.1.92(patch_hash=kyjpfj34qx6xnlpv22nirjdvwu)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-split-pane@0.1.92(patch_hash=we2kgptptkdh5cuho4fck6fmnu)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       prop-types: 15.8.1
       react: 18.3.1
