@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useClockTime } from '@/ui/contexts/Clock';
 import App from '@/App/App';
 import ChartJudgeline from "@/Chart/Judgeline";
@@ -16,6 +16,7 @@ type KeyframesRowProps = {
   isExpanded: boolean,
   scale: number,
   tempo: number,
+  timeRange: [number, number],
 };
 
 const KeyframesRow: React.FC<KeyframesRowProps> = ({
@@ -23,9 +24,10 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
   isExpanded,
   scale,
   tempo,
+  timeRange,
 }) => {
-  // TODO: Beat
-  const onAddKeyframe = (type: keyof ChartJudgelineProps, beat: number) => {
+  const onAddKeyframe = (type: keyof ChartJudgelineProps, clickedPosX: number) => {
+    const beat = clickedPosX / scale;
     let beatFloor = Math.floor(beat);
     let beatSub = Math.round((beat - beatFloor) * tempo);
 
@@ -40,11 +42,31 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
   return <>
     <TimelineListItem />
     {isExpanded && <>
-      <Keyframes keyframes={line.props.speed} scale={scale} onAddKeyframe={((b) => onAddKeyframe('speed', b))} />
-      <Keyframes keyframes={line.props.positionX} scale={scale} onAddKeyframe={((b) => onAddKeyframe('positionX', b))} />
-      <Keyframes keyframes={line.props.positionY} scale={scale} onAddKeyframe={((b) => onAddKeyframe('positionY', b))} />
-      <Keyframes keyframes={line.props.rotate} scale={scale} onAddKeyframe={((b) => onAddKeyframe('rotate', b))} />
-      <Keyframes keyframes={line.props.alpha} scale={scale} onAddKeyframe={((b) => onAddKeyframe('alpha', b))} />
+      <Keyframes
+        keyframes={line.props.speed}
+        timeRange={timeRange}
+        onDoubleClick={((b) => onAddKeyframe('speed', b))}
+      />
+      <Keyframes
+        keyframes={line.props.positionX}
+        timeRange={timeRange}
+        onDoubleClick={((b) => onAddKeyframe('positionX', b))}
+      />
+      <Keyframes
+        keyframes={line.props.positionY}
+        timeRange={timeRange}
+        onDoubleClick={((b) => onAddKeyframe('positionY', b))}
+      />
+      <Keyframes
+        keyframes={line.props.rotate}
+        timeRange={timeRange}
+        onDoubleClick={((b) => onAddKeyframe('rotate', b))}
+      />
+      <Keyframes
+        keyframes={line.props.alpha}
+        timeRange={timeRange}
+        onDoubleClick={((b) => onAddKeyframe('alpha', b))}
+      />
     </>}
   </>
 };
@@ -64,6 +86,23 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   expandedLines,
   tempo,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const containerWidth = useRef(0);
+  const containerScrolled = useRef(0);
+  const [ timeRange, setTimeRange ] = useState<[number, number]>([ 0, 0 ]);
+
+  const updateTimeRange = useCallback(() => {
+    const start = Math.floor(containerScrolled.current / scale);
+    const end = Math.ceil(containerWidth.current / scale) + start + 1;
+    setTimeRange([ start, end ]);
+  }, [scale]);
+
+  const onContainerScrolled = (e: UIEvent) => {
+    const target = e.target as HTMLDivElement;
+    containerScrolled.current = target.scrollLeft;
+    updateTimeRange();
+  };
+
   const onHeadClicked = (e: MouseEvent) => {
     const target = e.target as HTMLDivElement;
     const rect = target.getBoundingClientRect();
@@ -73,29 +112,29 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
     App.chart.beatNum = clickAtTime;
   };
 
-  const scaleMemoed = useMemo(() => {
-    return new Array(Math.floor(timeLength)).fill(0).map((_, index) => {
-      return <BeatScale time={index} tempo={tempo} key={index} />;
-    });
-  }, [tempo, timeLength]);
+  useEffect(() => {
+    const updateContainerWidth = () => {
+      const containerDom = containerRef.current;
+      if (!containerDom) return;
 
-  const keyframesMemoed = useMemo(() => {
-    return lines.map((line, index) => { // TODO: Render keyframes
-      return <KeyframesRow
-        line={line}
-        isExpanded={expandedLines.includes(index)}
-        scale={scale}
-        tempo={tempo}
-        key={index}
-      />;
+      containerWidth.current = containerDom.clientWidth;
+      updateTimeRange();
+    };
+
+    updateContainerWidth();
+    window.addEventListener('resize', updateContainerWidth);
+    return (() => {
+      window.removeEventListener('resize', updateContainerWidth);
     });
-  }, [lines, expandedLines, scale, tempo]);
+  }, [scale, updateTimeRange]);
 
   return <div
     className="timeline-content-container"
     style={setCSSProperties({
       '--base-scale': scale,
     })}
+    onScroll={(e) => onContainerScrolled(e.nativeEvent)}
+    ref={containerRef}
   >
     <TimelineList
       className='timeline-content'
@@ -108,9 +147,22 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
         height={'40px'}
         onClick={(e) => onHeadClicked(e.nativeEvent)}
       >
-        <div className="timeline-scale-container">{scaleMemoed}</div>
+        <div className="timeline-scale-container">
+          {new Array(Math.floor(timeRange[1] - timeRange[0])).fill(0).map((_, index) => {
+            return <BeatScale time={timeRange[0] + index} tempo={tempo} key={index} />;
+          })}
+        </div>
       </TimelineListItem>
-      {keyframesMemoed}
+      {lines.map((line, index) => { // TODO: Render keyframes
+        return <KeyframesRow
+          line={line}
+          isExpanded={expandedLines.includes(index)}
+          scale={scale}
+          tempo={tempo}
+          timeRange={timeRange}
+          key={index}
+        />;
+      })}
     </TimelineList>
     <TimelineSeeker
       currentTime={useClockTime().beat}

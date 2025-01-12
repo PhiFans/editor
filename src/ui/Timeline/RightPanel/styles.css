@@ -5,6 +5,7 @@
   top: 65%;
   left: 0px;
   min-height: 8px;
+  overflow-x: hidden;
 }
 
 .timeline-scale-container .timeline-scale {

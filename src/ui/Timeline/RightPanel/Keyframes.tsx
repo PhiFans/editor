@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TimelineListItem from '../List/Item';
 import ChartKeyframe from '@/Chart/Keyframe';
 import { setCSSProperties } from '@/utils/ui';
@@ -22,16 +22,39 @@ const Keyframe: React.FC<KeyframeProps> = ({
   ></div>
 };
 
+type KeyframesProps = {
+  timeRange: [number, number],
+  keyframes: ChartKeyframe[],
+};
+
+const Keyframes: React.FC<KeyframesProps> = ({
+  timeRange,
+  keyframes,
+}) => {
+  const result: React.ReactNode[] = [];
+
+  for (const keyframe of keyframes) {
+    if (keyframe.beatNum < timeRange[0]) continue;
+    if (keyframe.beatNum > timeRange[1]) break;
+
+    result.push(
+      <Keyframe time={keyframe.beatNum} value={keyframe.value} key={keyframe.beatNum} />
+    );
+  }
+
+  return result;
+};
+
 export type TimelineRightPanelKeyframesProps = {
   keyframes: ArrayEvented<ChartKeyframe>,
-  scale: number,
-  onAddKeyframe: (beat: number) => void,
+  timeRange: [number, number],
+  onDoubleClick: (clickedPosX: number) => void,
 };
 
 const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = ({
   keyframes,
-  scale,
-  onAddKeyframe,
+  timeRange,
+  onDoubleClick,
 }: TimelineRightPanelKeyframesProps) => {
   const [ keyframeList, setKeyframeList ] = useState<ChartKeyframe[]>([ ...keyframes ]);
 
@@ -46,23 +69,15 @@ const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = 
     });
   }, [keyframes]);
 
-  const keyframesMemoed = useMemo(() => {
-    return keyframeList.map((keyframe, index) => {
-      return <Keyframe time={keyframe.beatNum} value={keyframe.value} key={index} />
-    });
-  }, [keyframeList]);
-
   const onRowDoubleClick = (e: MouseEvent) => {
     const target = e.target as HTMLDivElement;
     const rect = target.getBoundingClientRect();
-    const clickAtTime = (e.clientX - rect.x) / scale;
-
-    onAddKeyframe(clickAtTime);
+    onDoubleClick(e.clientX - rect.x);
   };
 
   return <TimelineListItem onDoubleClick={(e) => onRowDoubleClick(e.nativeEvent)}>
-    {keyframesMemoed}
+    <Keyframes keyframes={keyframeList} timeRange={timeRange} />
   </TimelineListItem>
 };
 
-export default React.memo(TimelineRightPanelKeyframes);
+export default TimelineRightPanelKeyframes;
