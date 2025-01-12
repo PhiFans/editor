@@ -15,11 +15,15 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength }: TimelineProps) => {
   const [ lineList, setLineList ] = useState<ChartJudgeline[]>([]);
   const [ expandedLines, setExpandedLines ] = useState<number[]>([]);
   const [ tempo, setTempo ] = useState(4);
-  const [ contentScale, setContentScale ] = useState(50);
+  const [ contentScale, setContentScale ] = useState(205);
 
   const setLineExpand = (lineId: number, isExpanded: boolean) => {
     if (isExpanded) setExpandedLines([ ...expandedLines, lineId ]);
     else setExpandedLines([ ...expandedLines.filter((e) => e !== lineId) ]);
+  };
+
+  const updateContentScale = (scale: number) => {
+    setContentScale(10 + (scale / 100) * 390);
   };
 
   const updateTempo = (e: number) => {
@@ -105,10 +109,10 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength }: TimelineProps) => {
             <span className='hr'>|</span>
             <input
               type='range'
-              min={1}
+              min={0}
               max={100}
               defaultValue={50}
-              onInput={(e) => setContentScale(101 - parseInt((e.nativeEvent.target as HTMLInputElement).value))}
+              onChange={(e) => updateContentScale(100 - parseInt(e.target.value))}
               key={'footer-right-scale'}
             />
           </>
