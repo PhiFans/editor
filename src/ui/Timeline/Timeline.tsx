@@ -33,14 +33,14 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength }: TimelineProps) => {
   };
 
   useEffect(() => {
-    const updateLineList = (newLine: ChartJudgeline) => {
-      setLineList([ ...lineList, newLine ]);
+    const updateLineList = (newLines: ChartJudgeline[]) => {
+      setLineList([ ...newLines ]);
     };
-    App.events.on('chart.lines.added', updateLineList);
+    App.events.on('chart.lines.updated', updateLineList);
     return (() => {
-      App.events.off('chart.lines.added', updateLineList);
+      App.events.off('chart.lines.updated', updateLineList);
     });
-  }, [lineList]);
+  }, []);
 
   return (
     <div className="timeline">
