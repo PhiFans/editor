@@ -25,11 +25,13 @@ const Keyframe: React.FC<KeyframeProps> = ({
 export type TimelineRightPanelKeyframesProps = {
   keyframes: ArrayEvented<ChartKeyframe>,
   scale: number,
+  onAddKeyframe: (beat: number) => void,
 };
 
 const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = ({
   keyframes,
   scale,
+  onAddKeyframe,
 }: TimelineRightPanelKeyframesProps) => {
   const [ keyframeList, setKeyframeList ] = useState<ChartKeyframe[]>([ ...keyframes ]);
 
@@ -50,7 +52,15 @@ const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = 
     });
   }, [keyframeList]);
 
-  return <TimelineListItem>
+  const onRowDoubleClick = (e: MouseEvent) => {
+    const target = e.target as HTMLDivElement;
+    const rect = target.getBoundingClientRect();
+    const clickAtTime = (e.clientX - rect.x) / scale;
+
+    onAddKeyframe(clickAtTime);
+  };
+
+  return <TimelineListItem onDoubleClick={(e) => onRowDoubleClick(e.nativeEvent)}>
     {keyframesMemoed}
   </TimelineListItem>
 };

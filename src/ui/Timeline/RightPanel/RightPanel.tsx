@@ -7,6 +7,7 @@ import TimelineListItem from '../List/Item';
 import TimelineSeeker from '../Seeker';
 import Keyframes from './Keyframes';
 import { setCSSProperties } from "@/utils/ui";
+import ChartJudgelineProps from '@/Chart/JudgelineProps';
 
 type KeyframesRowProps = {
   line: ChartJudgeline,
@@ -19,14 +20,20 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
   isExpanded,
   scale,
 }) => {
+  // TODO: Beat
+  const onAddKeyframe = (type: keyof ChartJudgelineProps, beat: number) => {
+    const beatRound = Math.round(beat);
+    line.addKeyframe(type, [ beatRound, 0, 1 ], 1, false, 1);
+  };
+
   return <>
     <TimelineListItem />
     {isExpanded && <>
-      <Keyframes keyframes={line.props.speed} scale={scale} />
-      <Keyframes keyframes={line.props.positionX} scale={scale} />
-      <Keyframes keyframes={line.props.positionY} scale={scale} />
-      <Keyframes keyframes={line.props.rotate} scale={scale} />
-      <Keyframes keyframes={line.props.alpha} scale={scale} />
+      <Keyframes keyframes={line.props.speed} scale={scale} onAddKeyframe={((b) => onAddKeyframe('speed', b))} />
+      <Keyframes keyframes={line.props.positionX} scale={scale} onAddKeyframe={((b) => onAddKeyframe('positionX', b))} />
+      <Keyframes keyframes={line.props.positionY} scale={scale} onAddKeyframe={((b) => onAddKeyframe('positionY', b))} />
+      <Keyframes keyframes={line.props.rotate} scale={scale} onAddKeyframe={((b) => onAddKeyframe('rotate', b))} />
+      <Keyframes keyframes={line.props.alpha} scale={scale} onAddKeyframe={((b) => onAddKeyframe('alpha', b))} />
     </>}
   </>
 };
