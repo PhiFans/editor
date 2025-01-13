@@ -1,15 +1,16 @@
 import React, { useRef, useEffect, useCallback } from 'react';
-import { setCSSProperties } from '@/utils/ui';
 import { parseDoublePrecist } from '@/utils/math';
 
 export type RangeContainerProps = {
   scale: number,
+  timeLength: number,
   children: React.ReactNode,
   onRangeChanged: (newRange: [number, number]) => void,
 };
 
 const RangeContainer: React.FC<RangeContainerProps> = ({
   scale,
+  timeLength,
   children,
   onRangeChanged,
 }) => {
@@ -48,9 +49,10 @@ const RangeContainer: React.FC<RangeContainerProps> = ({
   return (
     <div
       className="timeline-content-container"
-      style={setCSSProperties({
+      style={{
         '--base-scale': scale,
-      })}
+        '--time-length': timeLength,
+      } as React.CSSProperties}
       onScroll={(e) => onContainerScrolled(e.nativeEvent)}
       ref={containerRef}
     >

@@ -14,10 +14,7 @@ const RightPanelHead: React.FC<RightPanelHeadProps> = ({
 }) => {
   return (
     <div
-      className='timeline-right-panel-head'
-      style={{
-        height: 40,
-      }}
+      className='timeline-panel-head timeline-panel-head-right'
       onClick={onClick}
     >
       <div className="timeline-scale-container">

@@ -58,6 +58,7 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   return (
     <RangeContainer
       scale={scale}
+      timeLength={timeLength}
       onRangeChanged={handleRangeChanged}
     >
       <RightPanelHead
@@ -65,12 +66,7 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
         tempo={tempo}
         onClick={onHeadClicked}
       />
-      <TimelineList
-        className='timeline-content'
-        style={{
-          '--time-length': timeLength,
-        } as React.CSSProperties}
-      >
+      <TimelineList className='timeline-content'>
         {keyframeRowMemoed}
       </TimelineList>
       <TimelineSeeker

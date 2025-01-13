@@ -11,10 +11,7 @@ const timeToString = (time: number) => {
 
 const LeftPanelHead = () => {
   return <div
-    className='timeline-left-panel-head'
-    style={{
-      height: 40,
-    }}
+    className='timeline-panel-head timeline-panel-head-left'
   >
     <div className="timeline-head-current-time">
       <div className="current-time">{timeToString(useClockTime().time)}</div>
