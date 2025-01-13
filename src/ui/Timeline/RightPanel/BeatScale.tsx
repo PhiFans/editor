@@ -1,5 +1,4 @@
 import React from "react";
-import { setCSSProperties } from "@/utils/ui";
 import { parseDoublePrecist } from "@/utils/math";
 
 const ValidTempo = [
@@ -51,13 +50,12 @@ const BeatScale: React.FC<BeatScaleProps> = ({
   const beatSubscale = parseDoublePrecist(1 / tempo, 6, -1);
 
   return <>
-    <div className='timeline-scale' style={setCSSProperties({ '--time': time })} />
+    <div className='timeline-scale' style={{ '--time': time } as React.CSSProperties} />
     {new Array(tempo - 1).fill(0).map((_, index) => {
-      const currentBeat = (time + (index + 1) * beatSubscale);
       return <div
         className={`timeline-scale ${getScaleColor(tempo, index + 1)}`}
-        style={setCSSProperties({ '--time': currentBeat })}
-        key={currentBeat}
+        style={{ '--time': (time + (index + 1) * beatSubscale) } as React.CSSProperties}
+        key={index}
       />
     })}
   </>

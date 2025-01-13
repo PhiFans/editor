@@ -12,14 +12,17 @@ const RightPanelHead: React.FC<RightPanelHeadProps> = ({
   tempo,
   onClick
 }) => {
+  const timeRangeStart = Math.floor(timeRange[0]);
+  const timeRangeLength = Math.ceil(timeRange[1]) - timeRangeStart;
+
   return (
     <div
       className='timeline-panel-head timeline-panel-head-right'
       onClick={onClick}
     >
       <div className="timeline-scale-container">
-        {new Array(Math.floor(Math.ceil(timeRange[1]) - Math.floor(timeRange[0]))).fill(0).map((_, index) => {
-          return <BeatScale time={Math.floor(timeRange[0]) + index} tempo={tempo} key={index} />;
+        {new Array(timeRangeLength).fill(0).map((_, index) => {
+          return <BeatScale time={timeRangeStart + index} tempo={tempo} key={timeRangeStart + index} />;
         })}
       </div>
     </div>
