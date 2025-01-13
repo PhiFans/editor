@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import TimelineListItem from '../List/Item';
+import { useScale } from '../ScaleContext';
 import ChartKeyframe from '@/Chart/Keyframe';
 import { setCSSProperties } from '@/utils/ui';
 
@@ -12,12 +13,48 @@ const Keyframe: React.FC<KeyframeProps> = ({
   time,
   value,
 }) => {
+  const scale = useScale();
+  const [ currentTime, setCurrentTime ] = useState(time);
+  const isDragging = useRef(false);
+  const dragStartPos = useRef(NaN);
+
+  const handleDragStart = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    isDragging.current = true;
+    dragStartPos.current = e.clientX;
+  }, []);
+
+  const handleDragMoving = useCallback((e: MouseEvent) => {
+    if (!isDragging.current) return;
+    const currentDiff = (e.clientX - dragStartPos.current);
+    const timeDiff = currentDiff / scale;
+    setCurrentTime(time + timeDiff);
+  }, [time, scale]);
+
+  const handleDragEnd = useCallback((e: MouseEvent) => {
+    if (!isDragging.current) return;
+
+    handleDragMoving(e);
+    isDragging.current = false;
+    dragStartPos.current = NaN;
+  }, [handleDragMoving]);
+
+  useEffect(() => {
+    window.addEventListener('mousemove', handleDragMoving);
+    window.addEventListener('mouseup', handleDragEnd);
+
+    return (() => {
+      window.removeEventListener('mousemove', handleDragMoving);
+      window.removeEventListener('mouseup', handleDragEnd);
+    });
+  }, [handleDragEnd, handleDragMoving]);
+
   return <div
     className="timeline-content-key"
     style={setCSSProperties({
-      "--point-time": time,
+      "--point-time": currentTime,
       "--point-value": value,
     })}
+    onMouseDown={handleDragStart}
   ></div>
 };
 
