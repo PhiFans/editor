@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import TimelineListItem from '../List/Item';
+import { useTempo } from '@/ui/contexts/Tempo';
 import { useScale } from '../ScaleContext';
 import ChartKeyframe from '@/Chart/Keyframe';
 import { setCSSProperties } from '@/utils/ui';
+import { parseDoublePrecist } from '@/utils/math';
 
 type KeyframeProps = {
   time: number,
@@ -13,6 +15,7 @@ const Keyframe: React.FC<KeyframeProps> = ({
   time,
   value,
 }) => {
+  const tempo = useTempo();
   const scale = useScale();
   const [ currentTime, setCurrentTime ] = useState(time);
   const isDragging = useRef(false);
@@ -26,9 +29,20 @@ const Keyframe: React.FC<KeyframeProps> = ({
   const handleDragMoving = useCallback((e: MouseEvent) => {
     if (!isDragging.current) return;
     const currentDiff = (e.clientX - dragStartPos.current);
-    const timeDiff = currentDiff / scale;
-    setCurrentTime(time + timeDiff);
-  }, [time, scale]);
+    const newBeat = (currentDiff / scale) + time;
+
+    let newBeatFloor = Math.floor(newBeat);
+    let newBeatSub = Math.round((newBeat - newBeatFloor) * tempo);
+
+    if (newBeatSub === tempo) {
+      newBeatFloor += 1;
+      newBeatSub = 0;
+    }
+
+    setCurrentTime(parseDoublePrecist(
+      newBeatFloor + (newBeatSub / tempo)
+    , 6, -1));
+  }, [time, tempo, scale]);
 
   const handleDragEnd = useCallback((e: MouseEvent) => {
     if (!isDragging.current) return;
