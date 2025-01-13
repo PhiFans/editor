@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import TimelineListItem from '../List/Item';
 import Keyframes from './Keyframes';
 import ChartJudgeline from '@/Chart/Judgeline';
-import ChartJudgelineProps from '@/Chart/JudgelineProps';
+import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
+import ChartKeyframe from '@/Chart/Keyframe';
 
 type KeyframesRowProps = {
   line: ChartJudgeline,
@@ -19,7 +20,9 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
   tempo,
   timeRange,
 }) => {
-  const onAddKeyframe = (type: keyof ChartJudgelineProps, clickedPosX: number) => {
+  const [ lineProp, setLineProp ] = useState<TChartJudgelineProps>({ ...line.props });
+
+  const onAddKeyframe = (type: keyof TChartJudgelineProps, clickedPosX: number) => {
     const beat = clickedPosX / scale;
     let beatFloor = Math.floor(beat);
     let beatSub = Math.round((beat - beatFloor) * tempo);
@@ -32,31 +35,50 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
     line.addKeyframe(type, [ beatFloor, beatSub, tempo ], 1, false, 1);
   };
 
+  const handlePropsUpdate = useCallback(({
+    type,
+    keyframes,
+  }: {
+    type: keyof TChartJudgelineProps,
+    keyframes: ChartKeyframe[],
+  }) => {
+    const newProp: Partial<TChartJudgelineProps> = {};
+    newProp[type] = keyframes;
+    setLineProp({ ...lineProp, ...newProp });
+  }, [lineProp]);
+
+  useEffect(() => {
+    line.events.on('props.updated', handlePropsUpdate);
+    return (() => {
+      line.events.off('props.updated', handlePropsUpdate);
+    });
+  }, [line, handlePropsUpdate]);
+
   return <>
     <TimelineListItem />
     {isExpanded && <>
       <Keyframes
-        keyframes={line.props.speed}
+        keyframes={lineProp.speed}
         timeRange={timeRange}
         onDoubleClick={((b) => onAddKeyframe('speed', b))}
       />
       <Keyframes
-        keyframes={line.props.positionX}
+        keyframes={lineProp.positionX}
         timeRange={timeRange}
         onDoubleClick={((b) => onAddKeyframe('positionX', b))}
       />
       <Keyframes
-        keyframes={line.props.positionY}
+        keyframes={lineProp.positionY}
         timeRange={timeRange}
         onDoubleClick={((b) => onAddKeyframe('positionY', b))}
       />
       <Keyframes
-        keyframes={line.props.rotate}
+        keyframes={lineProp.rotate}
         timeRange={timeRange}
         onDoubleClick={((b) => onAddKeyframe('rotate', b))}
       />
       <Keyframes
-        keyframes={line.props.alpha}
+        keyframes={lineProp.alpha}
         timeRange={timeRange}
         onDoubleClick={((b) => onAddKeyframe('alpha', b))}
       />

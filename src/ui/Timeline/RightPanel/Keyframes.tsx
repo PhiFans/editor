@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import TimelineListItem from '../List/Item';
 import ChartKeyframe from '@/Chart/Keyframe';
 import { setCSSProperties } from '@/utils/ui';
-import { ArrayEvented } from '@/utils/class';
 
 type KeyframeProps = {
   time: number,
@@ -46,7 +45,7 @@ const Keyframes: React.FC<KeyframesProps> = ({
 };
 
 export type TimelineRightPanelKeyframesProps = {
-  keyframes: ArrayEvented<ChartKeyframe>,
+  keyframes: ChartKeyframe[],
   timeRange: [number, number],
   onDoubleClick: (clickedPosX: number) => void,
 };
@@ -56,19 +55,6 @@ const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = 
   timeRange,
   onDoubleClick,
 }: TimelineRightPanelKeyframesProps) => {
-  const [ keyframeList, setKeyframeList ] = useState<ChartKeyframe[]>([ ...keyframes ]);
-
-  useEffect(() => {
-    const updateKeyframes = (keyframe: ChartKeyframe[]) => {
-      setKeyframeList([ ...keyframe ]);
-    };
-
-    keyframes.event.on('keyframes.updated', updateKeyframes);
-    return (() => {
-      keyframes.event.off('keyframes.updated', updateKeyframes);
-    });
-  }, [keyframes]);
-
   const onRowDoubleClick = (e: MouseEvent) => {
     const target = e.target as HTMLDivElement;
     const rect = target.getBoundingClientRect();
@@ -76,7 +62,7 @@ const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = 
   };
 
   return <TimelineListItem onDoubleClick={(e) => onRowDoubleClick(e.nativeEvent)}>
-    <Keyframes keyframes={keyframeList} timeRange={timeRange} />
+    <Keyframes keyframes={keyframes} timeRange={timeRange} />
   </TimelineListItem>
 };
 
