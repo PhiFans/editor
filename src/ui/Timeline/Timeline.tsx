@@ -5,6 +5,7 @@ import App from '@/App/App';
 import ChartJudgeline from '@/Chart/Judgeline';
 import TimelineLeftPanel from './LeftPanel/LeftPanel';
 import TimelineRightPanel from './RightPanel/RightPanel';
+import ScaleContext from './ScaleContext';
 import './styles.css';
 
 export type TimelineProps = {
@@ -62,13 +63,14 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength }: TimelineProps) => {
             expandedLines={expandedLines}
             onLineExpanded={(id, e) => setLineExpand(id, e)}
           />
-          <TimelineRightPanel
-            timeLength={timeLength}
-            scale={contentScale}
-            lines={lineList}
-            expandedLines={expandedLines}
-            tempo={tempo}
-          />
+          <ScaleContext.Provider value={contentScale}>
+            <TimelineRightPanel
+              timeLength={timeLength}
+              lines={lineList}
+              expandedLines={expandedLines}
+              tempo={tempo}
+            />
+          </ScaleContext.Provider>
         </SplitPane>
       </div>
       <TimelineFooter

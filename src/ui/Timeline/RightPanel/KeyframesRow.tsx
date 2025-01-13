@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import TimelineListItem from '../List/Item';
 import Keyframes from './Keyframes';
+import { useScale } from '../ScaleContext';
 import ChartJudgeline from '@/Chart/Judgeline';
 import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
 import ChartKeyframe from '@/Chart/Keyframe';
@@ -8,7 +9,6 @@ import ChartKeyframe from '@/Chart/Keyframe';
 type KeyframesRowProps = {
   line: ChartJudgeline,
   isExpanded: boolean,
-  scale: number,
   tempo: number,
   timeRange: [number, number],
 };
@@ -16,10 +16,10 @@ type KeyframesRowProps = {
 const KeyframesRow: React.FC<KeyframesRowProps> = ({
   line,
   isExpanded,
-  scale,
   tempo,
   timeRange,
 }) => {
+  const scale = useScale();
   const [ lineProp, setLineProp ] = useState<TChartJudgelineProps>({ ...line.props });
 
   const onAddKeyframe = (type: keyof TChartJudgelineProps, clickedPosX: number) => {

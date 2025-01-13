@@ -1,19 +1,19 @@
 import React, { useRef, useEffect, useCallback } from 'react';
+import { useScale } from '../ScaleContext';
 import { parseDoublePrecist } from '@/utils/math';
 
 export type RangeContainerProps = {
-  scale: number,
   timeLength: number,
   children: React.ReactNode,
   onRangeChanged: (newRange: [number, number]) => void,
 };
 
 const RangeContainer: React.FC<RangeContainerProps> = ({
-  scale,
   timeLength,
   children,
   onRangeChanged,
 }) => {
+  const scale = useScale();
   const containerRef = useRef<HTMLDivElement>(null);
   const containerWidth = useRef(0);
   const containerScrolled = useRef(0);

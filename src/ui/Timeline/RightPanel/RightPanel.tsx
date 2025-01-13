@@ -6,11 +6,11 @@ import TimelineSeeker from '../Seeker';
 import RangeContainer from './RangeContainer';
 import RightPanelHead from './Head';
 import KeyframesRow from './KeyframesRow';
+import { useScale } from '../ScaleContext';
 import './styles.css';
 
 export type TimelineRightPanelProps = {
   timeLength: number,
-  scale: number,
   lines: ChartJudgeline[],
   expandedLines: number[],
   tempo: number,
@@ -18,11 +18,11 @@ export type TimelineRightPanelProps = {
 
 const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   timeLength,
-  scale,
   lines,
   expandedLines,
   tempo,
 }) => {
+  const scale = useScale();
   const [ timeRange, setTimeRange ] = useState<[number, number]>([ 0, 0 ]);
 
   const handleRangeChanged = useCallback((newRange: [number, number]) => {
@@ -47,17 +47,15 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
       return <KeyframesRow
         line={line}
         isExpanded={expandedLines.includes(index)}
-        scale={scale}
         tempo={tempo}
         timeRange={timeRange}
         key={index}
       />;
     });
-  }, [lines, expandedLines, scale, tempo, timeRange]);
+  }, [lines, expandedLines, tempo, timeRange]);
 
   return (
     <RangeContainer
-      scale={scale}
       timeLength={timeLength}
       onRangeChanged={handleRangeChanged}
     >
@@ -71,7 +69,6 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
       </TimelineList>
       <TimelineSeeker
         timeLength={timeLength}
-        scale={scale}
         onSeek={onSeeked}
       />
     </RangeContainer>

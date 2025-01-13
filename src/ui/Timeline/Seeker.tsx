@@ -1,18 +1,18 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useClockTime } from '../contexts/Clock';
+import { useScale } from './ScaleContext';
 
 export type TimelineSeekerProps = {
   timeLength: number;
-  scale: number;
   onSeek: (newTime: number) => void;
 };
 
 const TimelineSeeker: React.FC<TimelineSeekerProps> = ({
   timeLength,
-  scale,
   onSeek,
 }: TimelineSeekerProps) => {
   const currentTime = useClockTime().beat;
+  const scale = useScale();
   const isHandling = useRef(false);
   const handleStartPosX = useRef(0);
   const handleStartTime = useRef(0);
