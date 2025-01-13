@@ -1,36 +1,14 @@
 import React from "react";
-import { useClockTime } from '@/ui/contexts/Clock';
 import TimelineList from "../List/List";
 import ChartJudgeline from "@/Chart/Judgeline";
+import LeftPanelHead from "./Head";
 import LeftPanelLine from './Line';
-import { FillZero } from "@/utils/math";
 import './styles.css';
-
-const LeftPanelHead = () => {
-  return <div
-    className='timeline-left-panel-head'
-    style={{
-      height: 40,
-    }}
-  >
-    <div className="timeline-head-current-time">
-      <div className="current-time">{timeToString(useClockTime().time)}</div>
-    </div>
-  </div>;
-};
 
 export type TimelineLeftPanelProps = {
   lines: ChartJudgeline[],
   expandedLines: number[],
   onLineExpanded: (lineIndex: number, isExpanded: boolean) => void,
-};
-
-// XXX: Move to somewhere else?
-const timeToString = (time: number) => {
-  const seconds = Math.floor(time) % 60;
-  const minutes = Math.floor(time / 60);
-  const milliseconds = Math.floor((time - Math.floor(time)) * 1000);
-  return `${FillZero(minutes)}:${FillZero(seconds)}.${FillZero(milliseconds, 3)}`;
 };
 
 const TimelineLeftPanel: React.FC<TimelineLeftPanelProps> = ({
