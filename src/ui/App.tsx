@@ -3,9 +3,11 @@ import Timeline from './Timeline/Timeline';
 import GlobalApp from '@/App/App';
 import { PopupReadFiles } from '@/utils/file';
 import { Nullable } from '@/utils/types';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import TempoContext from './contexts/Tempo';
 
 function App() {
+  const [ tempo, setTempo ] = useState(4);
   const [ timeLength, setTimeLength ] = useState(0);
   let importedMusic: Nullable<File> = null;
 
@@ -35,16 +37,41 @@ function App() {
     });
   };
 
+  const handleTempoUpdate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    const newValue = parseInt(target.value);
+
+    if (isNaN(newValue)) return;
+    if (newValue <= 0) return;
+    setTempo(newValue);
+  }, []);
+
   return (
     <>
       <div className="files">
         <button onClick={() => onImportAudio()}>Import music</button>
         <button onClick={() => onCreateChart()}>Create chart</button>
       </div>
+      <div className="settings">
+        <label>
+          Set tempo: 1/
+          <input
+            type='number'
+            min={1}
+            defaultValue={4}
+            onChange={handleTempoUpdate}
+            style={{
+              width: 38
+            }}
+          />
+        </label>
+      </div>
       <div className="">
-        <ClockTimeProvider>
-          <Timeline timeLength={timeLength} />
-        </ClockTimeProvider>
+        <TempoContext.Provider value={tempo}>
+          <ClockTimeProvider>
+            <Timeline timeLength={timeLength} />
+          </ClockTimeProvider>
+        </TempoContext.Provider>
       </div>
     </>
   );

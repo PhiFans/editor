@@ -3,13 +3,11 @@ import BeatScale from './BeatScale';
 
 export type RightPanelHeadProps = {
   timeRange: [number, number],
-  tempo: number,
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
 };
 
 const RightPanelHead: React.FC<RightPanelHeadProps> = ({
   timeRange,
-  tempo,
   onClick
 }) => {
   const timeRangeStart = Math.floor(timeRange[0]);
@@ -22,7 +20,7 @@ const RightPanelHead: React.FC<RightPanelHeadProps> = ({
     >
       <div className="timeline-scale-container">
         {new Array(timeRangeLength).fill(0).map((_, index) => {
-          return <BeatScale time={timeRangeStart + index} tempo={tempo} key={timeRangeStart + index} />;
+          return <BeatScale time={timeRangeStart + index} key={timeRangeStart + index} />;
         })}
       </div>
     </div>

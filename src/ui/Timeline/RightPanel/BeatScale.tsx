@@ -1,4 +1,5 @@
 import React from "react";
+import { useTempo } from "@/ui/contexts/Tempo";
 import { parseDoublePrecist } from "@/utils/math";
 
 const ValidTempo = [
@@ -40,13 +41,12 @@ const switchScaleColor = (beat: number) => {
 
 export type BeatScaleProps = {
   time: number,
-  tempo: number,
 };
 
 const BeatScale: React.FC<BeatScaleProps> = ({
   time,
-  tempo,
 }) => {
+  const tempo = useTempo();
   const beatSubscale = parseDoublePrecist(1 / tempo, 6, -1);
 
   return <>

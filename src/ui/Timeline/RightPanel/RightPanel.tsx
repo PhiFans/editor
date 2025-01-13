@@ -13,14 +13,12 @@ export type TimelineRightPanelProps = {
   timeLength: number,
   lines: ChartJudgeline[],
   expandedLines: number[],
-  tempo: number,
 };
 
 const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   timeLength,
   lines,
   expandedLines,
-  tempo,
 }) => {
   const scale = useScale();
   const [ timeRange, setTimeRange ] = useState<[number, number]>([ 0, 0 ]);
@@ -47,12 +45,11 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
       return <KeyframesRow
         line={line}
         isExpanded={expandedLines.includes(index)}
-        tempo={tempo}
         timeRange={timeRange}
         key={index}
       />;
     });
-  }, [lines, expandedLines, tempo, timeRange]);
+  }, [lines, expandedLines, timeRange]);
 
   return (
     <RangeContainer
@@ -61,7 +58,6 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
     >
       <RightPanelHead
         timeRange={timeRange}
-        tempo={tempo}
         onClick={onHeadClicked}
       />
       <TimelineList className='timeline-content'>

@@ -15,7 +15,6 @@ export type TimelineProps = {
 const Timeline: React.FC<TimelineProps> = ({ timeLength }: TimelineProps) => {
   const [ lineList, setLineList ] = useState<ChartJudgeline[]>([]);
   const [ expandedLines, setExpandedLines ] = useState<number[]>([]);
-  const [ tempo, setTempo ] = useState(4);
   const [ contentScale, setContentScale ] = useState(205);
 
   const setLineExpand = (lineId: number, isExpanded: boolean) => {
@@ -25,12 +24,6 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength }: TimelineProps) => {
 
   const updateContentScale = (scale: number) => {
     setContentScale(10 + (scale / 100) * 390);
-  };
-
-  const updateTempo = (e: number) => {
-    if (isNaN(e)) return;
-    if (e <= 0) return;
-    setTempo(e);
   };
 
   useEffect(() => {
@@ -68,7 +61,6 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength }: TimelineProps) => {
               timeLength={timeLength}
               lines={lineList}
               expandedLines={expandedLines}
-              tempo={tempo}
             />
           </ScaleContext.Provider>
         </SplitPane>
@@ -96,18 +88,6 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength }: TimelineProps) => {
         }
         rightContent={
           <>
-            <label>
-              1/<input
-                type='number'
-                min={1}
-                defaultValue={4}
-                onChange={(e) => updateTempo(parseInt(e.target.value))}
-                style={{
-                  width: 38
-                }}
-              />
-            </label>
-            <span className='hr'>|</span>
             <input
               type='range'
               min={0}
