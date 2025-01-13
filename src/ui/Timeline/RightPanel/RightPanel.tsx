@@ -1,15 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useClockTime } from '@/ui/contexts/Clock';
+import React, { useCallback, useMemo, useState } from 'react';
 import App from '@/App/App';
 import ChartJudgeline from "@/Chart/Judgeline";
 import TimelineList from "../List/List";
 import TimelineListItem from '../List/Item';
 import TimelineSeeker from '../Seeker';
 import Keyframes from './Keyframes';
-import { setCSSProperties } from "@/utils/ui";
 import ChartJudgelineProps from '@/Chart/JudgelineProps';
 import './styles.css';
-import BeatScale from './BeatScale';
+import RangeContainer from './RangeContainer';
+import RightPanelHead from './Head';
 
 type KeyframesRowProps = {
   line: ChartJudgeline,
@@ -86,94 +85,63 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   expandedLines,
   tempo,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const containerWidth = useRef(0);
-  const containerScrolled = useRef(0);
   const [ timeRange, setTimeRange ] = useState<[number, number]>([ 0, 0 ]);
 
-  const updateTimeRange = useCallback(() => {
-    const start = Math.floor(containerScrolled.current / scale);
-    const end = Math.ceil(containerWidth.current / scale) + start + 1;
-    setTimeRange([ start, end ]);
-  }, [scale]);
+  const handleRangeChanged = useCallback((newRange: [number, number]) => {
+    setTimeRange(newRange);
+  }, []);
 
-  const onContainerScrolled = (e: UIEvent) => {
-    const target = e.target as HTMLDivElement;
-    containerScrolled.current = target.scrollLeft;
-    updateTimeRange();
-  };
+  const onSeeked = useCallback((time: number) => {
+    if (!App.chart) return;
+    App.chart.beatNum = time;
+  }, []);
 
-  const onHeadClicked = (e: MouseEvent) => {
+  const onHeadClicked = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const target = e.target as HTMLDivElement;
     const rect = target.getBoundingClientRect();
     const clickAtTime = (e.clientX - rect.x) / scale;
 
-    if (!App.chart) return;
-    App.chart.beatNum = clickAtTime;
-  };
+    onSeeked(clickAtTime);
+  }, [onSeeked, scale]);
 
-  useEffect(() => {
-    const updateContainerWidth = () => {
-      const containerDom = containerRef.current;
-      if (!containerDom) return;
-
-      containerWidth.current = containerDom.clientWidth;
-      updateTimeRange();
-    };
-
-    updateContainerWidth();
-    window.addEventListener('resize', updateContainerWidth);
-    return (() => {
-      window.removeEventListener('resize', updateContainerWidth);
+  const keyframeRowMemoed = useMemo(() => {
+    return lines.map((line, index) => { // TODO: Render keyframes
+      return <KeyframesRow
+        line={line}
+        isExpanded={expandedLines.includes(index)}
+        scale={scale}
+        tempo={tempo}
+        timeRange={timeRange}
+        key={index}
+      />;
     });
-  }, [scale, updateTimeRange]);
+  }, [lines, expandedLines, scale, tempo, timeRange]);
 
-  return <div
-    className="timeline-content-container"
-    style={setCSSProperties({
-      '--base-scale': scale,
-    })}
-    onScroll={(e) => onContainerScrolled(e.nativeEvent)}
-    ref={containerRef}
-  >
-    <TimelineList
-      className='timeline-content'
-      style={setCSSProperties({
-        '--time-length': timeLength,
-      })}
-    >
-      <TimelineListItem
-        className='timeline-right-panel-head'
-        height={'40px'}
-        onClick={(e) => onHeadClicked(e.nativeEvent)}
-      >
-        <div className="timeline-scale-container">
-          {new Array(Math.floor(timeRange[1] - timeRange[0])).fill(0).map((_, index) => {
-            return <BeatScale time={timeRange[0] + index} tempo={tempo} key={index} />;
-          })}
-        </div>
-      </TimelineListItem>
-      {lines.map((line, index) => { // TODO: Render keyframes
-        return <KeyframesRow
-          line={line}
-          isExpanded={expandedLines.includes(index)}
-          scale={scale}
-          tempo={tempo}
-          timeRange={timeRange}
-          key={index}
-        />;
-      })}
-    </TimelineList>
-    <TimelineSeeker
-      currentTime={useClockTime().beat}
-      timeLength={timeLength}
+  return (
+    <RangeContainer
       scale={scale}
-      onSeek={(e) => {
-        if (!App.chart) return;
-        App.chart.beatNum = e;
-      }}
-    />
-  </div>
+      onRangeChanged={handleRangeChanged}
+    >
+      <RightPanelHead
+        timeRange={timeRange}
+        tempo={tempo}
+        onClick={onHeadClicked}
+      />
+      <TimelineList
+        className='timeline-content'
+        style={{
+          '--time-length': timeLength,
+        } as React.CSSProperties}
+      >
+        {keyframeRowMemoed}
+      </TimelineList>
+      <TimelineSeeker
+        timeLength={timeLength}
+        scale={scale}
+        onSeek={onSeeked}
+      />
+    </RangeContainer>
+  )
 };
 
-export default React.memo(TimelineRightPanel);
+export default TimelineRightPanel;

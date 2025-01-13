@@ -24,4 +24,4 @@ const TimelineList: React.FC<TimelineListProps> = ({
   >{children}</div>
 };
 
-export default React.memo(TimelineList);
+export default TimelineList;

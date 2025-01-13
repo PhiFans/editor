@@ -1,49 +1,49 @@
-import { useEffect, useRef } from 'react';
-import { setCSSProperties } from '@/utils/ui';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { useClockTime } from '../contexts/Clock';
 
 export type TimelineSeekerProps = {
-  currentTime: number;
   timeLength: number;
   scale: number;
   onSeek: (newTime: number) => void;
 };
 
 const TimelineSeeker: React.FC<TimelineSeekerProps> = ({
-  currentTime,
   timeLength,
   scale,
   onSeek,
 }: TimelineSeekerProps) => {
+  const currentTime = useClockTime().beat;
   const isHandling = useRef(false);
   const handleStartPosX = useRef(0);
   const handleStartTime = useRef(0);
 
-  const onHandlerHold = (e: MouseEvent) => {
+  const onHandlerHold = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (isHandling.current) return;
 
     isHandling.current = true;
     handleStartPosX.current = e.screenX;
     handleStartTime.current = currentTime;
-  };
+  }, [currentTime]);
 
-  const onHandlerMove = (e: MouseEvent) => {
+  const onHandlerMove = useCallback((e: MouseEvent) => {
     if (!isHandling.current) return;
     const posBetween = e.screenX - handleStartPosX.current;
     const timeBetween = posBetween / scale;
     const newTime = handleStartTime.current + timeBetween;
+
     if (newTime > timeLength) onSeek(timeLength);
     else if (newTime < 0) onSeek(0);
     else onSeek(newTime);
-  };
+  }, [scale, timeLength, onSeek]);
 
-  const onHandlerUnhold = (e: MouseEvent) => {
+  const onHandlerUnhold = useCallback((e: MouseEvent) => {
     if (!isHandling.current) return;
     onHandlerMove(e);
 
     isHandling.current = false;
     handleStartPosX.current = 0;
     handleStartTime.current = 0;
-  };
+  }, [onHandlerMove]);
 
   useEffect(() => {
     document.addEventListener("mousemove", onHandlerMove);
@@ -53,22 +53,21 @@ const TimelineSeeker: React.FC<TimelineSeekerProps> = ({
       document.removeEventListener("mousemove", onHandlerMove);
       document.removeEventListener("mouseup", onHandlerUnhold);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scale, timeLength]);
+  }, [scale, timeLength, onHandlerMove, onHandlerUnhold]);
 
   return (
     <div
       className="timeline-time-seeker"
-      style={setCSSProperties({
+      style={{
         "--current-time": currentTime,
-      })}
+      } as React.CSSProperties}
     >
       <div
         className="timeline-time-seeker-handle"
-        onMouseDown={(e) => onHandlerHold(e.nativeEvent)}
+        onMouseDown={onHandlerHold}
       ></div>
     </div>
   );
 };
 
-export default TimelineSeeker;
+export default React.memo(TimelineSeeker);

@@ -32,4 +32,4 @@ const TimelineLeftPanelLine: React.FC<TimelineLeftPanelLineProps> = ({
   </TimelineListItem>
 };
 
-export default React.memo(TimelineLeftPanelLine);
+export default TimelineLeftPanelLine;

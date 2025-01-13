@@ -53,10 +53,11 @@ const BeatScale: React.FC<BeatScaleProps> = ({
   return <>
     <div className='timeline-scale' style={setCSSProperties({ '--time': time })} />
     {new Array(tempo - 1).fill(0).map((_, index) => {
+      const currentBeat = (time + (index + 1) * beatSubscale);
       return <div
         className={`timeline-scale ${getScaleColor(tempo, index + 1)}`}
-        style={setCSSProperties({ '--time': (time + (index + 1) * beatSubscale) })}
-        key={index}
+        style={setCSSProperties({ '--time': currentBeat })}
+        key={currentBeat}
       />
     })}
   </>
