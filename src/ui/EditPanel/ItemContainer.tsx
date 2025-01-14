@@ -14,7 +14,7 @@ const EditPanelItemContainer = ({
   const childrenDom = (
     <>
       <div className="edit-panel-item-label">{title}</div>
-      <div className={`edit-panel-item-input ${className}`}>{children}</div>
+      <div className={`edit-panel-item-input ${className ?? ''}`}>{children}</div>
     </>
   );
 
