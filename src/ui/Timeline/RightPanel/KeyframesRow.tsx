@@ -6,6 +6,7 @@ import { useScale } from '../ScaleContext';
 import ChartJudgeline from '@/Chart/Judgeline';
 import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
 import ChartKeyframe from '@/Chart/Keyframe';
+import { BeatArray } from '@/utils/types';
 
 type KeyframesRowProps = {
   line: ChartJudgeline,
@@ -22,7 +23,7 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
   const scale = useScale();
   const [ lineProp, setLineProp ] = useState<TChartJudgelineProps>({ ...line.props });
 
-  const onAddKeyframe = (type: keyof TChartJudgelineProps, clickedPosX: number) => {
+  const onAddKeyframe = useCallback((type: keyof TChartJudgelineProps, clickedPosX: number) => {
     const beat = clickedPosX / scale;
     let beatFloor = Math.floor(beat);
     let beatSub = Math.round((beat - beatFloor) * tempo);
@@ -33,7 +34,11 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
     }
 
     line.addKeyframe(type, [ beatFloor, beatSub, tempo ], 1, false, 1);
-  };
+  }, [scale, tempo, line]);
+
+  const onKeyframeMove = useCallback((type: keyof TChartJudgelineProps, index: number, newBeat: BeatArray) => {
+    line.editKeyframe(type, index, newBeat);
+  }, [line]);
 
   const handlePropsUpdate = useCallback(({
     type,
@@ -58,29 +63,40 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
     <TimelineListItem />
     {isExpanded && <>
       <Keyframes
+        type='speed'
         keyframes={lineProp.speed}
         timeRange={timeRange}
-        onDoubleClick={((b) => onAddKeyframe('speed', b))}
+        onDoubleClick={onAddKeyframe}
+        onKeyframeMove={onKeyframeMove}
       />
       <Keyframes
+        type='positionX'
         keyframes={lineProp.positionX}
         timeRange={timeRange}
-        onDoubleClick={((b) => onAddKeyframe('positionX', b))}
+        onDoubleClick={onAddKeyframe}
+        onKeyframeMove={onKeyframeMove}
+
       />
       <Keyframes
+        type='positionY'
         keyframes={lineProp.positionY}
         timeRange={timeRange}
-        onDoubleClick={((b) => onAddKeyframe('positionY', b))}
+        onDoubleClick={onAddKeyframe}
+        onKeyframeMove={onKeyframeMove}
       />
       <Keyframes
+        type='rotate'
         keyframes={lineProp.rotate}
         timeRange={timeRange}
-        onDoubleClick={((b) => onAddKeyframe('rotate', b))}
+        onDoubleClick={onAddKeyframe}
+        onKeyframeMove={onKeyframeMove}
       />
       <Keyframes
+        type='alpha'
         keyframes={lineProp.alpha}
         timeRange={timeRange}
-        onDoubleClick={((b) => onAddKeyframe('alpha', b))}
+        onDoubleClick={onAddKeyframe}
+        onKeyframeMove={onKeyframeMove}
       />
     </>}
   </>

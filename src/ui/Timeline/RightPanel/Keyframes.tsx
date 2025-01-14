@@ -5,15 +5,21 @@ import { useScale } from '../ScaleContext';
 import ChartKeyframe from '@/Chart/Keyframe';
 import { setCSSProperties } from '@/utils/ui';
 import { parseDoublePrecist } from '@/utils/math';
+import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
+import { BeatArray } from '@/utils/types';
 
 type KeyframeProps = {
+  index: number,
   time: number,
   value: number,
+  onKeyframeMove: (index: number, newBeat: BeatArray) => void,
 };
 
 const Keyframe: React.FC<KeyframeProps> = ({
+  index,
   time,
   value,
+  onKeyframeMove,
 }) => {
   const tempo = useTempo();
   const scale = useScale();
@@ -26,7 +32,7 @@ const Keyframe: React.FC<KeyframeProps> = ({
     dragStartPos.current = e.clientX;
   }, []);
 
-  const handleDragMoving = useCallback((e: MouseEvent) => {
+  const handleDragMoving = useCallback((e: MouseEvent, emit = false) => {
     if (!isDragging.current) return;
     const currentDiff = (e.clientX - dragStartPos.current);
     const newBeat = (currentDiff / scale) + time;
@@ -39,15 +45,20 @@ const Keyframe: React.FC<KeyframeProps> = ({
       newBeatSub = 0;
     }
 
-    setCurrentTime(parseDoublePrecist(
+    const newBeatNum = parseDoublePrecist(
       newBeatFloor + (newBeatSub / tempo)
-    , 6, -1));
-  }, [time, tempo, scale]);
+    , 6, -1);
+    setCurrentTime(newBeatNum);
+    if (newBeatNum !== time && emit) {
+      onKeyframeMove(index, [ newBeatFloor, newBeatSub, tempo ]);
+      setCurrentTime(time);
+    }
+  }, [time, index, tempo, scale, onKeyframeMove]);
 
   const handleDragEnd = useCallback((e: MouseEvent) => {
     if (!isDragging.current) return;
 
-    handleDragMoving(e);
+    handleDragMoving(e, true);
     isDragging.current = false;
     dragStartPos.current = NaN;
   }, [handleDragMoving]);
@@ -75,20 +86,29 @@ const Keyframe: React.FC<KeyframeProps> = ({
 type KeyframesProps = {
   timeRange: [number, number],
   keyframes: ChartKeyframe[],
+  onKeyframeMove: (index: number, newBeat: BeatArray) => void,
 };
 
 const Keyframes: React.FC<KeyframesProps> = ({
   timeRange,
   keyframes,
+  onKeyframeMove,
 }) => {
   const result: React.ReactNode[] = [];
 
-  for (const keyframe of keyframes) {
+  for (let i = 0; i < keyframes.length; i++) {
+    const keyframe = keyframes[i];
     if (keyframe.beatNum < timeRange[0]) continue;
     if (keyframe.beatNum > timeRange[1]) break;
 
     result.push(
-      <Keyframe time={keyframe.beatNum} value={keyframe.value} key={keyframe.beatNum} />
+      <Keyframe
+        index={i}
+        time={keyframe.beatNum}
+        value={keyframe.value}
+        onKeyframeMove={onKeyframeMove}
+        key={keyframe.beatNum}
+      />
     );
   }
 
@@ -96,24 +116,36 @@ const Keyframes: React.FC<KeyframesProps> = ({
 };
 
 export type TimelineRightPanelKeyframesProps = {
+  type: keyof TChartJudgelineProps,
   keyframes: ChartKeyframe[],
   timeRange: [number, number],
-  onDoubleClick: (clickedPosX: number) => void,
+  onDoubleClick: (type: keyof TChartJudgelineProps, clickedPosX: number) => void,
+  onKeyframeMove: (type: keyof TChartJudgelineProps, index: number, newBeat: BeatArray) => void,
 };
 
 const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = ({
+  type,
   keyframes,
   timeRange,
   onDoubleClick,
+  onKeyframeMove,
 }: TimelineRightPanelKeyframesProps) => {
-  const onRowDoubleClick = (e: MouseEvent) => {
+  const onRowDoubleClick = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const target = e.target as HTMLDivElement;
     const rect = target.getBoundingClientRect();
-    onDoubleClick(e.clientX - rect.x);
-  };
+    onDoubleClick(type, e.clientX - rect.x);
+  }, [type, onDoubleClick]);
 
-  return <TimelineListItem onDoubleClick={(e) => onRowDoubleClick(e.nativeEvent)}>
-    <Keyframes keyframes={keyframes} timeRange={timeRange} />
+  const handleKeyframeMove = useCallback((index: number, newBeat: BeatArray) => {
+    onKeyframeMove(type, index, newBeat);
+  }, [type, onKeyframeMove]);
+
+  return <TimelineListItem onDoubleClick={onRowDoubleClick}>
+    <Keyframes
+      keyframes={keyframes}
+      timeRange={timeRange}
+      onKeyframeMove={handleKeyframeMove}
+    />
   </TimelineListItem>
 };
 
