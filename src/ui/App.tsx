@@ -5,6 +5,7 @@ import { PopupReadFiles } from '@/utils/file';
 import { Nullable } from '@/utils/types';
 import { useCallback, useState } from 'react';
 import TempoContext from './contexts/Tempo';
+import SelectedItemProvider from './contexts/SelectedItem/Provider';
 
 function App() {
   const [ tempo, setTempo ] = useState(4);
@@ -66,13 +67,15 @@ function App() {
           />
         </label>
       </div>
-      <div className="">
-        <TempoContext.Provider value={tempo}>
-          <ClockTimeProvider>
-            <Timeline timeLength={timeLength} />
-          </ClockTimeProvider>
-        </TempoContext.Provider>
-      </div>
+      <SelectedItemProvider>
+        <div className="">
+          <TempoContext.Provider value={tempo}>
+            <ClockTimeProvider>
+              <Timeline timeLength={timeLength} />
+            </ClockTimeProvider>
+          </TempoContext.Provider>
+        </div>
+      </SelectedItemProvider>
     </>
   );
 }
