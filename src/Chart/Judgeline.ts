@@ -4,6 +4,7 @@ import ChartBPMList from './BPMList';
 import JudgelineProps, { TChartJudgelineProps } from './JudgelineProps';
 import ChartKeyframe from './Keyframe';
 import Note from './Note';
+import { BeatArrayToNumber } from '@/utils/math';
 
 const PropsSortFn = (a: ChartKeyframe, b: ChartKeyframe) => a.beatNum - b.beatNum;
 
@@ -29,6 +30,7 @@ export default class ChartJudgeline {
   ) {
     const keyframeArr = this.props[type];
     if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
+    if (this.findKeyframe(type, beat)) return;
 
     const newKeyframe = new ChartKeyframe(beat, value, continuous, easing);
     keyframeArr.push(newKeyframe);
@@ -50,6 +52,7 @@ export default class ChartJudgeline {
 
     const keyframe = keyframeArr[index];
     if (!keyframe) throw new Error(`Cannot found keyframe index #${index} for props ${type}`);
+    if (beat && this.findKeyframe(type, beat)) return;
 
     if (beat) {
       keyframe.beat = beat;
@@ -61,6 +64,14 @@ export default class ChartJudgeline {
 
     this.calcPropsTime();
     this.events.emit('props.updated', { type, keyframes: [ ...keyframeArr ] });
+  }
+
+  findKeyframe(type: keyof TChartJudgelineProps, beat: BeatArray) {
+    const keyframeArr = this.props[type];
+    if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
+
+    const beatNum = BeatArrayToNumber(beat);
+    return keyframeArr.find((e) => e.beatNum === beatNum);
   }
 
   private sortProps() {
