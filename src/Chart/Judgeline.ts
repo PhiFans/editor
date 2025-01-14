@@ -37,6 +37,32 @@ export default class ChartJudgeline {
     this.events.emit('props.updated', { type, keyframes: [ ...keyframeArr ] });
   }
 
+  editKeyframe(
+    type: keyof TChartJudgelineProps,
+    index: number,
+    beat?: BeatArray,
+    value?: number,
+    continuous?: boolean,
+    easing?: number
+  ) {
+    const keyframeArr = this.props[type];
+    if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
+
+    const keyframe = keyframeArr[index];
+    if (!keyframe) throw new Error(`Cannot found keyframe index #${index} for props ${type}`);
+
+    if (beat) {
+      keyframe.beat = beat;
+      keyframe.beatNum = BeatArrayToNumber(beat);
+    }
+    if (value) keyframe.value = value;
+    if (continuous) keyframe.continuous = continuous;
+    if (easing) keyframe.easing = easing;
+
+    this.calcPropsTime();
+    this.events.emit('props.updated', { type, keyframes: [ ...keyframeArr ] });
+  }
+
   private sortProps() {
     this.props.speed.sort(PropsSortFn);
     this.props.positionX.sort(PropsSortFn);
