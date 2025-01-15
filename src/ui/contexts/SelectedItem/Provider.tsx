@@ -18,7 +18,12 @@ const SelectedItemProvider = ({
     const target = e.target as Nullable<HTMLElement>;
     if (!target) return;
 
-    if (!target.classList.contains('timeline-content-key')) setItem(null);
+    const parentDom = target.parentElement;
+    if (parentDom) {
+      if (parentDom.closest('.edit-panel')) return;
+    }
+
+    if (!target.classList.contains('timeline-content-key')) return setItem(null);
   }, [item]);
 
   useEffect(() => {
