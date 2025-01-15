@@ -39,8 +39,9 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
   }, [scale, tempo, line]);
 
   const onKeyframeMove = useCallback((type: keyof TChartJudgelineProps, index: number, newBeat: BeatArray) => {
+    setSelectedItem(null);
     line.editKeyframe(type, index, { beat: newBeat });
-  }, [line]);
+  }, [line, setSelectedItem]);
 
   const handlePropsUpdate = useCallback(({
     type,
