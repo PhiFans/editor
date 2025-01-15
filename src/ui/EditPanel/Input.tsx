@@ -1,6 +1,6 @@
 import { parseDoublePrecist } from "@/utils/math";
 import { Nullable } from "@/utils/types";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type InputPropsBase = {
   type: 'text' | 'number',
@@ -83,6 +83,17 @@ const EditPanelInput = ({
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputRef.current) inputRef.current.blur();
   }, []);
+
+  useEffect(() => {
+    if (type === 'number') {
+      let _value = defaultValue ?? (value as number);
+      if (min && _value < min) _value = min;
+      if (max && _value > max) _value = max;
+      setValue(_value);
+    }
+    else setValue(value);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultValue]);
 
   return (
     <input

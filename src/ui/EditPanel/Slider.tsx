@@ -69,6 +69,14 @@ const EditPanelSlider = ({
     });
   }, [handleMouseMove, handleMouseUp]);
 
+  useEffect(() => {
+    let newValue = defaultValue ?? value;
+    if (min && newValue < min) newValue = min;
+    if (max && newValue > max) newValue = max;
+    setValue(newValue / rangeDiff + (min ?? 0));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultValue]);
+
   return (
     <div
       className="edit-panel-slider"
