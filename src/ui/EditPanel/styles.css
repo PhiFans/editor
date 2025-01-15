@@ -1,3 +1,36 @@
+.edit-panel {
+  position: relative;
+  width: 100%;
+  min-height: 40px;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.edit-panel-placeholder {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  transform: translateY(-50%);
+}
+
+.edit-panel-item {
+  display: flex;
+  margin: 4px 0px;
+  width: 100%;
+}
+
+.edit-panel-item .edit-panel-item-label {
+  display: block;
+  flex: 0.4;
+}
+
+.edit-panel-item .edit-panel-item-input {
+  display: block;
+  flex: 0.6;
+}
+
 .edit-panel-slider {
   --value-percent: 0;
 

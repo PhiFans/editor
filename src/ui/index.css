@@ -3,6 +3,12 @@ span.hr {
   color: grey;
 }
 
+.edit-panel-container {
+  display: block;
+  border: 1px solid black;
+  width: 300px;
+}
+
 /* Default styles of react-split-pane */
 .SplitPane {
   width: 100%;

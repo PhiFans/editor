@@ -76,7 +76,7 @@ function App() {
             </ClockTimeProvider>
           </TempoContext.Provider>
         </div>
-        <div>
+        <div className='edit-panel-container'>
           <EditPanel />
         </div>
       </SelectedItemProvider>
