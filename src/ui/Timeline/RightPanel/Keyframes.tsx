@@ -35,7 +35,8 @@ const Keyframe: React.FC<KeyframeProps> = ({
   const handleDragMoving = useCallback((e: MouseEvent, emit = false) => {
     if (!isDragging.current) return;
     const currentDiff = (e.clientX - dragStartPos.current);
-    const newBeat = (currentDiff / scale) + time;
+    const unclampedNewBeat = (currentDiff / scale) + time;
+    const newBeat = unclampedNewBeat < 0 ? 0 : unclampedNewBeat;
 
     let newBeatFloor = Math.floor(newBeat);
     let newBeatSub = Math.round((newBeat - newBeatFloor) * tempo);
