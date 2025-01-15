@@ -6,6 +6,7 @@ import { Nullable } from '@/utils/types';
 import { useCallback, useState } from 'react';
 import TempoContext from './contexts/Tempo';
 import SelectedItemProvider from './contexts/SelectedItem/Provider';
+import EditPanel from './EditPanel/EditPanel';
 
 function App() {
   const [ tempo, setTempo ] = useState(4);
@@ -74,6 +75,9 @@ function App() {
               <Timeline timeLength={timeLength} />
             </ClockTimeProvider>
           </TempoContext.Provider>
+        </div>
+        <div>
+          <EditPanel />
         </div>
       </SelectedItemProvider>
     </>

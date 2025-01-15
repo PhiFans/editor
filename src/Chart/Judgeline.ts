@@ -2,7 +2,7 @@ import { EventEmitter } from 'pixi.js';
 import { BeatArray } from '@/utils/types';
 import ChartBPMList from './BPMList';
 import JudgelineProps, { TChartJudgelineProps } from './JudgelineProps';
-import ChartKeyframe from './Keyframe';
+import ChartKeyframe, { TChartKeyframe } from './Keyframe';
 import Note from './Note';
 import { BeatArrayToNumber } from '@/utils/math';
 
@@ -42,25 +42,24 @@ export default class ChartJudgeline {
   editKeyframe(
     type: keyof TChartJudgelineProps,
     index: number,
-    beat?: BeatArray,
-    value?: number,
-    continuous?: boolean,
-    easing?: number
+    newProps: Partial<TChartKeyframe> = {}
   ) {
     const keyframeArr = this.props[type];
     if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
 
     const keyframe = keyframeArr[index];
     if (!keyframe) throw new Error(`Cannot found keyframe index #${index} for props ${type}`);
-    if (beat && this.findKeyframe(type, beat)) return;
+    if (newProps.beat && this.findKeyframe(type, newProps.beat)) return;
 
-    if (beat) {
-      keyframe.beat = beat;
-      keyframe.beatNum = BeatArrayToNumber(beat);
+    for (const name in newProps) {
+      // XXX: This sucks
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      keyframe[name] = newProps[name];
     }
-    if (value) keyframe.value = value;
-    if (continuous) keyframe.continuous = continuous;
-    if (easing) keyframe.easing = easing;
+
+    keyframe.beatNum = BeatArrayToNumber(keyframe.beat);
 
     this.calcPropsTime();
     this.events.emit('props.updated', { type, keyframes: [ ...keyframeArr ] });

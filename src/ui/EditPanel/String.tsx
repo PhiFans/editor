@@ -2,7 +2,7 @@ import Container from './ItemContainer';
 import Input from './Input';
 import { PanelItemPropsBase } from "./types";
 
-type StringProps = PanelItemPropsBase<string> & {
+export type StringProps = PanelItemPropsBase<string> & {
   placeholder?: string,
 };
 

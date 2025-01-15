@@ -1,7 +1,15 @@
 import { BeatArrayToNumber } from '@/utils/math';
 import { BeatArray, Nullable } from '@/utils/types';
 
-export default class ChartKeyframe {
+export type TChartKeyframe = {
+  beat: BeatArray;
+  beatNum: number;
+  value: number;
+  continuous: boolean;
+  easing: number;
+};
+
+export default class ChartKeyframe implements TChartKeyframe {
   beat: BeatArray;
   beatNum: number;
   value: number;

@@ -7,6 +7,7 @@ import ChartJudgeline from '@/Chart/Judgeline';
 import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
 import ChartKeyframe from '@/Chart/Keyframe';
 import { BeatArray } from '@/utils/types';
+import { useSelectedItem } from '@/ui/contexts/SelectedItem';
 
 type KeyframesRowProps = {
   line: ChartJudgeline,
@@ -22,6 +23,7 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
   const tempo = useTempo();
   const scale = useScale();
   const [ lineProp, setLineProp ] = useState<TChartJudgelineProps>({ ...line.props });
+  const [ , setSelectedItem ] = useSelectedItem()!;
 
   const onAddKeyframe = useCallback((type: keyof TChartJudgelineProps, clickedPosX: number) => {
     const beat = clickedPosX / scale;
@@ -37,7 +39,7 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
   }, [scale, tempo, line]);
 
   const onKeyframeMove = useCallback((type: keyof TChartJudgelineProps, index: number, newBeat: BeatArray) => {
-    line.editKeyframe(type, index, newBeat);
+    line.editKeyframe(type, index, { beat: newBeat });
   }, [line]);
 
   const handlePropsUpdate = useCallback(({
@@ -51,6 +53,18 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
     newProp[type] = keyframes;
     setLineProp({ ...lineProp, ...newProp });
   }, [lineProp]);
+
+  const handleKeyframeSelected = useCallback((type: keyof TChartJudgelineProps, index: number) => {
+    const keyframe = line.props[type][index];
+    if (!keyframe) return;
+
+    setSelectedItem({
+      type: 'keyframe',
+      line: line,
+      propName: type,
+      index: index,
+    });
+  }, [line, setSelectedItem]);
 
   useEffect(() => {
     line.events.on('props.updated', handlePropsUpdate);
@@ -66,6 +80,7 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
         type='speed'
         keyframes={lineProp.speed}
         timeRange={timeRange}
+        onKeyframeSelected={handleKeyframeSelected}
         onDoubleClick={onAddKeyframe}
         onKeyframeMove={onKeyframeMove}
       />
@@ -73,6 +88,7 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
         type='positionX'
         keyframes={lineProp.positionX}
         timeRange={timeRange}
+        onKeyframeSelected={handleKeyframeSelected}
         onDoubleClick={onAddKeyframe}
         onKeyframeMove={onKeyframeMove}
 
@@ -81,6 +97,7 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
         type='positionY'
         keyframes={lineProp.positionY}
         timeRange={timeRange}
+        onKeyframeSelected={handleKeyframeSelected}
         onDoubleClick={onAddKeyframe}
         onKeyframeMove={onKeyframeMove}
       />
@@ -88,6 +105,7 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
         type='rotate'
         keyframes={lineProp.rotate}
         timeRange={timeRange}
+        onKeyframeSelected={handleKeyframeSelected}
         onDoubleClick={onAddKeyframe}
         onKeyframeMove={onKeyframeMove}
       />
@@ -95,6 +113,7 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
         type='alpha'
         keyframes={lineProp.alpha}
         timeRange={timeRange}
+        onKeyframeSelected={handleKeyframeSelected}
         onDoubleClick={onAddKeyframe}
         onKeyframeMove={onKeyframeMove}
       />

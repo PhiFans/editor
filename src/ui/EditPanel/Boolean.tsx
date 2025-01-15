@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import Container from './ItemContainer';
 import { PanelItemPropsBase } from './types';
 
-type BooleanProps = PanelItemPropsBase<boolean>;
+export type BooleanProps = PanelItemPropsBase<boolean>;
 
 const EditPanelBoolean = ({
   label,

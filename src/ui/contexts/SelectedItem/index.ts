@@ -1,9 +1,25 @@
 import { createContext, useContext } from 'react';
-import ChartKeyframe from '@/Chart/Keyframe';
-import ChartNote from '@/Chart/Note';
 import { Nullable } from '@/utils/types';
+import ChartJudgeline from '@/Chart/Judgeline';
+import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
 
-export type SelectedItem = ChartKeyframe | ChartNote;
+export type SelectedItemBase = {
+  type: 'keyframe' | 'note',
+  line: ChartJudgeline,
+  index: number,
+};
+
+export type SelectedItemKeyframe = SelectedItemBase & {
+  type: 'keyframe',
+  propName: keyof TChartJudgelineProps,
+};
+
+export type SelectedItemNote = SelectedItemBase & {
+  type: 'note',
+};
+
+export type SelectedItem = SelectedItemKeyframe | SelectedItemNote;
+
 export type TSelectedItemContext = Nullable<
   [ Nullable<SelectedItem>, React.Dispatch<React.SetStateAction<Nullable<SelectedItem>>> ]
 >;

@@ -4,7 +4,7 @@ import Slider from './Slider';
 import { PanelItemPropsBase } from "./types";
 import { useCallback, useState } from 'react';
 
-type InputProps = PanelItemPropsBase<number> & {
+export type NumberProps = PanelItemPropsBase<number> & {
   min?: number,
   max?: number,
   step?: number,
@@ -21,7 +21,7 @@ const EditPanelNumber = ({
   step,
   placeholder,
   useSlider,
-}: InputProps) => {
+}: NumberProps) => {
   const [ value, setValue ] = useState(defaultValue ?? (min ?? 0));
 
   const handleValueChanged = useCallback((newVal: number) => {

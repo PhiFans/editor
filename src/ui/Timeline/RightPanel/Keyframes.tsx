@@ -12,6 +12,7 @@ type KeyframeProps = {
   index: number,
   time: number,
   value: number,
+  onSelected: (index: number) => void,
   onKeyframeMove: (index: number, newBeat: BeatArray) => void,
 };
 
@@ -19,6 +20,7 @@ const Keyframe: React.FC<KeyframeProps> = ({
   index,
   time,
   value,
+  onSelected,
   onKeyframeMove,
 }) => {
   const tempo = useTempo();
@@ -26,6 +28,10 @@ const Keyframe: React.FC<KeyframeProps> = ({
   const [ currentTime, setCurrentTime ] = useState(time);
   const isDragging = useRef(false);
   const dragStartPos = useRef(NaN);
+
+  const handleSelected = useCallback(() => {
+    onSelected(index);
+  }, [index, onSelected]);
 
   const handleDragStart = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     isDragging.current = true;
@@ -80,6 +86,7 @@ const Keyframe: React.FC<KeyframeProps> = ({
       "--point-time": currentTime,
       "--point-value": value,
     })}
+    onClick={handleSelected}
     onMouseDown={handleDragStart}
   ></div>
 };
@@ -87,12 +94,14 @@ const Keyframe: React.FC<KeyframeProps> = ({
 type KeyframesProps = {
   timeRange: [number, number],
   keyframes: ChartKeyframe[],
+  onKeyframeSelected: (index: number) => void,
   onKeyframeMove: (index: number, newBeat: BeatArray) => void,
 };
 
 const Keyframes: React.FC<KeyframesProps> = ({
   timeRange,
   keyframes,
+  onKeyframeSelected,
   onKeyframeMove,
 }) => {
   const result: React.ReactNode[] = [];
@@ -107,6 +116,7 @@ const Keyframes: React.FC<KeyframesProps> = ({
         index={i}
         time={keyframe.beatNum}
         value={keyframe.value}
+        onSelected={onKeyframeSelected}
         onKeyframeMove={onKeyframeMove}
         key={keyframe.beatNum}
       />
@@ -120,6 +130,7 @@ export type TimelineRightPanelKeyframesProps = {
   type: keyof TChartJudgelineProps,
   keyframes: ChartKeyframe[],
   timeRange: [number, number],
+  onKeyframeSelected: (type: keyof TChartJudgelineProps, index: number) => void,
   onDoubleClick: (type: keyof TChartJudgelineProps, clickedPosX: number) => void,
   onKeyframeMove: (type: keyof TChartJudgelineProps, index: number, newBeat: BeatArray) => void,
 };
@@ -128,9 +139,14 @@ const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = 
   type,
   keyframes,
   timeRange,
+  onKeyframeSelected,
   onDoubleClick,
   onKeyframeMove,
 }: TimelineRightPanelKeyframesProps) => {
+  const handleKeyframeSelected = useCallback((index: number) => {
+    onKeyframeSelected(type, index);
+  }, [type, onKeyframeSelected]);
+
   const onRowDoubleClick = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const target = e.target as HTMLDivElement;
     const rect = target.getBoundingClientRect();
@@ -145,6 +161,7 @@ const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = 
     <Keyframes
       keyframes={keyframes}
       timeRange={timeRange}
+      onKeyframeSelected={handleKeyframeSelected}
       onKeyframeMove={handleKeyframeMove}
     />
   </TimelineListItem>
