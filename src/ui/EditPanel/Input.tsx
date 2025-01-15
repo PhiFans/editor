@@ -69,7 +69,7 @@ const EditPanelInput = ({
     let _value: string | number = target.value;
 
     if (type === 'number') {
-      if (_value === '') _value = defaultValue ?? (min ?? 0);
+      if (_value === '') _value = (min ?? 0);
       else if (!isNaN(parseFloat(_value))) _value = parseFloat(target.value);
     }
 
@@ -78,7 +78,7 @@ const EditPanelInput = ({
       if (type === 'text') onChanged(`${_value}`);
       else onChanged(_value as number);
     }
-  }, [type, defaultValue, min, onChanged]);
+  }, [type, min, onChanged]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputRef.current) inputRef.current.blur();
