@@ -29,6 +29,7 @@
   height: 40px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
+  user-select: none;
 }
 
 .timeline-panel-head-left {
@@ -48,6 +49,7 @@
   line-height: calc(var(--height) - 1px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
+  user-select: none;
 }
 
 .timeline-head-current-time {
@@ -134,4 +136,21 @@
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: space-between;
+}
+
+.Resizer.vertical:hover {
+  border-left: 2.5px solid rgba(0, 0, 0, 0.5);
+  border-right: 2.5px solid rgba(0, 0, 0, 0.5);
+}
+
+.Resizer.vertical {
+  width: 5px;
+  margin: 0 -2.5px;
+  border-left: 2.5px solid rgba(255, 255, 255, 0);
+  border-right: 2.5px solid rgba(255, 255, 255, 0);
+}
+
+.Resizer:hover {
+  -webkit-transition: all 0s;
+  transition: all 0s;
 }
