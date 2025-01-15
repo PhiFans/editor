@@ -27,7 +27,7 @@ const EditPanelNumber = ({
         step={step}
         defaultValue={defaultValue}
         placeholder={`${placeholder ?? ''}`}
-        onChanged={onChanged}
+        onInput={onChanged}
       />
     </Container>
   )

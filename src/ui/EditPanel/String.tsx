@@ -18,7 +18,7 @@ const EditPanelString = ({
         type="text"
         defaultValue={defaultValue}
         placeholder={placeholder}
-        onChanged={onChanged}
+        onInput={onChanged}
       />
     </Container>
   )

@@ -13,13 +13,15 @@ type InputPropsBase = {
 type InputPropsString = InputPropsBase & {
   type: 'text',
   defaultValue?: string,
-  onChanged: (newValue: string) => void,
+  onChanged?: (newValue: string) => void,
+  onInput?: (newValue: string) => void,
 };
 
 type InputPropsNumber = InputPropsBase & {
   type: 'number',
   defaultValue?: number,
-  onChanged: (newValue: number) => void,
+  onChanged?: (newValue: number) => void,
+  onInput?: (newValue: number) => void,
 };
 
 type InputProps = InputPropsString | InputPropsNumber;
@@ -27,6 +29,7 @@ type InputProps = InputPropsString | InputPropsNumber;
 const EditPanelInput = ({
   type,
   onChanged,
+  onInput,
   min,
   max,
   step,
@@ -51,21 +54,31 @@ const EditPanelInput = ({
     }
 
     if (lastChangedValue.current !== _value) {
-      if (type === 'text') onChanged(`${_value}`);
-      else onChanged(_value as number);
+      if (onInput) {
+        if (type === 'text') onInput(`${_value}`);
+        else onInput(_value as number);
+      }
 
       setValue(_value);
       lastChangedValue.current = _value;
     }
-  }, [type, min, max, step, onChanged, value]);
+  }, [type, min, max, step, onInput, value]);
 
   const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
+    let _value: string | number = target.value;
+
     if (type === 'number') {
-      if (target.value === '') setValue(0);
-      else if (!isNaN(parseFloat(target.value))) setValue(parseFloat(target.value));
-    } else setValue(target.value);
-  }, [type]);
+      if (_value === '') _value = defaultValue ?? (min ?? 0);
+      else if (!isNaN(parseFloat(_value))) _value = parseFloat(target.value);
+    }
+
+    setValue(_value);
+    if (onChanged) {
+      if (type === 'text') onChanged(`${_value}`);
+      else onChanged(_value as number);
+    }
+  }, [type, defaultValue, min, onChanged]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputRef.current) inputRef.current.blur();
