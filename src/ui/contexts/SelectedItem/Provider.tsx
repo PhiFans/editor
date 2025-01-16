@@ -27,9 +27,9 @@ const SelectedItemProvider = ({
   }, [item]);
 
   useEffect(() => {
-    document.addEventListener('click', unsetItem);
+    document.addEventListener('mousedown', unsetItem);
     return (() => {
-      document.removeEventListener('click', unsetItem);
+      document.removeEventListener('mousedown', unsetItem);
     });
   }, [unsetItem]);
 
