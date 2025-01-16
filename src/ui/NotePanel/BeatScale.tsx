@@ -37,7 +37,7 @@ const GridBeatScale = () => {
 
 
   return (
-    <div className="note-grid-beat-scale-container">
+    <div className="note-grid-scale note-grid-beat-scale-container">
       {new Array(timeRangeLength).fill(0).map((_, index) => {
         return <BeatScale time={timeRangeStart + index} key={timeRangeStart + index} />
       })}
