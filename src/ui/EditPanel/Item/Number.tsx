@@ -1,5 +1,5 @@
 import Container from './Container';
-import Input from '../Input/Input';
+import Input from '../Input/Number';
 import Slider from '../Input/Slider';
 import { PanelItemPropsBase } from "../types";
 import { useCallback, useState } from 'react';
@@ -35,7 +35,6 @@ const EditPanelNumber = ({
 
   const inputDom = (
     <Input
-      type="number"
       min={min}
       max={max}
       step={step}
