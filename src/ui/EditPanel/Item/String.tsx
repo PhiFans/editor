@@ -15,7 +15,6 @@ const EditPanelString = ({
   return (
     <Container title={label}>
       <Input
-        type="text"
         defaultValue={defaultValue}
         placeholder={placeholder}
         onInput={onChanged}
