@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useClockTime } from '../contexts/Clock';
 import { useScale } from './ScaleContext';
+import { setDragStyle } from '@/utils/ui';
 
 export type TimelineSeekerProps = {
   timeLength: number;
@@ -23,6 +24,7 @@ const TimelineSeeker: React.FC<TimelineSeekerProps> = ({
     isHandling.current = true;
     handleStartPosX.current = e.screenX;
     handleStartTime.current = currentTime;
+    setDragStyle('horizontal');
   }, [currentTime]);
 
   const onHandlerMove = useCallback((e: MouseEvent) => {
@@ -43,6 +45,7 @@ const TimelineSeeker: React.FC<TimelineSeekerProps> = ({
     isHandling.current = false;
     handleStartPosX.current = 0;
     handleStartTime.current = 0;
+    setDragStyle();
   }, [onHandlerMove]);
 
   useEffect(() => {

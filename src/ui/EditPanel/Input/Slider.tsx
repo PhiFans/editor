@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { setDragStyle } from "@/utils/ui";
 import { Nullable } from "@/utils/types";
 
 const getDragStep = (min?: number, max?: number) => {
@@ -82,11 +83,13 @@ const EditPanelSlider = ({
     isSliding.current = true;
     slideDelta.current = 0;
     handleMouseMove(e.nativeEvent);
+    setDragStyle('horizontal');
   }, [handleMouseMove]);
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
     if (!isSliding.current) return;
 
+    setDragStyle();
     handleMouseMove(e, true);
     isSliding.current = false;
     slideDelta.current = NaN;

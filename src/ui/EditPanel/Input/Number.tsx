@@ -1,5 +1,6 @@
-import { Nullable } from '@/utils/types';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { setDragStyle } from '@/utils/ui';
+import { Nullable } from '@/utils/types';
 
 // Thanks to [lil.gui](https://github.com/georgealways/lil-gui/blob/master/src/NumberController.js#L140)
 // for the drag algorithm
@@ -115,6 +116,7 @@ const EditPanelInputNumber = ({
     dragPrevPosY.current = NaN;
 
     dragDelta.current = NaN;
+    setDragStyle();
   }, [handleChangeEnd]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
@@ -129,6 +131,7 @@ const EditPanelInputNumber = ({
         e.preventDefault();
         inputRef.current.blur();
         isDragTesting.current = false;
+        setDragStyle('vertical');
 
       } else if (Math.abs(dx) > DRAG_THRESH) {
         handleMouseUp();

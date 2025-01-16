@@ -3,7 +3,7 @@ import TimelineListItem from '../List/Item';
 import { useTempo } from '@/ui/contexts/Tempo';
 import { useScale } from '../ScaleContext';
 import ChartKeyframe from '@/Chart/Keyframe';
-import { setCSSProperties } from '@/utils/ui';
+import { setCSSProperties, setDragStyle } from '@/utils/ui';
 import { parseDoublePrecist } from '@/utils/math';
 import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
 import { BeatArray } from '@/utils/types';
@@ -32,6 +32,7 @@ const Keyframe: React.FC<KeyframeProps> = ({
   const handleDragStart = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     isDragging.current = true;
     dragStartPos.current = e.clientX;
+    setDragStyle('horizontal');
   }, []);
 
   const handleDragMoving = useCallback((e: MouseEvent, emit = false) => {
@@ -64,6 +65,7 @@ const Keyframe: React.FC<KeyframeProps> = ({
     handleDragMoving(e, true);
     isDragging.current = false;
     dragStartPos.current = NaN;
+    setDragStyle();
   }, [handleDragMoving]);
 
   useEffect(() => {

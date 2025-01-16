@@ -1,3 +1,12 @@
+html.is-dragging.drag-horizontal,
+html.is-dragging.drag-horizontal * {
+  cursor: ew-resize !important;
+}
+html.is-dragging.drag-vertical,
+html.is-dragging.drag-vertical * {
+  cursor: ns-resize !important;
+}
+
 span.hr {
   margin: 0px 4px;
   color: grey;
