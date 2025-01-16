@@ -91,6 +91,18 @@
   cursor: pointer;
 }
 
+.timeline-content-key:hover {
+  background: rgba(0, 0, 0, 1);
+}
+
+.timeline-content-key.selected {
+  background: rgba(0, 127, 255, 0.5);
+}
+
+.timeline-content-key.selected:hover {
+  background: rgba(0, 127, 255, 1);
+}
+
 .timeline-time-seeker {
   --current-time: 0;
 

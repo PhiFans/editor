@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import TimelineListItem from '../List/Item';
 import { useTempo } from '@/ui/contexts/Tempo';
 import { useScale } from '../ScaleContext';
+import { useSelectedItem } from '@/ui/contexts/SelectedItem';
 import ChartKeyframe from '@/Chart/Keyframe';
 import { setCSSProperties, setDragStyle } from '@/utils/ui';
 import { parseDoublePrecist } from '@/utils/math';
@@ -21,9 +22,14 @@ const Keyframe: React.FC<KeyframeProps> = ({
 }) => {
   const tempo = useTempo();
   const scale = useScale();
+  const [ selectedItem, ] = useSelectedItem()!;
   const [ currentTime, setCurrentTime ] = useState(keyframe.beatNum);
   const isDragging = useRef(false);
   const dragStartPos = useRef(NaN);
+
+  const isSelected = () => {
+    return selectedItem && selectedItem.type === 'keyframe' && selectedItem.id === keyframe.id
+  };
 
   const handleSelected = useCallback(() => {
     onSelected(keyframe.id);
@@ -78,8 +84,10 @@ const Keyframe: React.FC<KeyframeProps> = ({
     });
   }, [handleDragEnd, handleDragMoving]);
 
+  const className = "timeline-content-key" + (isSelected() ? " selected" : "");
+
   return <div
-    className="timeline-content-key"
+    className={className}
     style={setCSSProperties({
       "--point-time": currentTime,
       "--point-value": keyframe.value,
