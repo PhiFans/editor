@@ -47,7 +47,7 @@ const EditPanelNumber = ({
 
   return (
     <Container title={label}>
-      {max && useSlider ? (
+      {min !== (void 0) && max !== (void 0) && useSlider ? (
         <>
           <Slider
             min={min}

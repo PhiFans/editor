@@ -1,4 +1,3 @@
-import { parseDoublePrecist } from '@/utils/math';
 import { Nullable } from '@/utils/types';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -33,6 +32,7 @@ const EditPanelInputNumber = ({
 }: NumberInputProps) => {
   const [ value, setValue ] = useState<Nullable<number>>(defaultValue ?? null);
   const inputRef = useRef<Nullable<HTMLInputElement>>(null);
+  const lastChanged = useRef<number>(defaultValue ?? (min ?? 0));
   const lastInput = useRef<number>(defaultValue ?? (min ?? 0));
 
   const clampValue = useCallback((newValue: number) => {
@@ -41,6 +41,25 @@ const EditPanelInputNumber = ({
     return newValue;
   }, [max, min]);
 
+  const snapValue = useCallback((value: number) => {
+    const _step = step ?? getDragStep(min, max);
+    let _value = value;
+    let offset = 0;
+    if (min !== (void 0)) offset = min;
+    else if (max !== (void 0)) offset = max;
+
+    _value -= offset;
+    _value = Math.round(_value / _step) * _step;
+    _value += offset;
+
+    _value = parseFloat(_value.toPrecision(10));
+    return _value;
+  }, [min, max, step]);
+
+  const clampSnapValue = useCallback((value: number) => {
+    return snapValue(clampValue(value));
+  }, [clampValue, snapValue]);
+
   const handleChanged = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     const value = parseFloat(target.value);
@@ -48,22 +67,27 @@ const EditPanelInputNumber = ({
     if (!isNaN(value)) {
       setValue(value);
 
-      const _value = clampValue(value);
-      if (onChanged) onChanged(_value);
-      lastInput.current = _value;
+      const _value = clampSnapValue(value);
+      if (lastChanged.current !== _value) {
+        if (onChanged) onChanged(_value);
+        lastChanged.current = _value;
+      }
     } else {
       setValue(null);
     }
-  }, [onChanged, clampValue]);
+  }, [onChanged, clampSnapValue]);
 
   const handleChangeEnd = useCallback(() => {
     if (isDragTesting.current) return;
 
-    const _value = clampValue(value ?? lastInput.current);
+    const _value = clampSnapValue(value ?? lastInput.current);
     setValue(_value);
-    if (onInput) onInput(_value);
-    lastInput.current = _value;
-  }, [value, onInput, clampValue]);
+
+    if (lastInput.current !== _value) {
+      if (onInput) onInput(_value);
+      lastInput.current = _value;
+    }
+  }, [value, onInput, clampSnapValue]);
 
   const handleKeydown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!inputRef.current) return;
@@ -121,11 +145,11 @@ const EditPanelInputNumber = ({
         dragDelta.current = min - dragStartValue.current;
       }
 
-      const dragValue = parseDoublePrecist(dragDelta.current + dragStartValue.current, 6, 0);
-      if (dragValue !== lastInput.current) {
+      const dragValue = parseFloat((dragDelta.current + dragStartValue.current).toPrecision(10));
+      if (dragValue !== lastChanged.current) {
         setValue(dragValue);
         if (onChanged) onChanged(dragValue);
-        lastInput.current = dragValue;
+        lastChanged.current = dragValue;
       }
 
       dragPrevPosY.current = e.clientY;
@@ -151,6 +175,11 @@ const EditPanelInputNumber = ({
       window.removeEventListener('mouseup', handleMouseUp);
     });
   }, [handleMouseMove, handleMouseUp]);
+
+  useEffect(() => {
+    if (defaultValue === (void 0)) return;
+    setValue(clampSnapValue(defaultValue));
+  }, [clampSnapValue, defaultValue]);
 
   return (
     <input
