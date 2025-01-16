@@ -38,9 +38,9 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
     line.addKeyframe(type, [ beatFloor, beatSub, tempo ], 1, false, 1);
   }, [scale, tempo, line]);
 
-  const onKeyframeMove = useCallback((type: keyof TChartJudgelineProps, index: number, newBeat: BeatArray) => {
+  const onKeyframeMove = useCallback((type: keyof TChartJudgelineProps, id: string, newBeat: BeatArray) => {
     setSelectedItem(null);
-    line.editKeyframe(type, index, { beat: newBeat });
+    line.editKeyframe(type, id, { beat: newBeat });
   }, [line, setSelectedItem]);
 
   const handlePropsUpdate = useCallback(({
@@ -55,15 +55,15 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
     setLineProp({ ...lineProp, ...newProp });
   }, [lineProp]);
 
-  const handleKeyframeSelected = useCallback((type: keyof TChartJudgelineProps, index: number) => {
-    const keyframe = line.props[type][index];
+  const handleKeyframeSelected = useCallback((type: keyof TChartJudgelineProps, id: string) => {
+    const keyframe = line.findKeyframeById(type, id);
     if (!keyframe) return;
 
     setSelectedItem({
       type: 'keyframe',
       line: line,
       propName: type,
-      index: index,
+      id: id,
     });
   }, [line, setSelectedItem]);
 

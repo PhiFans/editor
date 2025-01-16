@@ -6,7 +6,7 @@ import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
 export type SelectedItemBase = {
   type: 'keyframe' | 'note',
   line: ChartJudgeline,
-  index: number,
+  id: string,
 };
 
 export type SelectedItemKeyframe = SelectedItemBase & {

@@ -46,7 +46,7 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
         line={line}
         isExpanded={expandedLines.includes(index)}
         timeRange={timeRange}
-        key={index}
+        key={line.id}
       />;
     });
   }, [lines, expandedLines, timeRange]);

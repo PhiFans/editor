@@ -35,7 +35,7 @@ export default class ChartJudgeline {
   ) {
     const keyframeArr = this.props[type];
     if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
-    if (this.findKeyframe(type, beat)) return;
+    if (this.findKeyframeByBeat(type, beat)) return;
 
     const newKeyframe = new ChartKeyframe(beat, value, continuous, easing);
     keyframeArr.push(newKeyframe);
@@ -46,15 +46,15 @@ export default class ChartJudgeline {
 
   editKeyframe(
     type: keyof TChartJudgelineProps,
-    index: number,
+    id: string,
     newProps: Partial<TChartKeyframe> = {}
   ) {
     const keyframeArr = this.props[type];
     if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
 
-    const keyframe = keyframeArr[index];
-    if (!keyframe) throw new Error(`Cannot found keyframe index #${index} for props ${type}`);
-    if (newProps.beat && this.findKeyframe(type, newProps.beat)) return;
+    const keyframe = this.findKeyframeById(type, id);
+    if (!keyframe) throw new Error(`Cannot found keyframe ID: "${id}" for props ${type}`);
+    if (newProps.beat && this.findKeyframeByBeat(type, newProps.beat)) return;
 
     for (const name in newProps) {
       // XXX: This sucks
@@ -70,12 +70,19 @@ export default class ChartJudgeline {
     this.events.emit('props.updated', { type, keyframes: [ ...keyframeArr ] });
   }
 
-  findKeyframe(type: keyof TChartJudgelineProps, beat: BeatArray) {
+  findKeyframeByBeat(type: keyof TChartJudgelineProps, beat: BeatArray) {
     const keyframeArr = this.props[type];
     if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
 
     const beatNum = BeatArrayToNumber(beat);
     return keyframeArr.find((e) => e.beatNum === beatNum);
+  }
+
+  findKeyframeById(type: keyof TChartJudgelineProps, id: string) {
+    const keyframeArr = this.props[type];
+    if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
+
+    return keyframeArr.find((e) => e.id === id);
   }
 
   private sortProps() {

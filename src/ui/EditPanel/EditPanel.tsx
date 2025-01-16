@@ -30,7 +30,7 @@ const EditPanel: React.FC = () => {
     if (selectedItem.type === 'keyframe') {
       line.editKeyframe(
         selectedItem.propName,
-        selectedItem.index,
+        selectedItem.id,
         newProp as unknown as TChartKeyframe
       );
     }
@@ -43,14 +43,15 @@ const EditPanel: React.FC = () => {
       return;
     }
 
-    const { line, index } = selectedItem;
+    const { line, id } = selectedItem;
     setLine(line);
     if (selectedItem.type === 'note') {
-      const note = line.notes[index];
-      setItem({ type: 'note', item: note });
+      // TODO: Note edit
+      // const note = line.notes[0];
+      // setItem({ type: 'note', item: note });
     } else if (selectedItem.type === 'keyframe') {
-      const prop = line.props[selectedItem.propName];
-      const keyframe = prop[index];
+      const keyframe = line.findKeyframeById(selectedItem.propName, id);
+      if (!keyframe) return;
       setItem({ type: 'keyframe', item: keyframe });
     }
   }, [selectedItem]);
