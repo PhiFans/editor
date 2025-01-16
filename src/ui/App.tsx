@@ -1,5 +1,6 @@
 import ClockTimeProvider from './contexts/Clock/Provider';
 import Timeline from './Timeline/Timeline';
+import NotePanel from './NotePanel/NotePanel';
 import GlobalApp from '@/App/App';
 import { PopupReadFiles } from '@/utils/file';
 import { Nullable } from '@/utils/types';
@@ -69,13 +70,14 @@ function App() {
         </label>
       </div>
       <SelectedItemProvider>
-        <div className="">
           <TempoContext.Provider value={tempo}>
             <ClockTimeProvider>
               <Timeline timeLength={timeLength} />
+              <div className='note-panel-test-container'>
+                <NotePanel />
+              </div>
             </ClockTimeProvider>
           </TempoContext.Provider>
-        </div>
         <div className='edit-panel-container'>
           <EditPanel />
         </div>

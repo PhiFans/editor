@@ -1,8 +1,19 @@
 .note-panel {
+  display: flex;
   width: 100%;
   height: 100%;
   overflow: hidden;
   border: 1px solid black;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+.note-panel-controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .note-grid-container {

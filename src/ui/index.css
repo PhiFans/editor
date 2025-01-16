@@ -7,6 +7,11 @@ html.is-dragging.drag-vertical * {
   cursor: ns-resize !important;
 }
 
+.note-panel-test-container {
+  width: 400px;
+  height: 600px;
+}
+
 span.hr {
   margin: 0px 4px;
   color: grey;
