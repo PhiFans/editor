@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import { EventEmitter } from 'pixi.js';
 import { BeatArray } from '@/utils/types';
 import ChartBPMList from './BPMList';
@@ -9,13 +10,17 @@ import { BeatArrayToNumber } from '@/utils/math';
 const PropsSortFn = (a: ChartKeyframe, b: ChartKeyframe) => a.beatNum - b.beatNum;
 
 export default class ChartJudgeline {
+  /** Internal property */
+  readonly id: string;
+
   bpm: ChartBPMList;
   props = new JudgelineProps();
   notes: Note[] = [];
 
   readonly events: EventEmitter = new EventEmitter();
 
-  constructor(bpmList: ChartBPMList) {
+  constructor(bpmList: ChartBPMList, id = uuid()) {
+    this.id = id;
     this.bpm = bpmList;
 
     this.calcPropsTime();

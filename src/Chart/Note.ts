@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import ChartJudgeline from './Judgeline';
 import { NoteType } from './types';
 import { BeatArray } from '@/utils/types';
@@ -14,6 +15,9 @@ export type ChartNoteProps = {
 };
 
 export default class ChartNote {
+  /** Internal property */
+  readonly id: string;
+
   line: ChartJudgeline;
   type: NoteType;
   beat: BeatArray;
@@ -36,7 +40,9 @@ export default class ChartNote {
     isAbove,
 
     holdEndBeat
-  }: ChartNoteProps) {
+  }: ChartNoteProps, id = uuid()) {
+    this.id = id;
+
     this.line = line;
     this.type = type;
     this.beat = beat;
