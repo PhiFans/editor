@@ -1,8 +1,8 @@
 import { useCallback } from "react";
-import InputBoolean, { BooleanProps } from "./Boolean";
-import InputDropdown, { DropdownProps } from "./Dropdown";
-import InputNumber, { NumberProps } from "./Number";
-import { StringProps } from "./String";
+import InputBoolean, { BooleanProps } from "./Item/Boolean";
+import InputDropdown, { DropdownProps } from "./Item/Dropdown";
+import InputNumber, { NumberProps } from "./Item/Number";
+import { StringProps } from "./Item/String";
 
 type PropsMovedDefault = 'label' | 'onChanged';
 

@@ -1,7 +1,7 @@
-import Container from './ItemContainer';
-import Input from './Input';
-import Slider from './Slider';
-import { PanelItemPropsBase } from "./types";
+import Container from './Container';
+import Input from '../Input/Input';
+import Slider from '../Input/Slider';
+import { PanelItemPropsBase } from "../types";
 import { useCallback, useState } from 'react';
 
 export type NumberProps = PanelItemPropsBase<number> & {

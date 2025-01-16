@@ -1,6 +1,6 @@
-import Container from './ItemContainer';
-import Input from './Input';
-import { PanelItemPropsBase } from "./types";
+import Container from './Container';
+import Input from '../Input/Input';
+import { PanelItemPropsBase } from "../types";
 
 export type StringProps = PanelItemPropsBase<string> & {
   placeholder?: string,

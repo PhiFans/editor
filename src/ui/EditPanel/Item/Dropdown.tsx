@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import Container from './ItemContainer';
-import { PanelItemPropsBase } from './types';
+import Container from './Container';
+import { PanelItemPropsBase } from '../types';
 
 export type DropdownProps = PanelItemPropsBase<string> & {
   options: {
