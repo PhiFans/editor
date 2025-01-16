@@ -32,6 +32,9 @@ export default class Chart {
         App.events.emit('chart.audioClip.loaded', clip);
       })
       .catch((e) => { throw e });
+
+    App.hotkeys.add('space', 'chart.playOrPause');
+    App.hotkeys.on('chart.playOrPause', () => this.playOrPause());
   }
 
   async play() {
@@ -42,6 +45,12 @@ export default class Chart {
   async pause() {
     await this.waitAudio();
     this.audioClip.pause();
+  }
+
+  async playOrPause() {
+    await this.waitAudio();
+    if (this.audioClip.status === EAudioClipStatus.PLAY) this.audioClip.pause();
+    else this.audioClip.play();
   }
 
   async stop() {
