@@ -1,12 +1,14 @@
 import { EventEmitter } from "pixi.js";
 import Audio, { Audio as AudioClass } from "@/Audio/Audio";
 import Chart from "@/Chart/Chart";
+import { Hotkeys } from './Hotkeys';
 import { ChartInfo } from "@/Chart/types";
 import { Nullable } from "@/utils/types";
 
 export class App {
   readonly audio: AudioClass = Audio;
   readonly events = new EventEmitter();
+  readonly hotkeys = new Hotkeys(this.events);
   private currentChart: Nullable<Chart> = null;
 
   createChart(info: ChartInfo, audio: File, background: File, applyToApp: boolean = false) {
