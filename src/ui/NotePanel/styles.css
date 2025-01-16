@@ -1,0 +1,66 @@
+.note-panel {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid black;
+}
+
+.note-grid-container {
+  --current-time: 0;
+  --scale: 200;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.note-grid-beat-scale-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.note-grid-beat-scale-container .note-grid-beat-scale {
+  position: absolute;
+  top: calc(100% - (var(--time) - var(--current-time)) * var(--scale) * 1px);
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: black;
+  transform: translateY(-50%);
+}
+
+.note-grid-beat-scale.red {
+  background: #ed1121;
+}
+.note-grid-beat-scale.blue {
+  background: #66ccff;
+}
+.note-grid-beat-scale.yellow {
+  background: #ffcc22;
+}
+.note-grid-beat-scale.yellow-dark {
+  background: #d6a400;
+}
+.note-grid-beat-scale.brown {
+  background: #af8600;
+}
+.note-grid-beat-scale.purple {
+  background: #6644cc;
+}
+.note-grid-beat-scale.purple-dark {
+  background: #583da8;
+}
+
+.note-grid-beat-scale.red,
+.note-grid-beat-scale.blue,
+.note-grid-beat-scale.yellow,
+.note-grid-beat-scale.yellow-dark,
+.note-grid-beat-scale.brown,
+.note-grid-beat-scale.purple,
+.note-grid-beat-scale.purple-dark {
+  height: 1px;
+}
