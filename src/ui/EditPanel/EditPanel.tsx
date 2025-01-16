@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelectedItem } from '../contexts/SelectedItem';
 import List from './List';
-import { Nullable } from '@/utils/types';
+import { BeatArray, Nullable } from '@/utils/types';
 import ChartKeyframe, { TChartKeyframe } from '@/Chart/Keyframe';
 import ChartNote from '@/Chart/Note';
 import ChartJudgeline from '@/Chart/Judgeline';
@@ -24,7 +24,7 @@ const EditPanel: React.FC = () => {
   const [ line, setLine ] = useState<Nullable<ChartJudgeline>>(null);
   const [ item, setItem ] = useState<Nullable<Item>>(null);
 
-  const handleValueChanged = useCallback((newProp: Record<string, string | number | boolean>) => {
+  const handleValueChanged = useCallback((newProp: Record<string, string | number | boolean | BeatArray>) => {
     if (!selectedItem || !line) return;
 
     if (selectedItem.type === 'keyframe') {
@@ -61,6 +61,14 @@ const EditPanel: React.FC = () => {
       {item ? (
         <List
           items={item.type === 'keyframe' ? ([
+            {
+              label: 'Time',
+              type: 'beat',
+              key: 'beat',
+              props: {
+                defaultValue: item.item.beat,
+              },
+            },
             {
               label: 'Value',
               type: 'number',
