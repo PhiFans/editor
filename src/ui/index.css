@@ -7,6 +7,11 @@ html.is-dragging.drag-vertical * {
   cursor: ns-resize !important;
 }
 
+body {
+  background-color: var(--background-primary-color);
+  color: var(--text-primary-color);
+}
+
 .note-panel-test-container {
   width: 400px;
   height: 600px;
@@ -14,12 +19,12 @@ html.is-dragging.drag-vertical * {
 
 span.hr {
   margin: 0px 4px;
-  color: grey;
+  color: var(--border-secondary-color);
 }
 
 .edit-panel-container {
   display: block;
-  border: 1px solid black;
+  border: 1px solid var(--border-primary-color);
   width: 300px;
 }
 
@@ -30,7 +35,7 @@ span.hr {
 }
 
 .Resizer {
-  background: #000;
+  background: var(--resizer-background);
   opacity: 0.2;
   z-index: 1;
   -moz-box-sizing: border-box;
@@ -49,28 +54,28 @@ span.hr {
 .Resizer.horizontal {
   height: 11px;
   margin: -5px 0;
-  border-top: 5px solid rgba(255, 255, 255, 0);
-  border-bottom: 5px solid rgba(255, 255, 255, 0);
+  border-top: 5px solid var(--resizer-border);
+  border-bottom: 5px solid var(--resizer-border);
   cursor: row-resize;
   width: 100%;
 }
 
 .Resizer.horizontal:hover {
-  border-top: 5px solid rgba(0, 0, 0, 0.5);
-  border-bottom: 5px solid rgba(0, 0, 0, 0.5);
+  border-top: 5px solid var(--resizer-border-hover);
+  border-bottom: 5px solid var(--resizer-border-hover);
 }
 
 .Resizer.vertical {
   width: 11px;
   margin: 0 -5px;
-  border-left: 5px solid rgba(255, 255, 255, 0);
-  border-right: 5px solid rgba(255, 255, 255, 0);
+  border-left: 5px solid var(--resizer-border);
+  border-right: 5px solid var(--resizer-border);
   cursor: col-resize;
 }
 
 .Resizer.vertical:hover {
-  border-left: 5px solid rgba(0, 0, 0, 0.5);
-  border-right: 5px solid rgba(0, 0, 0, 0.5);
+  border-left: 5px solid var(--resizer-border-hover);
+  border-right: 5px solid var(--resizer-border-hover);
 }
 .Resizer.disabled {
   cursor: not-allowed;
@@ -81,4 +86,57 @@ span.hr {
 
 .Pane {
   overflow: hidden;
+}
+
+/* Themes Colors */
+@media (prefers-color-scheme: dark) {
+  :where(body) {
+    --background-primary-color: #212121;
+    --text-primary-color: #fff;
+    --text-secondary-color: #bbb;
+    --border-primary-color: var(--text-primary-color);
+    --border-secondary-color: color-mix(in srgb, var(--border-primary-color) 50%, transparent);
+
+    --red-primary: #f00;
+    --blue-primary: #07f;
+
+    --resizer-background: var(--border-primary-color);
+    --resizer-border: var(--background-primary-color);
+    --resizer-border-hover: color-mix(in srgb, var(--text-primary-color) 50%, transparent);
+
+    --beat-black: #ffffff;
+    --beat-red: #ed1121;
+    --beat-blue: #66ccff;
+    --beat-yellow: #ffcc22;
+    --beat-yellow-dark: #d6a400;
+    --beat-brown: #af8600;
+    --beat-purple: #6644cc;
+    --beat-purple-dark: #583da8;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :where(body) {
+    --background-primary-color: #fff;
+    --text-primary-color: #000;
+    --text-secondary-color: #333;
+    --border-primary-color: var(--text-primary-color);
+    --border-secondary-color: var(--text-secondary-color);
+
+    --red-primary: #f00;
+    --blue-primary: #07f;
+
+    --resizer-background: var(--border-primary-color);
+    --resizer-border: var(--background-primary-color);
+    --border-secondary-color: color-mix(in srgb, var(--border-primary-color) 50%, transparent);
+
+    --beat-black: #000000;
+    --beat-red: #ed1121;
+    --beat-blue: #66ccff;
+    --beat-yellow: #ffcc22;
+    --beat-yellow-dark: #d6a400;
+    --beat-brown: #af8600;
+    --beat-purple: #6644cc;
+    --beat-purple-dark: #583da8;
+  }
 }

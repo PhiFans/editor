@@ -3,7 +3,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border: 1px solid black;
+  border: 1px solid var(--border-primary-color);
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: stretch;
@@ -50,7 +50,7 @@
   left: 0;
   width: 100%;
   height: 1px;
-  background: black;
+  background: var(--border-primary-color);
   transform: translateY(-50%);
 }
 
@@ -62,30 +62,30 @@
   left: calc((100% / var(--scale-count)) * var(--index));
   width: 1px;
   height: 100%;
-  background: black;
+  background: var(--border-primary-color);
   transform: translateX(-50%);
 }
 
 .note-grid-beat-scale.red {
-  background: #ed1121;
+  background: var(--beat-red);
 }
 .note-grid-beat-scale.blue {
-  background: #66ccff;
+  background: var(--beat-blue);
 }
 .note-grid-beat-scale.yellow {
-  background: #ffcc22;
+  background: var(--beat-yellow);
 }
 .note-grid-beat-scale.yellow-dark {
-  background: #d6a400;
+  background: var(--beat-yellow-dark);
 }
 .note-grid-beat-scale.brown {
-  background: #af8600;
+  background: var(--beat-brown);
 }
 .note-grid-beat-scale.purple {
-  background: #6644cc;
+  background: var(--beat-purple);
 }
 .note-grid-beat-scale.purple-dark {
-  background: #583da8;
+  background: var(--beat-purple-dark);
 }
 
 .note-grid-beat-scale.red,

@@ -3,7 +3,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  border: 1px solid black;
+  border: 1px solid var(--border-primary-color);
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: stretch;
@@ -27,7 +27,7 @@
   position: sticky;
   width: 100%;
   height: 40px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--border-secondary-color);
   box-sizing: border-box;
   user-select: none;
 }
@@ -47,7 +47,7 @@
   position: relative;
   min-height: var(--height);
   line-height: calc(var(--height) - 1px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--border-secondary-color);
   box-sizing: border-box;
   user-select: none;
 }
@@ -77,7 +77,7 @@
 }
 
 .timeline-content-time-meter {
-  outline: 1px solid black;
+  outline: 1px solid var(--beat-black);
 }
 
 .timeline-content-key {
@@ -87,20 +87,20 @@
   height: 10px;
   left: calc(var(--point-time) * var(--base-scale) * 1px);
   transform: translate(-50%, -50%) rotate(45deg);
-  background: rgba(0, 0, 0, 0.5);
+  background: color-mix(in srgb, var(--text-primary-color) 50%, transparent);
   cursor: pointer;
 }
 
 .timeline-content-key:hover {
-  background: rgba(0, 0, 0, 1);
+  background: var(--text-primary-color);
 }
 
 .timeline-content-key.selected {
-  background: rgba(0, 127, 255, 0.5);
+  background: color-mix(in srgb, var(--blue-primary) 50%, transparent);
 }
 
 .timeline-content-key.selected:hover {
-  background: rgba(0, 127, 255, 1);
+  background: var(--blue-primary);
 }
 
 .timeline-time-seeker {
@@ -111,7 +111,7 @@
   left: calc(var(--current-time) * var(--base-scale) * 1px);
   width: 2px;
   height: calc(100% - 8px);
-  background: red;
+  background: var(--red-primary);
   transform: translateX(-50%);
   z-index: 10;
 }
@@ -126,11 +126,11 @@
         45deg,
         transparent 0,
         transparent 4px,
-        red 4px,
-        red 100%
+        var(--red-primary) 4px,
+        var(--red-primary) 100%
       )
       top left,
-    linear-gradient(315deg, transparent 0, transparent 4px, red 4px, red 100%)
+    linear-gradient(315deg, transparent 0, transparent 4px, var(--red-primary) 4px, var(--red-primary) 100%)
       top right;
   background-size: 50% 100%;
   background-repeat: no-repeat;
@@ -150,16 +150,17 @@
   justify-content: space-between;
 }
 
+/* Adjust timeline resizer to avoid conflict with keyframes */
 .Resizer.vertical:hover {
-  border-left: 2.5px solid rgba(0, 0, 0, 0.5);
-  border-right: 2.5px solid rgba(0, 0, 0, 0.5);
+  border-left: 2.5px solid var(--resizer-border-hover);
+  border-right: 2.5px solid var(--resizer-border-hover);
 }
 
 .Resizer.vertical {
   width: 5px;
   margin: 0 -2.5px;
-  border-left: 2.5px solid rgba(255, 255, 255, 0);
-  border-right: 2.5px solid rgba(255, 255, 255, 0);
+  border-left: 2.5px solid var(--resizer-border);
+  border-right: 2.5px solid var(--resizer-border);
 }
 
 .Resizer:hover {

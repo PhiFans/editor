@@ -1,8 +1,9 @@
 .line-detail {
-
+  color: var(--text-secondary-color);
 }
 
 .line-detail .line-info {
+  color: var(--text-primary-color);
   display: flex;
   padding: 0px 8px;
   flex-direction: row;
@@ -12,7 +13,8 @@
 
 .line-detail .line-info .line-expand-button {
   display: block;
-  background: rgba(0, 0, 0, 0);
+  background: transparent;
+  color: var(--text-color);
   padding: 0px;
   width: 24px;
   height: 24px;
@@ -22,15 +24,15 @@
 }
 
 .line-detail .line-info .line-expand-button:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: color-mix(in srgb, var(--background-primary-color) 10%, transparent);
 }
 
 .line-detail .line-info .line-expand-button:active {
-  background: rgba(0, 0, 0, 0.2);
+  background: color-mix(in srgb, var(--background-primary-color) 20%, transparent);
 }
 
 .line-props-expanded {
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  border-top: 1px solid var(--border-secondary-color);
   box-sizing: content-box;
 }
 

@@ -46,7 +46,7 @@
   position: relative;
   display: block;
   height: 24px;
-  border: 1px solid rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-secondary-color);
   border-radius: 4px;
   overflow: hidden;
   cursor: ew-resize;
@@ -60,5 +60,5 @@
   width: 2px;
   height: 100%;
   transform: translateX(-50%);
-  background: black;
+  background: var(--background-primary-color);
 }
