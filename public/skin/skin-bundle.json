@@ -1,0 +1,49 @@
+{
+  "name": "skin-default",
+  "assets": [
+    {
+      "alias": "note-tap",
+      "src": "skin/note-tap.png"
+    },
+    {
+      "alias": "note-tap-highlight",
+      "src": "skin/note-tap-highlight.png"
+    },
+    {
+      "alias": "note-drag",
+      "src": "skin/note-drag.png"
+    },
+    {
+      "alias": "note-drag-highlight",
+      "src": "skin/note-drag-highlight.png"
+    },
+    {
+      "alias": "note-hold-head",
+      "src": "skin/note-hold-head.png"
+    },
+    {
+      "alias": "note-hold-head-highlight",
+      "src": "skin/note-hold-head-highlight.png"
+    },
+    {
+      "alias": "note-hold-body",
+      "src": "skin/note-tap.png"
+    },
+    {
+      "alias": "note-hold-body-highlight",
+      "src": "skin/note-hold-body-highlight.png"
+    },
+    {
+      "alias": "note-hold-end",
+      "src": "skin/note-hold-end.png"
+    },
+    {
+      "alias": "note-flick",
+      "src": "skin/note-flick.png"
+    },
+    {
+      "alias": "note-flick-highlight",
+      "src": "skin/note-flick-highlight.png"
+    }
+  ]
+}
