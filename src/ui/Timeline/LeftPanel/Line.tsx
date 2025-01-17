@@ -1,21 +1,31 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, { useCallback } from 'react';
 import TimelineList from '../List/List';
 import TimelineListItem from '../List/Item';
+import { useSelectedLine } from '@/ui/contexts/SelectedLine';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import ChartJudgeline from '@/Chart/Judgeline';
 
 export type TimelineLeftPanelLineProps = {
+  line: ChartJudgeline,
   name: string,
   isExpanded: boolean,
   onExpandClick: (isExpanded: boolean) => void
 };
 
 const TimelineLeftPanelLine: React.FC<TimelineLeftPanelLineProps> = ({
+  line,
   name,
   isExpanded,
   onExpandClick
 }: TimelineLeftPanelLineProps) => {
-  return <TimelineListItem className="line-detail">
+  const [ , setSelectedLine ] = useSelectedLine()!;
+
+  const handleLineClicked = useCallback(() => {
+    setSelectedLine(line);
+  }, [line, setSelectedLine]);
+
+  return <TimelineListItem className="line-detail" onClick={handleLineClicked}>
     <div className="line-info">
       <button className="line-expand-button" onClick={() => onExpandClick(!isExpanded)}>
         <FontAwesomeIcon icon={isExpanded ? faChevronUp : faChevronDown} />

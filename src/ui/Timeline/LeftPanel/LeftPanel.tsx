@@ -20,12 +20,13 @@ const TimelineLeftPanel: React.FC<TimelineLeftPanelProps> = ({
     <div className="timeline-panel-left">
       <LeftPanelHead />
       <TimelineList>
-        {lines.map((_line, index) => { // TODO: Render line props & add right click menu
+        {lines.map((line, index) => { // TODO: Render line props & add right click menu
           return <LeftPanelLine
+            line={line}
             name={`Line #${index}`}
             isExpanded={expandedLines.includes(index)}
             onExpandClick={(e) => onLineExpanded(index, e)}
-            key={index}
+            key={line.id}
           />
         })}
       </TimelineList>
