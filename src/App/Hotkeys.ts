@@ -1,4 +1,4 @@
-import { EventEmitter } from 'pixi.js';
+import { EventEmitter } from 'eventemitter3';
 import hotkeys from 'hotkeys-js';
 
 export class Hotkeys {
@@ -12,9 +12,9 @@ export class Hotkeys {
 
     add(key: string, id: string) {
         this.keymap[key] = id;
-        hotkeys(key, (event: KeyboardEvent,) => { 
+        hotkeys(key, (event: KeyboardEvent,) => {
             event.preventDefault();
-            this.event.emit(id); 
+            this.event.emit(id);
         });
     }
 

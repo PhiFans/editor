@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { EventEmitter } from 'pixi.js';
+import { EventEmitter } from 'eventemitter3';
 import { BeatArray } from '@/utils/types';
 import ChartBPMList from './BPMList';
 import JudgelineProps, { TChartJudgelineProps } from './JudgelineProps';

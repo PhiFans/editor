@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { EventEmitter } from 'pixi.js';
+import { EventEmitter } from 'eventemitter3';
 
 export class UUIDMap<T> extends Map<string, T> {
   push(value: T) {
