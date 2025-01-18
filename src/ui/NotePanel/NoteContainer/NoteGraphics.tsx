@@ -1,7 +1,8 @@
 import React from 'react';
 import { Container, Sprite } from '@pixi/react';
-import ChartJudgeline from '@/Chart/Judgeline';
 import { Texture } from 'pixi.js';
+import { useTime } from './TimeContext';
+import ChartJudgeline from '@/Chart/Judgeline';
 import { NoteType } from '@/Chart/types';
 
 const NOTE_SCALE = 5000;
@@ -57,27 +58,32 @@ const Note = React.memo(function Note ({
 });
 
 type NoteGraphicsProps = {
-  timeRange: [number, number],
+  timeRangeEnd: number,
   scale: number,
   width: number,
   line: ChartJudgeline,
+  timeOffset?: number,
 };
 
 const NoteGraphics = ({
-  timeRange,
+  timeRangeEnd,
   scale,
   width,
-  line
+  line,
+  timeOffset = 0
 }: NoteGraphicsProps) => {
   const widthHalf = width / 2;
   const noteScale = width / NOTE_SCALE;
+
+  const currentTime = useTime() - timeOffset;
+  const timeRange = timeRangeEnd + timeOffset;
 
   const noteSprites = (() => {
     const result = [];
 
     for (const note of line.notes) {
-      if (note.beatNum < timeRange[0]) continue;
-      if (note.beatNum > timeRange[1]) break;
+      if (note.beatNum < currentTime) continue;
+      if (note.beatNum > timeRange) break;
 
       result.push(
         <Note
@@ -94,8 +100,10 @@ const NoteGraphics = ({
     return result;
   })();
   return (
-    <Container>{noteSprites}</Container>
+    <Container zIndex={3} y={currentTime * scale}>
+      {noteSprites}
+    </Container>
   );
 };
 
-export default NoteGraphics;
+export default React.memo(NoteGraphics);

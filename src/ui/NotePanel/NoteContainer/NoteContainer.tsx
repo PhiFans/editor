@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Stage, Container, Sprite } from '@pixi/react';
 import { Texture } from 'pixi.js';
 import ChartJudgeline from '@/Chart/Judgeline';
+import TimeContextProvider from './TimeContext/Provider';
+import { useTempo } from '@/ui/contexts/Tempo';
 import useTimeRange from './TimeRange';
 import BeatGraphics from './BeatGraphics';
-import { Nullable } from '@/utils/types';
-import { useTempo } from '@/ui/contexts/Tempo';
-import { useClockTime } from '@/ui/contexts/Clock';
 import NoteGraphics from './NoteGraphics';
+import { Nullable } from '@/utils/types';
 
 const NOTE_OFFSET = 50;
 
@@ -20,11 +20,13 @@ const NoteContainer = ({
   line,
   scale
 }: NoteContainerProps) => {
-  const timeOffset = NOTE_OFFSET / scale;
-  const currentTime = useClockTime().beat;
+  const timeOffset = useCallback(() => {
+    return NOTE_OFFSET / scale;
+  }, [scale])();
+
   const tempo = useTempo();
   const containerRef = useRef<Nullable<HTMLDivElement>>(null);
-  const { range: timeRange } = useTimeRange({ ref: containerRef, scale, currentTime, timeOffset });
+  const timeRangeEnd = useTimeRange({ ref: containerRef, scale });
   const [ size, setSize ] = useState<[number, number]>([1, 1]);
 
   const updateSize = useCallback(() => {
@@ -53,37 +55,45 @@ const NoteContainer = ({
       <Stage
         width={size[0]}
         height={size[1]}
+        raf={false}
+        renderOnComponentChange={true}
         options={{
           backgroundAlpha: 0,
         }}
       >
-        <Sprite
-          texture={Texture.WHITE}
-          width={size[0]}
-          height={4}
-          x={0}
-          y={size[1] - NOTE_OFFSET}
-          tint={0x00ff00}
-        />
-        <Container y={size[1] + (currentTime * scale) - NOTE_OFFSET}>
-          <BeatGraphics
-            timeRange={timeRange}
-            scale={scale}
-            tempo={tempo}
-            width={size[0]}
-          />
-          {line && (
-            <NoteGraphics
-              timeRange={timeRange}
+        <TimeContextProvider>
+          <Container y={size[1]}>
+            <BeatGraphics
+              timeRangeEnd={timeRangeEnd}
               scale={scale}
+              tempo={tempo}
               width={size[0]}
-              line={line}
+              timeOffset={timeOffset}
             />
-          )}
-        </Container>
+            <Sprite
+              texture={Texture.WHITE}
+              width={size[0]}
+              height={4}
+              x={0}
+              y={-NOTE_OFFSET}
+              anchor={{ x: 0, y: 0.5 }}
+              tint={0x00ff00}
+              zIndex={2}
+            />
+            {line && (
+              <NoteGraphics
+              timeRangeEnd={timeRangeEnd}
+                scale={scale}
+                width={size[0]}
+                line={line}
+                timeOffset={timeOffset}
+              />
+            )}
+          </Container>
+        </TimeContextProvider>
       </Stage>
     </div>
   );
 };
 
-export default NoteContainer;
+export default React.memo(NoteContainer);

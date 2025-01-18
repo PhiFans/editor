@@ -1,33 +1,24 @@
 import { useCallback, useEffect, useState } from "react";
-import { Nullable } from "@/utils/types";
 import { parseDoublePrecist } from "@/utils/math";
-
-type TimeRange = [ number, number ];
+import { Nullable } from "@/utils/types";
 
 type TimeRangeProps = {
   ref: React.RefObject<Nullable<HTMLElement>>,
   scale: number,
-  currentTime?: number,
-  timeOffset?: number,
 };
 
 const useTimeRange = ({
   ref,
   scale,
-  currentTime = 0,
-  timeOffset = 0
-}: TimeRangeProps): { range: TimeRange } => {
-  const [ range, setRange ] = useState<TimeRange>([ 0, 0 ]);
+}: TimeRangeProps): number => {
+  const [ range, setRange ] = useState<number>(0);
 
   const updateRange = useCallback(() => {
     const dom = ref.current;
     if (!dom) return;
 
-    setRange([
-      (0 + currentTime) - timeOffset,
-      parseDoublePrecist(dom.clientHeight / scale, 6, -1) + currentTime - timeOffset
-    ])
-  }, [currentTime, timeOffset, ref, scale]);
+    setRange(parseDoublePrecist(dom.clientHeight / scale, 6, -1));
+  }, [ref, scale]);
 
   useEffect(() => {
     updateRange();
@@ -37,9 +28,7 @@ const useTimeRange = ({
     });
   }, [updateRange]);
 
-  return {
-    range
-  };
+  return range;
 };
 
 export default useTimeRange;

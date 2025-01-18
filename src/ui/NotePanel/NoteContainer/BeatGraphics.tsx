@@ -1,8 +1,9 @@
+import React from "react";
 import { Container, Sprite } from "@pixi/react";
 import { Texture } from 'pixi.js';
+import { useTime } from "./TimeContext";
 import { parseDoublePrecist } from "@/utils/math";
 import { getScaleColor } from "@/utils/tempo";
-import React from "react";
 
 const getStylePropertyValue = (name: string) => {
   return getComputedStyle(document.body).getPropertyValue(`--${name}`);
@@ -47,6 +48,7 @@ const BeatScale = React.memo(function BeatScale({
             height={1}
             x={0}
             y={(time + (index + 1) * beatSubscale) * -scale}
+            anchor={{ x: 0, y: 0.5 }}
             tint={getScaleTint(tempo, index + 1)}
             key={index}
           />
@@ -57,24 +59,26 @@ const BeatScale = React.memo(function BeatScale({
 });
 
 type BeatGraphicsProps = {
-  timeRange: [ number, number ],
+  timeRangeEnd: number,
   scale: number,
   tempo: number,
   width: number,
+  timeOffset?: number,
 };
 
 const BeatGraphics = ({
-  timeRange,
+  timeRangeEnd,
   scale,
   tempo,
   width,
+  timeOffset = 0
 }: BeatGraphicsProps) => {
-  const timeRangeStart = Math.floor(timeRange[0]);
-  const timeRangeLength = Math.ceil(timeRange[1]) - timeRangeStart;
+  const currentTime = useTime() - timeOffset;
+  const timeRangeStart = Math.floor(currentTime);
 
   return (
-    <Container zIndex={1}>
-      {new Array(timeRangeLength).fill(0).map((_, index) => {
+    <Container zIndex={1} y={currentTime * scale}>
+      {new Array(Math.ceil(timeRangeEnd + timeOffset)).fill(0).map((_, index) => {
         return (
           <BeatScale
             time={timeRangeStart + index}
@@ -89,4 +93,4 @@ const BeatGraphics = ({
   )
 };
 
-export default BeatGraphics;
+export default React.memo(BeatGraphics);
