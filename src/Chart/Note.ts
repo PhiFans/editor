@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import ChartJudgeline from './Judgeline';
+import { BeatArrayToNumber } from '@/utils/math';
 import { NoteType } from './types';
 import { BeatArray } from '@/utils/types';
 
@@ -27,8 +28,12 @@ export default class ChartNote {
 
   holdEndBeat: BeatArray;
 
+  beatNum: number;
   time: number;
+  holdEndBeatNum: number;
   holdEndTime: number;
+  holdLengthBeatNum: number;
+  holdLengthTime: number;
   floorPosition: number;
 
   constructor({
@@ -53,8 +58,12 @@ export default class ChartNote {
     this.holdEndBeat = this.type === NoteType.HOLD && holdEndBeat ? holdEndBeat : [ NaN, 0, 1 ];
 
     // TODO: Auto-generating these
+    this.beatNum = BeatArrayToNumber(this.beat);
     this.time = 0;
+    this.holdEndBeatNum = this.type === NoteType.HOLD ? BeatArrayToNumber(this.holdEndBeat) : NaN;
     this.holdEndTime = this.type === NoteType.HOLD ? 0 : NaN;
+    this.holdLengthBeatNum = this.type === NoteType.HOLD ? this.holdEndBeatNum - this.beatNum : NaN;
+    this.holdLengthTime = this.type === NoteType.HOLD ? 0 : NaN;
     this.floorPosition = 0;
   }
 }
