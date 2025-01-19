@@ -55,15 +55,15 @@ export default class ChartNote {
     this.speed = speed;
     this.isAbove = isAbove;
 
-    this.holdEndBeat = this.type === NoteType.HOLD && holdEndBeat ? holdEndBeat : [ NaN, 0, 1 ];
+    this.holdEndBeat = this.type === NoteType.HOLD && holdEndBeat ? holdEndBeat : this.beat;
 
     // TODO: Auto-generating these
     this.beatNum = BeatArrayToNumber(this.beat);
     this.time = 0;
-    this.holdEndBeatNum = this.type === NoteType.HOLD ? BeatArrayToNumber(this.holdEndBeat) : NaN;
-    this.holdEndTime = this.type === NoteType.HOLD ? 0 : NaN;
-    this.holdLengthBeatNum = this.type === NoteType.HOLD ? this.holdEndBeatNum - this.beatNum : NaN;
-    this.holdLengthTime = this.type === NoteType.HOLD ? 0 : NaN;
+    this.holdEndBeatNum = this.type === NoteType.HOLD ? BeatArrayToNumber(this.holdEndBeat) : this.beatNum;
+    this.holdEndTime = this.type === NoteType.HOLD ? 0 : this.time;
+    this.holdLengthBeatNum = this.type === NoteType.HOLD ? this.holdEndBeatNum - this.beatNum : 0;
+    this.holdLengthTime = this.type === NoteType.HOLD ? 0 : 0;
     this.floorPosition = 0;
   }
 }

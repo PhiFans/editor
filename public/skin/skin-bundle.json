@@ -27,7 +27,7 @@
     },
     {
       "alias": "note-hold-body",
-      "src": "skin/note-tap.png"
+      "src": "skin/note-hold-body.png"
     },
     {
       "alias": "note-hold-body-highlight",

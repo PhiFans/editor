@@ -44,12 +44,12 @@ const Note = React.memo(function Note ({
         <Sprite
           texture={Texture.from('note-hold-body')}
           x={0} y={0}
-          height={-length}
+          height={length / scale}
           anchor={{ x: 0.5, y: 1 }}
         />
         <Sprite
           texture={Texture.from('note-hold-end')}
-          x={0} y={-length}
+          x={0} y={-length / scale}
           anchor={{ x: 0.5, y: 1 }}
         />
       </Container>
@@ -82,7 +82,7 @@ const NoteGraphics = ({
     const result = [];
 
     for (const note of line.notes) {
-      if (note.beatNum < currentTime) continue;
+      if (note.holdEndBeatNum < currentTime) continue;
       if (note.beatNum > timeRange) break;
 
       result.push(
