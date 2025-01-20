@@ -1,7 +1,8 @@
+/* eslint-disable react/no-unknown-property */
 import React from 'react';
-import { Container, Sprite } from '@pixi/react';
-import { Texture } from 'pixi.js';
-import { useTime } from './TimeContext';
+import { extend } from '@pixi/react';
+import { Container, Sprite, Texture } from 'pixi.js';
+import { useClockTime } from '@/ui/contexts/Clock';
 import ChartJudgeline from '@/Chart/Judgeline';
 import { NoteType } from '@/Chart/types';
 
@@ -27,32 +28,34 @@ const Note = React.memo(function Note ({
   scale,
   length = 0,
 }: NoteProps) {
+  extend({ Container, Sprite });
+
   return (<>
     {type !== NoteType.HOLD ? (
-      <Sprite
+      <pixiSprite
         texture={Texture.from(getNoteTexture(type))}
         x={x} y={-y}
         anchor={0.5} scale={scale}
       />
     ): (
-      <Container x={x} y={-y} scale={scale}>
-        <Sprite
+      <pixiContainer x={x} y={-y} scale={scale}>
+        <pixiSprite
           texture={Texture.from('note-hold-head')}
           x={0} y={0}
           anchor={{ x: 0.5, y: 0 }}
         />
-        <Sprite
+        <pixiSprite
           texture={Texture.from('note-hold-body')}
           x={0} y={0}
           height={length / scale}
           anchor={{ x: 0.5, y: 1 }}
         />
-        <Sprite
+        <pixiSprite
           texture={Texture.from('note-hold-end')}
           x={0} y={-length / scale}
           anchor={{ x: 0.5, y: 1 }}
         />
-      </Container>
+      </pixiContainer>
     )}
   </>);
 });
@@ -72,10 +75,12 @@ const NoteGraphics = ({
   line,
   timeOffset = 0
 }: NoteGraphicsProps) => {
+  extend({ Container });
+
   const widthHalf = width / 2;
   const noteScale = width / NOTE_SCALE;
 
-  const currentTime = useTime() - timeOffset;
+  const currentTime = useClockTime().beat - timeOffset;
   const timeRange = timeRangeEnd + timeOffset;
 
   const noteSprites = (() => {
@@ -100,9 +105,9 @@ const NoteGraphics = ({
     return result;
   })();
   return (
-    <Container zIndex={3} y={currentTime * scale}>
+    <pixiContainer zIndex={3} y={currentTime * scale}>
       {noteSprites}
-    </Container>
+    </pixiContainer>
   );
 };
 
