@@ -6,11 +6,11 @@ export const setCSSProperties = (
   return props as React.CSSProperties;
 };
 
-export const setDragStyle = (style: Nullable<'horizontal' | 'vertical'> = null) => {
+export const setDragStyle = (style: Nullable<'horizontal' | 'vertical' | 'all'> = null) => {
   const bodyDom = document.documentElement;
 
   if (style === null) {
-    bodyDom.classList.remove('is-dragging', 'drag-horizontal', 'drag-vertical');
+    bodyDom.classList.remove('is-dragging', 'drag-horizontal', 'drag-vertical', 'drag-all');
     return;
   }
 

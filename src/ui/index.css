@@ -6,6 +6,10 @@ html.is-dragging.drag-vertical,
 html.is-dragging.drag-vertical * {
   cursor: ns-resize !important;
 }
+html.is-dragging.drag-all,
+html.is-dragging.drag-all * {
+  cursor: move !important;
+}
 
 body {
   background-color: var(--background-primary-color);
