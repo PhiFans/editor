@@ -30,10 +30,10 @@ export default class ChartNote {
 
   beatNum: number;
   time: number;
-  holdEndBeatNum: number;
-  holdEndTime: number;
-  holdLengthBeatNum: number;
-  holdLengthTime: number;
+  holdEndBeatNum!: number;
+  holdEndTime!: number;
+  holdLengthBeatNum!: number;
+  holdLengthTime!: number;
   floorPosition: number;
 
   constructor({
@@ -60,10 +60,20 @@ export default class ChartNote {
     // TODO: Auto-generating these
     this.beatNum = BeatArrayToNumber(this.beat);
     this.time = 0;
+    this.floorPosition = 0;
+
+    this.updateHoldProps();
+  }
+
+  updateHoldProps() {
     this.holdEndBeatNum = this.type === NoteType.HOLD ? BeatArrayToNumber(this.holdEndBeat) : this.beatNum;
+    if (this.holdEndBeatNum < this.beatNum) {
+      this.holdEndBeat = this.beat;
+      this.holdEndBeatNum = this.beatNum;
+    }
+
     this.holdEndTime = this.type === NoteType.HOLD ? 0 : this.time;
     this.holdLengthBeatNum = this.type === NoteType.HOLD ? this.holdEndBeatNum - this.beatNum : 0;
     this.holdLengthTime = this.type === NoteType.HOLD ? 0 : 0;
-    this.floorPosition = 0;
   }
 }

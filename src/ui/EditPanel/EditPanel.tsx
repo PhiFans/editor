@@ -3,7 +3,7 @@ import { useSelectedItem } from '../contexts/SelectedItem';
 import List from './List';
 import { BeatArray, Nullable } from '@/utils/types';
 import ChartKeyframe, { TChartKeyframe } from '@/Chart/Keyframe';
-import ChartNote from '@/Chart/Note';
+import ChartNote, { ChartNoteProps } from '@/Chart/Note';
 import ChartJudgeline from '@/Chart/Judgeline';
 import { NotePanelBuilder } from './builder';
 import './styles.css';
@@ -28,7 +28,15 @@ const EditPanel: React.FC = () => {
   const handleValueChanged = useCallback((newProp: Record<string, string | number | boolean | BeatArray>) => {
     if (!selectedItem || !line) return;
 
-    if (selectedItem.type === 'keyframe') {
+    if (selectedItem.type === 'note') {
+      if (newProp['type']) newProp['type'] = parseInt(newProp['type'] as string);
+      if (newProp['positionX']) newProp['positionX'] = (newProp['positionX'] as number) / 100;
+
+      line.editNote(
+        selectedItem.id,
+        newProp as unknown as ChartNoteProps
+      );
+    } else if (selectedItem.type === 'keyframe') {
       line.editKeyframe(
         selectedItem.propName,
         selectedItem.id,

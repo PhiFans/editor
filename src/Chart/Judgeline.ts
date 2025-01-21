@@ -4,7 +4,7 @@ import { BeatArray } from '@/utils/types';
 import ChartBPMList from './BPMList';
 import JudgelineProps, { TChartJudgelineProps } from './JudgelineProps';
 import ChartKeyframe, { TChartKeyframe } from './Keyframe';
-import Note from './Note';
+import Note, { ChartNoteProps } from './Note';
 import { BeatArrayToNumber } from '@/utils/math';
 
 const PropsSortFn = (a: ChartKeyframe, b: ChartKeyframe) => a.beatNum - b.beatNum;
@@ -53,7 +53,7 @@ export default class ChartJudgeline {
     if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
 
     const keyframe = this.findKeyframeById(type, id);
-    if (!keyframe) throw new Error(`Cannot found keyframe ID: "${id}" for props ${type}`);
+    if (!keyframe) throw new Error(`Cannot find keyframe ID: "${id}" for props ${type}`);
     if (newProps.beat && this.findKeyframeByBeat(type, newProps.beat)) return;
 
     for (const name in newProps) {
@@ -83,6 +83,24 @@ export default class ChartJudgeline {
     if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
 
     return keyframeArr.find((e) => e.id === id);
+  }
+
+  editNote(id: string, newProps: Partial<Omit<ChartNoteProps, 'line'>>) {
+    const note = this.findNoteById(id);
+    if (!note) throw new Error(`Cannot find note ID: "${id}" for line "${this.id}"`);
+
+    for (const name in newProps) {
+      // XXX: This sucks
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      note[name] = newProps[name];
+    }
+
+    note.beatNum = BeatArrayToNumber(note.beat);
+    note.updateHoldProps();
+
+    this.events.emit('notes.updated', [ ...this.notes ]);
   }
 
   findNoteById(id: string) {
