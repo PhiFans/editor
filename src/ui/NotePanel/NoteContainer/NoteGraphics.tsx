@@ -1,10 +1,11 @@
 /* eslint-disable react/no-unknown-property */
-import React from 'react';
+import React, { useCallback } from 'react';
 import { extend } from '@pixi/react';
-import { Container, Sprite, Texture } from 'pixi.js';
+import { Container, EventMode, Sprite, Texture } from 'pixi.js';
 import { useClockTime } from '@/ui/contexts/Clock';
 import ChartJudgeline from '@/Chart/Judgeline';
 import { NoteType } from '@/Chart/types';
+import { useSelectedItem } from '@/ui/contexts/SelectedItem';
 
 const NOTE_SCALE = 5000;
 
@@ -16,19 +17,33 @@ const getNoteTexture = (type: NoteType) => {
 
 type NoteProps = {
   type: NoteType,
+  id: string,
   x: number,
   y: number,
   scale: number,
+  onSelected: (id: string) => void,
   length?: number
 };
 
 const Note = React.memo(function Note ({
   type,
+  id,
   x, y,
   scale,
+  onSelected,
   length = 0,
 }: NoteProps) {
   extend({ Container, Sprite });
+
+  const handleClicked = useCallback(() => {
+    onSelected(id);
+  }, [onSelected, id]);
+
+  const noteEventProps = {
+    eventMode: 'static' as EventMode,
+    onClick: handleClicked,
+    cursor: 'pointer',
+  };
 
   return (<>
     {type !== NoteType.HOLD ? (
@@ -36,9 +51,14 @@ const Note = React.memo(function Note ({
         texture={Texture.from(getNoteTexture(type))}
         x={x} y={-y}
         anchor={0.5} scale={scale}
+        {...noteEventProps}
       />
     ): (
-      <pixiContainer x={x} y={-y} scale={scale}>
+      <pixiContainer
+        x={x} y={-y}
+        scale={scale}
+        {...noteEventProps}
+      >
         <pixiSprite
           texture={Texture.from('note-hold-head')}
           x={0} y={0}
@@ -77,11 +97,21 @@ const NoteGraphics = ({
 }: NoteGraphicsProps) => {
   extend({ Container });
 
+  const [ , setSelectedItem ] = useSelectedItem()!;
+
   const widthHalf = width / 2;
   const noteScale = width / NOTE_SCALE;
 
   const currentTime = useClockTime().beat - timeOffset;
   const timeRange = timeRangeEnd + timeOffset;
+
+  const handleNoteSelected = useCallback((id: string) => {
+    setSelectedItem({
+      type: 'note',
+      line,
+      id
+    })
+  }, [line, setSelectedItem]);
 
   const noteSprites = (() => {
     const result = [];
@@ -93,10 +123,12 @@ const NoteGraphics = ({
       result.push(
         <Note
           type={note.type}
+          id={note.id}
           x={note.positionX * widthHalf + widthHalf}
           y={note.beatNum * scale}
           scale={noteScale}
           length={note.holdLengthBeatNum * scale}
+          onSelected={handleNoteSelected}
           key={note.id}
         />
       );

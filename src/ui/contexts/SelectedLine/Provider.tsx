@@ -23,7 +23,8 @@ const SelectedLineProvider = ({
 
     if (
       parentDom.closest('.timeline') ||
-      parentDom.closest('.note-panel')
+      parentDom.closest('.note-panel') ||
+      parentDom.closest('.edit-panel')
     ) return;
     if (!parentDom.closest('.line-detail')) return setLine(null);
   }, [line]);

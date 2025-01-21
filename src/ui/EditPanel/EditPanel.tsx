@@ -5,6 +5,7 @@ import { BeatArray, Nullable } from '@/utils/types';
 import ChartKeyframe, { TChartKeyframe } from '@/Chart/Keyframe';
 import ChartNote from '@/Chart/Note';
 import ChartJudgeline from '@/Chart/Judgeline';
+import { NotePanelBuilder } from './builder';
 import './styles.css';
 
 type ItemKeyframe = {
@@ -46,9 +47,9 @@ const EditPanel: React.FC = () => {
     const { line, id } = selectedItem;
     setLine(line);
     if (selectedItem.type === 'note') {
-      // TODO: Note edit
-      // const note = line.notes[0];
-      // setItem({ type: 'note', item: note });
+      const note = line.findNoteById(id);
+      if (!note) return;
+      setItem({ type: 'note', item: note });
     } else if (selectedItem.type === 'keyframe') {
       const keyframe = line.findKeyframeById(selectedItem.propName, id);
       if (!keyframe) return;
@@ -111,9 +112,7 @@ const EditPanel: React.FC = () => {
                 ]
               },
             }
-          ]) : ([
-
-          ])}
+          ]) : NotePanelBuilder(item.item)}
           onChanged={handleValueChanged}
         />
       ): (

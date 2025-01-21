@@ -39,7 +39,7 @@ type EditPanelItemBeat = EditPanelItemBase & {
   props: Omit<BeatProps, PropsMovedDefault>,
 };
 
-type EditPanelItem = EditPanelItemNumber | EditPanelItemString | EditPanelItemBoolean | EditPanelItemDropdown | EditPanelItemBeat;
+export type EditPanelItem = EditPanelItemNumber | EditPanelItemString | EditPanelItemBoolean | EditPanelItemDropdown | EditPanelItemBeat;
 
 type EditPanelListProps = {
   items: EditPanelItem[],

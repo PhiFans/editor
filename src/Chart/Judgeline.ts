@@ -85,6 +85,10 @@ export default class ChartJudgeline {
     return keyframeArr.find((e) => e.id === id);
   }
 
+  findNoteById(id: string) {
+    return this.notes.find((e) => e.id === id);
+  }
+
   private sortProps() {
     this.props.speed.sort(PropsSortFn);
     this.props.positionX.sort(PropsSortFn);

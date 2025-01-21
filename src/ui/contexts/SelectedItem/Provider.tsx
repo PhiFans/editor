@@ -20,7 +20,10 @@ const SelectedItemProvider = ({
 
     const parentDom = target.parentElement;
     if (parentDom) {
-      if (parentDom.closest('.edit-panel')) return;
+      if (
+        parentDom.closest('.edit-panel') ||
+        parentDom.closest('.note-panel')
+      ) return;
     }
 
     if (!target.classList.contains('timeline-content-key')) return setItem(null);
