@@ -1,10 +1,11 @@
 import { useCallback, useState } from 'react';
 import Grid from './Grid';
 import './styles.css';
+import AlignContext from './AlignContext';
 
 const NotePanel = () => {
   const [ scale, setScale ] = useState(200);
-  const [ alignCount, setAlighCount ] = useState(7);
+  const [ alignCount, setAlighCount ] = useState(8);
 
   const updateScale = useCallback((scale: number) => {
     setScale(10 + (scale / 100) * 390);
@@ -12,10 +13,11 @@ const NotePanel = () => {
 
   return (
     <div className="note-panel">
+      <AlignContext.Provider value={alignCount}>
       <Grid
         scale={scale}
-        alignCount={alignCount}
       />
+      </AlignContext.Provider>
       <div className="note-panel-controls">
         <label>
           Scale:
@@ -32,7 +34,7 @@ const NotePanel = () => {
           <input
             type='number'
             min={1}
-            defaultValue={7}
+            defaultValue={8}
             style={{
               width: 50
             }}

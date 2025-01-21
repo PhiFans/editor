@@ -1,13 +1,8 @@
-import { Nullable } from '@/utils/types';
+import { useRef, useCallback, useEffect, useMemo } from 'react';
 import { setDragStyle } from '@/utils/ui';
-import { useRef, useCallback, useEffect } from 'react';
+import { Nullable, Point } from '@/utils/types';
 
 const DRAG_THRESH = 5;
-
-type Point = {
-  x: number,
-  y: number,
-};
 
 type MouseDownEvent = {
   clientX: number,
@@ -15,13 +10,15 @@ type MouseDownEvent = {
 };
 
 type UseDragProps = {
-  grid?: number,
+  grid?: number | Point,
   allowX?: boolean,
   allowY?: boolean,
   onDrag?: (point: Point) => void,
   onDragEnd?: (point: Point) => void,
   onClick?: () => void,
 };
+
+const getGrid = (grid: number | Point, type: keyof Point) => typeof grid === 'number' ? grid : grid[type];
 
 // Thanks to [lil.gui](https://github.com/georgealways/lil-gui/blob/master/src/NumberController.js#L140)
 // for the drag algorithm
@@ -32,16 +29,20 @@ const useDrag = ({
   allowY = true,
   onDrag, onDragEnd, onClick,
 }: UseDragProps) => {
+  const _grid: Point = useMemo(() => ({
+    x: grid !== (void 0) ? getGrid(grid, 'x') : 1,
+    y: grid !== (void 0) ? getGrid(grid, 'y') : 1,
+  }), [grid]);
   const isDragging = useRef(false);
   const isDragTesting = useRef(false);
   const dragStartPos = useRef<Point>({ x: NaN, y: NaN });
   const dragDelta = useRef<Nullable<Point>>(null);
   const lastDragPos = useRef<Nullable<Point>>(null);
 
-  const gridDrag = useCallback((value: number) => {
+  const gridDrag = useCallback((value: number, type: keyof Point) => {
     if (grid === void 0) return value;
-    else return Math.round(value / grid) * grid;
-  }, [grid]);
+    else return Math.round(value / _grid[type]) * _grid[type];
+  }, [grid, _grid]);
 
   const handleMouseDown = useCallback((e: MouseDownEvent) => {
     isDragging.current = true;
@@ -90,8 +91,8 @@ const useDrag = ({
       let dx = 0;
       let dy = 0;
 
-      if (allowX) dx = gridDrag(e.clientX - dragStartPos.current.x);
-      if (allowY) dy = gridDrag(e.clientY - dragStartPos.current.y);
+      if (allowX) dx = gridDrag(e.clientX - dragStartPos.current.x, 'x');
+      if (allowY) dy = gridDrag(e.clientY - dragStartPos.current.y, 'y');
 
       dragDelta.current = { x: dx, y: dy };
       if (

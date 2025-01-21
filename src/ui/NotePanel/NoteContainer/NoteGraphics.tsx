@@ -1,11 +1,17 @@
 /* eslint-disable react/no-unknown-property */
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { extend } from '@pixi/react';
 import { Container, EventMode, Sprite, Texture } from 'pixi.js';
 import { useClockTime } from '@/ui/contexts/Clock';
 import ChartJudgeline from '@/Chart/Judgeline';
 import { NoteType } from '@/Chart/types';
 import { useSelectedItem } from '@/ui/contexts/SelectedItem';
+import useDrag from '@/ui/hooks/useDrag';
+import { useTempo } from '@/ui/contexts/Tempo';
+import { useAlign } from '../AlignContext';
+import ChartNote from '@/Chart/Note';
+import { BeatArray, Point } from '@/utils/types';
+import { BeatNumberToArray } from '@/utils/math';
 
 const NOTE_SCALE = 5000;
 
@@ -16,47 +22,89 @@ const getNoteTexture = (type: NoteType) => {
 };
 
 type NoteProps = {
-  type: NoteType,
-  id: string,
-  x: number,
-  y: number,
+  note: ChartNote,
+  width: number,
   scale: number,
+  noteScale: number,
+  onChanged: (id: string, time: BeatArray, positionX: number) => void,
   onSelected: (id: string) => void,
-  length?: number
 };
 
 const Note = React.memo(function Note ({
-  type,
-  id,
-  x, y,
+  note,
+  width,
   scale,
+  noteScale,
+  onChanged,
   onSelected,
-  length = 0,
 }: NoteProps) {
   extend({ Container, Sprite });
 
+  const widthHalf = useMemo(() => width / 2, [width]);
+  const tempo = useTempo();
+  const align = useAlign();
+  const beatGrid = (1 / tempo) * scale;
+  const alignGrid = width / align;
+  const [ time, setTime ] = useState(note.beatNum);
+  const [ posX, setPosX ] = useState(note.positionX);
+  const notePosX = posX * widthHalf + widthHalf;
+  const notePosY = time * -scale;
+  const noteLength = note.holdLengthBeatNum * scale / noteScale;
+
+  const calculateNewTime = useCallback((y: number) => {
+    return note.beatNum - (y / beatGrid / tempo);
+  }, [note.beatNum, beatGrid, tempo]);
+
+  const calculateNewPositionX = useCallback((x: number) => {
+    return note.positionX + (x / widthHalf);
+  }, [note.positionX, widthHalf]);
+
+  const handleDragging = useCallback(({ x, y }: Point) => {
+    setTime(calculateNewTime(y));
+    setPosX(calculateNewPositionX(x));
+  }, [calculateNewPositionX, calculateNewTime]);
+
+  const handleDragEnd = useCallback(({ x, y }: Point) => {
+    const newTime = calculateNewTime(y);
+    const newPosX = calculateNewPositionX(x);
+
+    setTime(newTime);
+    setPosX(newPosX);
+    onChanged(note.id, BeatNumberToArray(newTime, tempo), newPosX);
+  }, [note.id, onChanged, tempo, calculateNewTime, calculateNewPositionX]);
+
   const handleClicked = useCallback(() => {
-    onSelected(id);
-  }, [onSelected, id]);
+    onSelected(note.id);
+  }, [onSelected, note.id]);
+
+  const { onMouseDown } = useDrag({
+    grid: {
+      x: alignGrid,
+      y: beatGrid,
+    },
+    onDrag: handleDragging,
+    onDragEnd: handleDragEnd,
+    onClick: handleClicked,
+  });
 
   const noteEventProps = {
     eventMode: 'static' as EventMode,
-    onClick: handleClicked,
+    onMouseDown,
     cursor: 'pointer',
   };
 
   return (<>
-    {type !== NoteType.HOLD ? (
+    {note.type !== NoteType.HOLD ? (
       <pixiSprite
-        texture={Texture.from(getNoteTexture(type))}
-        x={x} y={-y}
-        anchor={0.5} scale={scale}
+        texture={Texture.from(getNoteTexture(note.type))}
+        x={notePosX} y={notePosY}
+        anchor={0.5} scale={noteScale}
         {...noteEventProps}
       />
     ): (
       <pixiContainer
-        x={x} y={-y}
-        scale={scale}
+        x={notePosX} y={notePosY}
+        scale={noteScale}
         {...noteEventProps}
       >
         <pixiSprite
@@ -67,12 +115,12 @@ const Note = React.memo(function Note ({
         <pixiSprite
           texture={Texture.from('note-hold-body')}
           x={0} y={0}
-          height={length / scale}
+          height={noteLength}
           anchor={{ x: 0.5, y: 1 }}
         />
         <pixiSprite
           texture={Texture.from('note-hold-end')}
-          x={0} y={-length / scale}
+          x={0} y={-noteLength}
           anchor={{ x: 0.5, y: 1 }}
         />
       </pixiContainer>
@@ -99,11 +147,19 @@ const NoteGraphics = ({
 
   const [ , setSelectedItem ] = useSelectedItem()!;
 
-  const widthHalf = width / 2;
   const noteScale = width / NOTE_SCALE;
-
   const currentTime = useClockTime().beat - timeOffset;
   const timeRange = timeRangeEnd + timeOffset;
+
+  const handleNoteChanged = useCallback((id: string, time: BeatArray, positionX: number) => {
+    line.editNote(
+      id,
+      {
+        beat: time,
+        positionX,
+      }
+    );
+  }, [line]);
 
   const handleNoteSelected = useCallback((id: string) => {
     setSelectedItem({
@@ -122,12 +178,11 @@ const NoteGraphics = ({
 
       result.push(
         <Note
-          type={note.type}
-          id={note.id}
-          x={note.positionX * widthHalf + widthHalf}
-          y={note.beatNum * scale}
-          scale={noteScale}
-          length={note.holdLengthBeatNum * scale}
+          note={note}
+          width={width}
+          scale={scale}
+          noteScale={noteScale}
+          onChanged={handleNoteChanged}
           onSelected={handleNoteSelected}
           key={note.id}
         />

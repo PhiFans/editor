@@ -22,6 +22,10 @@ export const BeatNumberToArray = (beat: number, tempo: number): BeatArray => {
   return [ beatFloor, beatSub, tempo ];
 };
 
+export const GridValue = (value: number, grid: number) => (
+  Math.round(value / grid) * grid
+);
+
 /**
  *
  * @param {number} mode 1 == Ceil, 0 == Round, -1 == Floor. Default: round.
