@@ -10,6 +10,18 @@ export const FillZero = (number: number, length = 2) => {
 
 export const BeatArrayToNumber = (array: BeatArray) => parseDoublePrecist(array[0] + array[1] / array[2], 6, -1);
 
+export const BeatNumberToArray = (beat: number, tempo: number): BeatArray => {
+  let beatFloor = Math.floor(beat);
+  let beatSub = Math.round((beat - beatFloor) * tempo);
+
+  if (beatSub === tempo) {
+    beatFloor += 1;
+    beatSub = 0;
+  }
+
+  return [ beatFloor, beatSub, tempo ];
+};
+
 /**
  *
  * @param {number} mode 1 == Ceil, 0 == Round, -1 == Floor. Default: round.

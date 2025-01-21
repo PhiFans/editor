@@ -1,11 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import TimelineListItem from '../List/Item';
 import { useTempo } from '@/ui/contexts/Tempo';
 import { useScale } from '../ScaleContext';
 import { useSelectedItem } from '@/ui/contexts/SelectedItem';
+import useDrag from '@/ui/hooks/useDrag';
+import { setCSSProperties } from '@/utils/ui';
+import { BeatNumberToArray } from '@/utils/math';
 import ChartKeyframe from '@/Chart/Keyframe';
-import { setCSSProperties, setDragStyle } from '@/utils/ui';
-import { parseDoublePrecist } from '@/utils/math';
 import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
 import { BeatArray } from '@/utils/types';
 
@@ -22,67 +23,40 @@ const Keyframe: React.FC<KeyframeProps> = ({
 }) => {
   const tempo = useTempo();
   const scale = useScale();
+  const beatGrid = (1 / tempo) * scale;
   const [ selectedItem, ] = useSelectedItem()!;
   const [ currentTime, setCurrentTime ] = useState(keyframe.beatNum);
-  const isDragging = useRef(false);
-  const dragStartPos = useRef(NaN);
 
   const isSelected = () => {
     return selectedItem && selectedItem.type === 'keyframe' && selectedItem.id === keyframe.id
   };
 
+  const calculateNewTime = useCallback((x: number) => {
+    return keyframe.beatNum + (x / beatGrid / tempo);
+  }, [keyframe, beatGrid, tempo]);
+
+  const handleDragging = useCallback(({ x }: { x: number }) => {
+    setCurrentTime(calculateNewTime(x));
+  }, [calculateNewTime]);
+
+  const handleDragEnd = useCallback(({ x }: { x: number }) => {
+    const newTime = calculateNewTime(x);
+
+    setCurrentTime(newTime);
+    onKeyframeMove(keyframe.id, BeatNumberToArray(newTime, tempo));
+  }, [calculateNewTime, keyframe.id, onKeyframeMove, tempo]);
+
   const handleSelected = useCallback(() => {
     onSelected(keyframe.id);
-  }, [keyframe, onSelected]);
+  }, [keyframe.id, onSelected]);
 
-  const handleDragStart = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    isDragging.current = true;
-    dragStartPos.current = e.clientX;
-    setDragStyle('horizontal');
-  }, []);
-
-  const handleDragMoving = useCallback((e: MouseEvent, emit = false) => {
-    if (!isDragging.current) return;
-    const currentDiff = (e.clientX - dragStartPos.current);
-    const unclampedNewBeat = (currentDiff / scale) + keyframe.beatNum;
-    const newBeat = unclampedNewBeat < 0 ? 0 : unclampedNewBeat;
-
-    let newBeatFloor = Math.floor(newBeat);
-    let newBeatSub = Math.round((newBeat - newBeatFloor) * tempo);
-
-    if (newBeatSub === tempo) {
-      newBeatFloor += 1;
-      newBeatSub = 0;
-    }
-
-    const newBeatNum = parseDoublePrecist(
-      newBeatFloor + (newBeatSub / tempo)
-    , 6, -1);
-    setCurrentTime(newBeatNum);
-    if (newBeatNum !== keyframe.beatNum && emit) {
-      onKeyframeMove(keyframe.id, [ newBeatFloor, newBeatSub, tempo ]);
-      setCurrentTime(keyframe.beatNum);
-    }
-  }, [keyframe, tempo, scale, onKeyframeMove]);
-
-  const handleDragEnd = useCallback((e: MouseEvent) => {
-    if (!isDragging.current) return;
-
-    handleDragMoving(e, true);
-    isDragging.current = false;
-    dragStartPos.current = NaN;
-    setDragStyle();
-  }, [handleDragMoving]);
-
-  useEffect(() => {
-    window.addEventListener('mousemove', handleDragMoving);
-    window.addEventListener('mouseup', handleDragEnd);
-
-    return (() => {
-      window.removeEventListener('mousemove', handleDragMoving);
-      window.removeEventListener('mouseup', handleDragEnd);
-    });
-  }, [handleDragEnd, handleDragMoving]);
+  const { onMouseDown } = useDrag({
+    allowY: false,
+    grid: beatGrid,
+    onDrag: handleDragging,
+    onDragEnd: handleDragEnd,
+    onClick: handleSelected,
+  });
 
   const className = "timeline-content-key" + (isSelected() ? " selected" : "");
 
@@ -92,8 +66,7 @@ const Keyframe: React.FC<KeyframeProps> = ({
       "--point-time": currentTime,
       "--point-value": keyframe.value,
     })}
-    onClick={handleSelected}
-    onMouseDown={handleDragStart}
+    onMouseDown={onMouseDown}
   ></div>
 };
 
