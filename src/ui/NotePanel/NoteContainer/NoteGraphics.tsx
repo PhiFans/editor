@@ -26,7 +26,7 @@ type NoteProps = {
   width: number,
   scale: number,
   noteScale: number,
-  onChanged: (id: string, time: BeatArray, positionX: number) => void,
+  onChanged: (id: string, time: BeatArray, timeEnd: BeatArray, positionX: number) => void,
   onSelected: (id: string) => void,
 };
 
@@ -67,11 +67,12 @@ const Note = React.memo(function Note ({
   const handleDragEnd = useCallback(({ x, y }: Point) => {
     const newTime = calculateNewTime(y);
     const newPosX = calculateNewPositionX(x);
+    const newHoldEnd = note.holdEndBeatNum + (newTime - note.beatNum);
 
     setTime(newTime);
     setPosX(newPosX);
-    onChanged(note.id, BeatNumberToArray(newTime, tempo), newPosX);
-  }, [note.id, onChanged, tempo, calculateNewTime, calculateNewPositionX]);
+    onChanged(note.id, BeatNumberToArray(newTime, tempo), BeatNumberToArray(newHoldEnd, tempo), newPosX);
+  }, [note.holdEndBeatNum, note.beatNum, note.id, onChanged, tempo, calculateNewTime, calculateNewPositionX]);
 
   const handleClicked = useCallback(() => {
     onSelected(note.id);
@@ -151,12 +152,13 @@ const NoteGraphics = ({
   const currentTime = useClockTime().beat - timeOffset;
   const timeRange = timeRangeEnd + timeOffset;
 
-  const handleNoteChanged = useCallback((id: string, time: BeatArray, positionX: number) => {
+  const handleNoteChanged = useCallback((id: string, time: BeatArray, timeEnd: BeatArray, positionX: number) => {
     line.editNote(
       id,
       {
         beat: time,
         positionX,
+        holdEndBeat: timeEnd,
       }
     );
   }, [line]);
