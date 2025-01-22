@@ -47,6 +47,7 @@ const Note = React.memo(function Note ({
   const beatGrid = useMemo(() => tempoGrid * scale, [tempoGrid, scale]);
   const alignPercent = useMemo(() => 1 / align, [align]);
   const alignGrid = useMemo(() => width * alignPercent, [width, alignPercent]);
+  const [isDragging, setIsDragging] = useState(false);
   const [ time, setTime ] = useState(note.beatNum);
   const [ posX, setPosX ] = useState(note.positionX);
   const notePosX = posX * widthHalf + widthHalf;
@@ -65,6 +66,7 @@ const Note = React.memo(function Note ({
   const handleDragging = useCallback(({ x, y }: Point) => {
     setTime(calculateNewTime(y));
     setPosX(calculateNewPositionX(x));
+    setIsDragging(true);
   }, [calculateNewPositionX, calculateNewTime]);
 
   const handleDragEnd = useCallback(({ x, y }: Point) => {
@@ -74,6 +76,7 @@ const Note = React.memo(function Note ({
 
     setTime(newTime);
     setPosX(newPosX);
+    setIsDragging(false);
     onChanged(note.id, BeatNumberToArray(newTime, tempo), BeatNumberToArray(newHoldEnd, tempo), newPosX);
   }, [note.holdEndBeatNum, note.beatNum, note.id, onChanged, tempo, calculateNewTime, calculateNewPositionX]);
 
@@ -92,6 +95,10 @@ const Note = React.memo(function Note ({
   });
 
   const noteEventProps = {
+    x: notePosX,
+    y: notePosY,
+    alpha: isDragging ? 0.6 : 1,
+    scale: noteScale,
     eventMode: 'static' as EventMode,
     onMouseDown,
     cursor: 'pointer',
@@ -101,16 +108,11 @@ const Note = React.memo(function Note ({
     {note.type !== NoteType.HOLD ? (
       <pixiSprite
         texture={Texture.from(getNoteTexture(note.type))}
-        x={notePosX} y={notePosY}
-        anchor={0.5} scale={noteScale}
+        anchor={0.5}
         {...noteEventProps}
       />
     ): (
-      <pixiContainer
-        x={notePosX} y={notePosY}
-        scale={noteScale}
-        {...noteEventProps}
-      >
+      <pixiContainer {...noteEventProps}>
         <pixiSprite
           texture={Texture.from('note-hold-head')}
           x={0} y={0}
