@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { extend } from "@pixi/react";
 import { Container, Sprite, Texture } from 'pixi.js';
 import { useClockTime } from "@/ui/contexts/Clock";
@@ -84,11 +84,13 @@ const BeatGraphics = ({
   const tempo = useTempo();
   const currentTime = useClockTime().beat - timeOffset;
   const timeRangeStart = Math.floor(currentTime);
+  const _timeOffset = useMemo(() => Math.ceil(timeOffset * 2), [timeOffset]);
+  const scaleCount = useMemo(() => Math.ceil(timeRangeEnd + _timeOffset), [timeRangeEnd, _timeOffset]);
 
   return (
     // eslint-disable-next-line react/no-unknown-property
     <pixiContainer zIndex={1} y={currentTime * scale}>
-      {new Array(Math.ceil(timeRangeEnd + timeOffset)).fill(0).map((_, index) => {
+      {new Array(scaleCount).fill(0).map((_, index) => {
         return (
           <BeatScale
             time={timeRangeStart + index}
