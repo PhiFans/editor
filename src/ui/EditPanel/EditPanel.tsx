@@ -4,64 +4,95 @@ import List from './List';
 import { BeatArray, Nullable } from '@/utils/types';
 import ChartKeyframe, { TChartKeyframe } from '@/Chart/Keyframe';
 import ChartNote, { ChartNoteProps } from '@/Chart/Note';
-import ChartJudgeline from '@/Chart/Judgeline';
-import { NotePanelBuilder } from './builder';
+import { KeyframePanelBuilderSingle, NotePanelBuilderSingle } from './builder';
+import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
 import './styles.css';
+
+
+type ItemKeyframeSub = {
+  type: keyof TChartJudgelineProps,
+  keyframe: ChartKeyframe,
+}
 
 type ItemKeyframe = {
   type: 'keyframe',
-  item: ChartKeyframe,
+  item: ItemKeyframeSub | ItemKeyframeSub[],
 };
 
 type ItemNote = {
   type: 'note',
-  item: ChartNote,
+  item: ChartNote | ChartNote[],
 };
 
 type Item = ItemKeyframe | ItemNote;
 
 const EditPanel: React.FC = () => {
   const [ selectedItem, ] = useSelectedItem()!;
-  const [ line, setLine ] = useState<Nullable<ChartJudgeline>>(null);
   const [ item, setItem ] = useState<Nullable<Item>>(null);
 
   const handleValueChanged = useCallback((newProp: Record<string, string | number | boolean | BeatArray>) => {
-    if (!selectedItem || !line) return;
+    if (!selectedItem || !item) return;
 
-    if (selectedItem.type === 'note') {
-      if (newProp['type']) newProp['type'] = parseInt(newProp['type'] as string);
-      if (newProp['positionX']) newProp['positionX'] = (newProp['positionX'] as number) / 100;
+    const { line } = selectedItem;
+    if (item.type === 'note') {
+      if (item.item instanceof Array) {
+        // TODO: Multi note edit
+      } else {
+        if (newProp['type']) newProp['type'] = parseInt(newProp['type'] as string);
+        if (newProp['positionX']) newProp['positionX'] = (newProp['positionX'] as number) / 100;
 
-      line.editNote(
-        selectedItem.id,
-        newProp as unknown as ChartNoteProps
-      );
-    } else if (selectedItem.type === 'keyframe') {
-      line.editKeyframe(
-        selectedItem.propName,
-        selectedItem.id,
-        newProp as unknown as TChartKeyframe
-      );
+        line.editNote(
+          item.item.id,
+          newProp as unknown as ChartNoteProps
+        );
+      }
     }
-  }, [line, selectedItem]);
+
+    if (item.type === 'keyframe') {
+      if (item.item instanceof Array) {
+        // TODO: Multi keyframe edit
+      } else {
+        line.editKeyframe(
+          item.item.type,
+          item.item.keyframe.id,
+          newProp as unknown as TChartKeyframe
+        );
+      }
+    }
+  }, [item, selectedItem]);
 
   useEffect(() => {
     if (!selectedItem) {
-      setLine(null);
       setItem(null);
       return;
     }
 
-    const { line, id } = selectedItem;
-    setLine(line);
-    if (selectedItem.type === 'note') {
-      const note = line.findNoteById(id);
-      if (!note) return;
-      setItem({ type: 'note', item: note });
-    } else if (selectedItem.type === 'keyframe') {
-      const keyframe = line.findKeyframeById(selectedItem.propName, id);
-      if (!keyframe) return;
-      setItem({ type: 'keyframe', item: keyframe });
+    const { line } = selectedItem;
+
+    if (selectedItem.keyframe !== null) {
+      if (selectedItem.keyframe instanceof Array) {
+        // TODO: Multi keyframe edit
+      } else {
+        const keyframe = line.findKeyframeById(selectedItem.keyframe.type, selectedItem.keyframe.id);
+        if (!keyframe) return;
+        setItem({
+          type: 'keyframe',
+          item: {
+            type: selectedItem.keyframe.type,
+            keyframe,
+          },
+        });
+      }
+    }
+
+    if (selectedItem.note !== null) {
+      if (selectedItem.note instanceof Array) {
+        // TODO: Multi note edit
+      } else {
+        const note = line.findNoteById(selectedItem.note.id);
+        if (!note) return;
+        setItem({ type: 'note', item: note });
+      }
     }
   }, [selectedItem]);
 
@@ -69,58 +100,17 @@ const EditPanel: React.FC = () => {
     <div className="edit-panel">
       {item ? (
         <List
-          items={item.type === 'keyframe' ? ([
-            {
-              label: 'Time',
-              type: 'beat',
-              key: 'beat',
-              props: {
-                defaultValue: item.item.beat,
-              },
-            },
-            {
-              label: 'Value',
-              type: 'number',
-              key: 'value',
-              props: {
-                defaultValue: item.item.value,
-              }
-            },
-            {
-              label: 'Continuous',
-              type: 'boolean',
-              key: 'continuous',
-              props: {
-                defaultValue: item.item.continuous,
-              }
-            },
-            {
-              label: 'Easing',
-              type: 'dropdown',
-              key: 'easing',
-              props: {
-                defaultValue: `${item.item.easing}`,
-                options: [
-                  {
-                    label: 'Linear',
-                    value: '1',
-                  },
-                  {
-                    label: 'EaseIn',
-                    value: '2',
-                  },
-                  {
-                    label: 'EaseOut',
-                    value: '3',
-                  },
-                  {
-                    label: 'EaseInOut',
-                    value: '4',
-                  },
-                ]
-              },
-            }
-          ]) : NotePanelBuilder(item.item)}
+          items={(
+            (item.item instanceof Array) ? (
+              []
+            ) : (
+              item.type === 'note' ? (
+                NotePanelBuilderSingle(item.item)
+              ) : (
+                KeyframePanelBuilderSingle(item.item.keyframe)
+              )
+            )
+          )}
           onChanged={handleValueChanged}
         />
       ): (

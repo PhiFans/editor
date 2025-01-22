@@ -29,7 +29,13 @@ const Keyframe: React.FC<KeyframeProps> = ({
   const [ currentTime, setCurrentTime ] = useState(keyframe.beatNum);
 
   const isSelected = () => {
-    return selectedItem && selectedItem.type === 'keyframe' && selectedItem.id === keyframe.id
+    if (selectedItem === null) return false;
+    if (selectedItem.keyframe === null) return false;
+    if (selectedItem.keyframe instanceof Array) {
+      return selectedItem.keyframe.findIndex((e) => e.id === keyframe.id) !== -1;
+    } else {
+      return selectedItem.keyframe.id === keyframe.id;
+    };
   };
 
   const calculateNewTime = useCallback((x: number) => {

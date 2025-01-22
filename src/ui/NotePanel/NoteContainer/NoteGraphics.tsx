@@ -170,10 +170,12 @@ const NoteGraphics = ({
 
   const handleNoteSelected = useCallback((id: string) => {
     setSelectedItem({
-      type: 'note',
       line,
-      id
-    })
+      note: {
+        id,
+      },
+      keyframe: null,
+    });
   }, [line, setSelectedItem]);
 
   const noteSprites = (() => {
@@ -199,7 +201,7 @@ const NoteGraphics = ({
     return result;
   })();
   return (
-    <pixiContainer zIndex={3} y={currentTime * scale}>
+    <pixiContainer zIndex={4} y={currentTime * scale}>
       {noteSprites}
     </pixiContainer>
   );

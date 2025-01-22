@@ -60,10 +60,11 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
     if (!keyframe) return;
 
     setSelectedItem({
-      type: 'keyframe',
-      line: line,
-      propName: type,
-      id: id,
+      line,
+      keyframe: {
+        type, id
+      },
+      note: null,
     });
   }, [line, setSelectedItem]);
 

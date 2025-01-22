@@ -1,4 +1,4 @@
-import { useSelectedLine } from "../contexts/SelectedLine";
+import { useSelectedItem } from "../contexts/SelectedItem";
 import { useAlign } from "./AlignContext";
 import GridAlignScale from "./AlignScale";
 import NoteContainer from "./NoteContainer/NoteContainer";
@@ -11,13 +11,13 @@ const Grid = ({
   scale,
 }: GridProps) => {
   const align = useAlign();
-  const [ selectedLine, ] = useSelectedLine()!;
+  const [ selectedItem, ] = useSelectedItem()!;
 
   return (
     <div className="note-grid-container">
       <GridAlignScale grid={align} />
-      <NoteContainer line={selectedLine} scale={scale} />
-      {!selectedLine && <div className="note-grid-placeholder">Select a line to continue</div>}
+      <NoteContainer line={selectedItem ? selectedItem.line : null} scale={scale} />
+      {!selectedItem && <div className="note-grid-placeholder">Select a line to continue</div>}
     </div>
   );
 };

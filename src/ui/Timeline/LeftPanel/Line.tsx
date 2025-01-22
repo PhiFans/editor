@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback } from 'react';
 import TimelineList from '../List/List';
 import TimelineListItem from '../List/Item';
-import { useSelectedLine } from '@/ui/contexts/SelectedLine';
+import { useSelectedItem } from '@/ui/contexts/SelectedItem';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import ChartJudgeline from '@/Chart/Judgeline';
 
@@ -19,11 +19,14 @@ const TimelineLeftPanelLine: React.FC<TimelineLeftPanelLineProps> = ({
   isExpanded,
   onExpandClick
 }: TimelineLeftPanelLineProps) => {
-  const [ , setSelectedLine ] = useSelectedLine()!;
+  const [ , setSelectedItem ] = useSelectedItem()!;
 
   const handleLineClicked = useCallback(() => {
-    setSelectedLine(line);
-  }, [line, setSelectedLine]);
+    setSelectedItem((oldItem) => {
+      if (oldItem === null) return { line, keyframe: null, note: null };
+      else return { ...oldItem, line };
+    });
+  }, [line, setSelectedItem]);
 
   return <TimelineListItem className="line-detail" onClick={handleLineClicked}>
     <div className="line-info">
