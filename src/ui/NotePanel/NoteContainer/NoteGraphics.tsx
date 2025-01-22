@@ -11,7 +11,7 @@ import { useTempo } from '@/ui/contexts/Tempo';
 import { useAlign } from '../AlignContext';
 import ChartNote from '@/Chart/Note';
 import { BeatArray, Point } from '@/utils/types';
-import { BeatNumberToArray } from '@/utils/math';
+import { BeatNumberToArray, GridValue, parseDoublePrecist } from '@/utils/math';
 
 const NOTE_SCALE = 5000;
 
@@ -43,8 +43,10 @@ const Note = React.memo(function Note ({
   const widthHalf = useMemo(() => width / 2, [width]);
   const tempo = useTempo();
   const align = useAlign();
-  const beatGrid = (1 / tempo) * scale;
-  const alignGrid = width / align;
+  const tempoGrid = useMemo(() => parseDoublePrecist(1 / tempo, 6, -1), [tempo]);
+  const beatGrid = useMemo(() => tempoGrid * scale, [tempoGrid, scale]);
+  const alignPercent = useMemo(() => 1 / align, [align]);
+  const alignGrid = useMemo(() => width * alignPercent, [width, alignPercent]);
   const [ time, setTime ] = useState(note.beatNum);
   const [ posX, setPosX ] = useState(note.positionX);
   const notePosX = posX * widthHalf + widthHalf;
@@ -52,12 +54,13 @@ const Note = React.memo(function Note ({
   const noteLength = note.holdLengthBeatNum * scale / noteScale;
 
   const calculateNewTime = useCallback((y: number) => {
-    return note.beatNum - (y / beatGrid / tempo);
-  }, [note.beatNum, beatGrid, tempo]);
+    return GridValue(note.beatNum - (y / beatGrid / tempo), tempoGrid);
+  }, [note.beatNum, beatGrid, tempo, tempoGrid]);
 
   const calculateNewPositionX = useCallback((x: number) => {
-    return note.positionX + (x / widthHalf);
-  }, [note.positionX, widthHalf]);
+    const newValue = GridValue((note.positionX + (x / widthHalf) + 1) / 2, alignPercent);
+    return (newValue - 0.5) * 2;
+  }, [note.positionX, widthHalf, alignPercent]);
 
   const handleDragging = useCallback(({ x, y }: Point) => {
     setTime(calculateNewTime(y));

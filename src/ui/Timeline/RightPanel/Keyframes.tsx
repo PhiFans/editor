@@ -5,7 +5,7 @@ import { useScale } from '../ScaleContext';
 import { useSelectedItem } from '@/ui/contexts/SelectedItem';
 import useDrag from '@/ui/hooks/useDrag';
 import { setCSSProperties } from '@/utils/ui';
-import { BeatNumberToArray } from '@/utils/math';
+import { BeatNumberToArray, GridValue, parseDoublePrecist } from '@/utils/math';
 import ChartKeyframe from '@/Chart/Keyframe';
 import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
 import { BeatArray } from '@/utils/types';
@@ -23,7 +23,8 @@ const Keyframe: React.FC<KeyframeProps> = ({
 }) => {
   const tempo = useTempo();
   const scale = useScale();
-  const beatGrid = (1 / tempo) * scale;
+  const tempoGrid = useMemo(() => parseDoublePrecist(1 / tempo, 6, -1), [tempo]);
+  const beatGrid = useMemo(() => tempoGrid * scale, [tempoGrid, scale]);
   const [ selectedItem, ] = useSelectedItem()!;
   const [ currentTime, setCurrentTime ] = useState(keyframe.beatNum);
 
@@ -32,8 +33,8 @@ const Keyframe: React.FC<KeyframeProps> = ({
   };
 
   const calculateNewTime = useCallback((x: number) => {
-    return keyframe.beatNum + (x / beatGrid / tempo);
-  }, [keyframe, beatGrid, tempo]);
+    return GridValue(keyframe.beatNum + (x / beatGrid / tempo), tempoGrid);
+  }, [keyframe, beatGrid, tempo, tempoGrid]);
 
   const handleDragging = useCallback(({ x }: { x: number }) => {
     setCurrentTime(calculateNewTime(x));

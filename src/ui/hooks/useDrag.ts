@@ -1,5 +1,6 @@
 import { useRef, useCallback, useEffect, useMemo } from 'react';
 import { setDragStyle } from '@/utils/ui';
+import { GridValue } from '@/utils/math';
 import { Nullable, Point } from '@/utils/types';
 
 const DRAG_THRESH = 5;
@@ -41,7 +42,7 @@ const useDrag = ({
 
   const gridDrag = useCallback((value: number, type: keyof Point) => {
     if (grid === void 0) return value;
-    else return Math.round(value / _grid[type]) * _grid[type];
+    else return GridValue(value, _grid[type]);
   }, [grid, _grid]);
 
   const handleMouseDown = useCallback((e: MouseDownEvent) => {
