@@ -8,20 +8,20 @@ import useTimeRange from './TimeRange';
 import BeatGraphics from './BeatGraphics';
 import NoteGraphics from './NoteGraphics';
 import { Nullable } from '@/utils/types';
+import { useProps } from '../PropsContext';
 
 const NOTE_OFFSET = 50;
 
 type NoteContainerProps = {
   line: Nullable<ChartJudgeline>,
-  scale: number,
 };
 
 const NoteContainer = ({
   line,
-  scale
 }: NoteContainerProps) => {
   extend({ Container, Sprite });
 
+  const { scale } = useProps();
   const timeOffset = useCallback(() => {
     return NOTE_OFFSET / scale;
   }, [scale])();

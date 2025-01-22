@@ -8,7 +8,7 @@ import { NoteType } from '@/Chart/types';
 import { useSelectedItem } from '@/ui/contexts/SelectedItem';
 import useDrag from '@/ui/hooks/useDrag';
 import { useTempo } from '@/ui/contexts/Tempo';
-import { useAlign } from '../AlignContext';
+import { useProps } from '../PropsContext';
 import ChartNote from '@/Chart/Note';
 import { BeatArray, Point } from '@/utils/types';
 import { BeatNumberToArray, GridValue, parseDoublePrecist } from '@/utils/math';
@@ -42,7 +42,7 @@ const Note = React.memo(function Note ({
 
   const widthHalf = useMemo(() => width / 2, [width]);
   const tempo = useTempo();
-  const align = useAlign();
+  const { align } = useProps();
   const tempoGrid = useMemo(() => parseDoublePrecist(1 / tempo, 6, -1), [tempo]);
   const beatGrid = useMemo(() => tempoGrid * scale, [tempoGrid, scale]);
   const alignPercent = useMemo(() => 1 / align, [align]);
@@ -200,6 +200,7 @@ const NoteGraphics = ({
 
     return result;
   })();
+
   return (
     <pixiContainer zIndex={4} y={currentTime * scale}>
       {noteSprites}

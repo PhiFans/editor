@@ -1,19 +1,16 @@
+import { useProps } from './PropsContext';
 
-type AlignScaleProps = {
-  grid: number;
-};
+const GridAlignScale = () => {
+  const { align } = useProps();
 
-const GridAlignScale = ({
-  grid,
-}: AlignScaleProps) => {
   return (
     <div
       className="note-grid-scale note-grid-align-scale-container"
       style={{
-        '--scale-count': grid
+        '--scale-count': align
       } as React.CSSProperties}
     >
-      {new Array(grid - 1).fill(0).map((_, index) => {
+      {new Array(align - 1).fill(0).map((_, index) => {
         return <div
           className="note-grid-align-scale"
           style={{

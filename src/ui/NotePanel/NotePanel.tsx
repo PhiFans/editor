@@ -1,11 +1,17 @@
 import { useCallback, useState } from 'react';
 import Grid from './Grid';
 import './styles.css';
-import AlignContext from './AlignContext';
+import PropsContext from './PropsContext';
 
 const NotePanel = () => {
+  const [ isWriteMode, setWriteMode ] = useState(false);
   const [ scale, setScale ] = useState(200);
   const [ alignCount, setAlighCount ] = useState(8);
+
+  const updateWriteMode = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    setWriteMode(target.checked);
+  }, []);
 
   const updateScale = useCallback((scale: number) => {
     setScale(10 + (scale / 100) * 390);
@@ -13,11 +19,23 @@ const NotePanel = () => {
 
   return (
     <div className="note-panel">
-      <AlignContext.Provider value={alignCount}>
-      <Grid
-        scale={scale}
-      />
-      </AlignContext.Provider>
+      <div className='note-panel-controls'>
+        <label>
+          Write mode:
+          <input
+            type='checkbox'
+            checked={isWriteMode}
+            onChange={updateWriteMode}
+          />
+        </label>
+      </div>
+      <PropsContext.Provider value={{
+        align: alignCount,
+        scale,
+        writeMode: isWriteMode,
+      }}>
+        <Grid />
+      </PropsContext.Provider>
       <div className="note-panel-controls">
         <label>
           Scale:
