@@ -62,7 +62,12 @@ const EditPanel: React.FC = () => {
   }, [item, selectedItem]);
 
   useEffect(() => {
-    if (!selectedItem) {
+    if (
+      !selectedItem || (
+        selectedItem.note === null &&
+        selectedItem.keyframe === null
+      )
+    ) {
       setItem(null);
       return;
     }

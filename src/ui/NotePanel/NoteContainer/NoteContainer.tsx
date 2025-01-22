@@ -1,6 +1,8 @@
+/* eslint-disable react/no-unknown-property */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Application, extend } from '@pixi/react';
-import { Container, Sprite, Texture } from 'pixi.js';
+import { Container, Rectangle, Sprite, Texture } from 'pixi.js';
+import { useSelectedItem } from '@/ui/contexts/SelectedItem';
 import ChartJudgeline from '@/Chart/Judgeline';
 import useTimeRange from './TimeRange';
 import BeatGraphics from './BeatGraphics';
@@ -24,6 +26,7 @@ const NoteContainer = ({
     return NOTE_OFFSET / scale;
   }, [scale])();
 
+  const [, setSelectedItem ] = useSelectedItem()!;
   const containerRef = useRef<Nullable<HTMLDivElement>>(null);
   const timeRangeEnd = useTimeRange({ ref: containerRef, scale });
   const [ size, setSize ] = useState<[number, number]>([1, 1]);
@@ -37,6 +40,13 @@ const NoteContainer = ({
       containerDom.clientHeight
     ]);
   }, []);
+
+  const handleEmptySelect = useCallback(() => {
+    setSelectedItem((oldItem) => {
+      if (oldItem !== null) return { ...oldItem, note: null };
+      else return null;
+    });
+  }, [setSelectedItem]);
 
   useEffect(() => {
     updateSize();
@@ -65,18 +75,22 @@ const NoteContainer = ({
             timeOffset={timeOffset}
           />
           <pixiSprite
-            // eslint-disable-next-line react/no-unknown-property
             texture={Texture.WHITE}
             width={size[0]}
             height={4}
             x={0}
             y={-NOTE_OFFSET}
-            // eslint-disable-next-line react/no-unknown-property
             anchor={{ x: 0, y: 0.5 }}
-            // eslint-disable-next-line react/no-unknown-property
             tint={0x00ff00}
-            // eslint-disable-next-line react/no-unknown-property
             zIndex={2}
+          />
+          <pixiContainer
+            x={0} y={0}
+            width={size[0]} height={size[1]}
+            hitArea={new Rectangle(0, -size[1], size[0], size[1])}
+            eventMode='static'
+            onMouseDown={handleEmptySelect}
+            zIndex={3}
           />
           {line && (
             <NoteGraphics
