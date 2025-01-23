@@ -22,7 +22,7 @@ type NumberInputProps = {
   onInput?: (newValue: number) => void,
 };
 
-const EditPanelInputNumber = ({
+const NumberInput = ({
   min,
   max,
   step,
@@ -201,4 +201,4 @@ const EditPanelInputNumber = ({
   )
 };
 
-export default EditPanelInputNumber;
+export default NumberInput;
