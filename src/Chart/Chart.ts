@@ -5,7 +5,7 @@ import ChartBPMList from './BPMList';
 import ChartJudgeline from './Judgeline';
 import ChartNote from './Note';
 import { ChartInfo } from './types';
-import { ChartNoteProps } from './Note';
+import { BeatArray } from '@/utils/types';
 
 export default class Chart {
   info: ChartInfo;
@@ -68,15 +68,19 @@ export default class Chart {
     return newLine;
   }
 
-  addNote(line: ChartJudgeline | number, noteProps: Omit<ChartNoteProps, 'line'>) {
-    let _line: ChartJudgeline;
-    if (typeof line === 'number') _line = this.lines[line];
-    else _line = line;
-    if (!_line) throw new Error('No such line found');
+  addBPM(time: BeatArray, bpm: number) {
+    this.bpm.add(time, bpm);
+    App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
+  }
 
-    const newNote = new ChartNote({ line: _line, ...noteProps });
-    _line.notes.push(newNote);
-    return newNote;
+  editBPM(id: string, newBeat?: BeatArray, newBPM?: number) {
+    this.bpm.edit(id, newBPM, newBeat);
+    App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
+  }
+
+  removeBPM(id: string) {
+    this.bpm.remove(id);
+    App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }
 
   get status() {

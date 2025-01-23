@@ -8,6 +8,7 @@ import { useCallback, useState } from 'react';
 import TempoContext from './contexts/Tempo';
 import SelectedItemProvider from './contexts/SelectedItem/Provider';
 import EditPanel from './EditPanel/EditPanel';
+import BPMPanel from './BPMPanel/BPMPanel';
 
 function App() {
   const [ tempo, setTempo ] = useState(4);
@@ -73,8 +74,13 @@ function App() {
         <TempoContext.Provider value={tempo}>
           <ClockTimeProvider>
             <Timeline timeLength={timeLength} />
-            <div className='note-panel-test-container'>
-              <NotePanel />
+            <div className='panel-test-container'>
+              <div className='note-panel-test-container'>
+                <NotePanel />
+              </div>
+              <div className='bpm-panel-test-container'>
+                <BPMPanel />
+              </div>
             </div>
           </ClockTimeProvider>
         </TempoContext.Provider>

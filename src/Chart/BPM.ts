@@ -35,4 +35,9 @@ export default class ChartBPM {
     this.endBeatNum = Infinity;
     this.endTime = Infinity;
   }
+
+  update() {
+    this.beatNum = BeatArrayToNumber(this.beat);
+    this.timePerBeat = parseDoublePrecist(60 / this.bpm, 6, -1);
+  }
 }

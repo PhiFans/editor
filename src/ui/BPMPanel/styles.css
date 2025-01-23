@@ -1,0 +1,49 @@
+.bpm-panel {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--border-primary-color);
+  flex-direction: column;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.bpm-list {
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.bpm-list-item {
+  padding: 8px;
+  border-bottom: 1px solid var(--border-primary-color);
+  box-sizing: border-box;
+}
+.bpm-list-item:last-child {
+  border-bottom: unset;
+}
+
+.bpm-list-item .bpm-prop {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.bpm-prop .bpm-prop-name {
+  flex: 0.4;
+}
+
+.bpm-prop .bpm-prop-input {
+  flex: 0.6;
+}
+
+.bpm-prop-input .bpm-input-beat {
+  display: flex;
+}
+
+.bpm-prop-input .bpm-input-beat input {
+  width: 0;
+  flex: 0.3;
+}

@@ -16,7 +16,14 @@ body {
   color: var(--text-primary-color);
 }
 
-.note-panel-test-container {
+.panel-test-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.note-panel-test-container,
+.bpm-panel-test-container {
   width: 400px;
   height: 600px;
 }

@@ -23,25 +23,37 @@ export default class ChartBPMList extends Array<ChartBPM> {
     return this;
   }
 
-  remove(index: number) {
-    if (this.length === 1) throw new Error('Cannot remove BPM when only one BPM exists.');
+  remove(id: string) {
+    if (this.length === 1) return;
 
-    this.splice(index, 1);
+    const bpmIndex = this.findIndex((e) => e.id === id);
+    if (bpmIndex === -1) return;
+
+    this.splice(bpmIndex, 1);
     this.calcRealTime();
     return this;
   }
 
-  edit(index: number, newBPM?: number, newBeat?: BeatArray) {
-    const bpm = this[index];
-    if (!bpm) throw new Error(`BPM index #${index} not found`);
+  edit(id: string, newBPM?: number, newBeat?: BeatArray) {
+    const bpm = this.findByID(id);
+    if (!bpm) return;
 
     if (newBPM) bpm.bpm = newBPM;
-    if (newBeat) {
-      bpm.beat = newBeat;
-      bpm.beatNum = BeatArrayToNumber(newBeat);
-    }
+    if (newBeat) bpm.beat = newBeat;
 
-    if (newBPM || newBeat) this.calcRealTime();
+    bpm.update();
+    this.calcRealTime();
+    return bpm;
+  }
+
+  findByID(id: string) {
+    const bpm = this.find((e) => e.id === id);
+    return bpm;
+  }
+
+  findByTime(beat: BeatArray) {
+    const beatNum = BeatArrayToNumber(beat);
+    const bpm = this.find((e) => e.beatNum === beatNum);
     return bpm;
   }
 

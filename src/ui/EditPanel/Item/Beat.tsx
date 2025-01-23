@@ -1,5 +1,5 @@
 import Container from './Container';
-import Input from '../Input/Number';
+import Input from '../../components/NumberInput';
 import { PanelItemPropsBase } from '../types';
 import { BeatArray } from '@/utils/types';
 import { useCallback, useState } from 'react';

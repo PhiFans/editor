@@ -1,5 +1,5 @@
 import Container from './Container';
-import Input from '../Input/Number';
+import Input from '../../components/NumberInput';
 import Slider from '../Input/Slider';
 import { PanelItemPropsBase } from "../types";
 import { useCallback, useState } from 'react';
