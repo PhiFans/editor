@@ -29,6 +29,7 @@ type Item = ItemKeyframe | ItemNote;
 const EditPanel: React.FC = () => {
   const [ selectedItem, ] = useSelectedItem()!;
   const [ item, setItem ] = useState<Nullable<Item>>(null);
+  const [ id, setId ] = useState<Nullable<string>>(null);
 
   const handleValueChanged = useCallback((newProp: Record<string, string | number | boolean | BeatArray>) => {
     if (!selectedItem || !item) return;
@@ -69,6 +70,7 @@ const EditPanel: React.FC = () => {
       )
     ) {
       setItem(null);
+      setId(null);
       return;
     }
 
@@ -87,6 +89,7 @@ const EditPanel: React.FC = () => {
             keyframe,
           },
         });
+        setId(keyframe.id);
       }
     }
 
@@ -97,6 +100,7 @@ const EditPanel: React.FC = () => {
         const note = line.findNoteById(selectedItem.note.id);
         if (!note) return;
         setItem({ type: 'note', item: note });
+        setId(note.id);
       }
     }
   }, [selectedItem]);
@@ -105,6 +109,7 @@ const EditPanel: React.FC = () => {
     <div className="edit-panel">
       {item ? (
         <List
+          id={id !== null ? id : 'unselected'}
           items={(
             (item.item instanceof Array) ? (
               []

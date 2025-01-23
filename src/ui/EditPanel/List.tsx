@@ -42,11 +42,13 @@ type EditPanelItemBeat = EditPanelItemBase & {
 export type EditPanelItem = EditPanelItemNumber | EditPanelItemString | EditPanelItemBoolean | EditPanelItemDropdown | EditPanelItemBeat;
 
 type EditPanelListProps = {
+  id: string,
   items: EditPanelItem[],
   onChanged: (newProp: Record<string, string | number | boolean | BeatArray>) => void,
 };
 
 const EditPanelList = ({
+  id,
   items,
   onChanged,
 }: EditPanelListProps) => {
@@ -61,17 +63,19 @@ const EditPanelList = ({
   return (
     <div className="edit-panel-list">
       {items.map((item) => {
+        const itemKey = `${id}.${item.key}`;
+
         if (item.type === 'beat') return (
-          <InputBeat label={item.label} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={item.key} />
+          <InputBeat label={item.label} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={itemKey} />
         );
         if (item.type === 'number') return (
-          <InputNumber label={item.label} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={item.key} />
+          <InputNumber label={item.label} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={itemKey} />
         );
         if (item.type === 'boolean') return (
-          <InputBoolean label={item.label} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={item.key} />
+          <InputBoolean label={item.label} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={itemKey} />
         );
         if (item.type === 'dropdown') return (
-          <InputDropdown label={item.label} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={item.key} />
+          <InputDropdown label={item.label} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={itemKey} />
         );
         return null;
       })}
