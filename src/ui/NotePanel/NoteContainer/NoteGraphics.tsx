@@ -155,7 +155,7 @@ const NoteGraphics = ({
 
   const noteScale = width / NOTE_SCALE;
   const currentTime = useClockTime().beat - timeOffset;
-  const timeRange = timeRangeEnd + timeOffset;
+  const timeRange = timeRangeEnd + currentTime;
 
   const handleNoteChanged = useCallback((id: string, time: BeatArray, timeEnd: BeatArray, positionX: number) => {
     line.editNote(
