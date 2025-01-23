@@ -55,10 +55,10 @@ export default class ChartNote {
     this.speed = speed;
     this.isAbove = isAbove;
 
+    this.beatNum = BeatArrayToNumber(this.beat);
     this.holdEndBeat = this.type === NoteType.HOLD && holdEndBeat ? holdEndBeat : this.beat;
 
     // TODO: Auto-generating these
-    this.beatNum = BeatArrayToNumber(this.beat);
     this.time = 0;
     this.floorPosition = 0;
 
@@ -72,8 +72,8 @@ export default class ChartNote {
       this.holdEndBeatNum = this.beatNum;
     }
 
-    this.holdEndTime = this.type === NoteType.HOLD ? 0 : this.time;
+    this.holdEndTime = this.time;
     this.holdLengthBeatNum = this.type === NoteType.HOLD ? this.holdEndBeatNum - this.beatNum : 0;
-    this.holdLengthTime = this.type === NoteType.HOLD ? 0 : 0;
+    this.holdLengthTime = 0;
   }
 }

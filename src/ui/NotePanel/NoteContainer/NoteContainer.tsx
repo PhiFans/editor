@@ -7,8 +7,10 @@ import ChartJudgeline from '@/Chart/Judgeline';
 import useTimeRange from './TimeRange';
 import BeatGraphics from './BeatGraphics';
 import NoteGraphics from './NoteGraphics';
-import { Nullable } from '@/utils/types';
+import { BeatArray, Nullable } from '@/utils/types';
 import { useProps } from '../PropsContext';
+import useWrite from './useWrite';
+import { ChartNoteProps } from '@/Chart/Note';
 
 const NOTE_OFFSET = 50;
 
@@ -21,7 +23,7 @@ const NoteContainer = ({
 }: NoteContainerProps) => {
   extend({ Container, Sprite });
 
-  const { scale } = useProps();
+  const { scale, writeMode } = useProps();
   const timeOffset = useCallback(() => {
     return NOTE_OFFSET / scale;
   }, [scale])();
@@ -47,6 +49,30 @@ const NoteContainer = ({
       else return null;
     });
   }, [setSelectedItem]);
+
+  const handleHoldAddStart = useCallback((props: Omit<ChartNoteProps, 'line'>, id: string) => {
+    if (!line) return;
+    line.addNote(props, id);
+  }, [line]);
+
+  const handleHoldAdding = useCallback((props: { holdEndBeat: BeatArray }, id: string) => {
+    if (!line) return;
+    line.editNote(id, props);
+  }, [line]);
+
+  const handleNewNoteAdded = useCallback((props: Omit<ChartNoteProps, 'line'>) => {
+    if (!line) return;
+    line.addNote(props);
+  }, [line]);
+
+  const { onClick } = useWrite({
+    width: size[0],
+    height: size[1],
+    onAddStart: handleHoldAddStart,
+    onAdding: handleHoldAdding,
+    onAdded: handleNewNoteAdded,
+    timeOffset,
+  });
 
   useEffect(() => {
     updateSize();
@@ -89,7 +115,7 @@ const NoteContainer = ({
             width={size[0]} height={size[1]}
             hitArea={new Rectangle(0, -size[1], size[0], size[1])}
             eventMode='static'
-            onMouseDown={handleEmptySelect}
+            onMouseDown={writeMode !== null && line ? onClick : handleEmptySelect}
             zIndex={3}
           />
           {line && (

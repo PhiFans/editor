@@ -85,6 +85,20 @@ export default class ChartJudgeline {
     return keyframeArr.find((e) => e.id === id);
   }
 
+  addNote(props: Omit<ChartNoteProps, 'line'>, id = uuid()) {
+    const note = this.calcNoteTime(new Note({
+      ...props,
+      line: this,
+    }, id));
+    this.notes.push(note);
+    this.sortNotes();
+
+    this.events.emit('note.added', note);
+    this.events.emit('notes.updated', [ ...this.notes ]);
+
+    return note;
+  }
+
   editNote(id: string, newProps: Partial<Omit<ChartNoteProps, 'line'>>) {
     const note = this.findNoteById(id);
     if (!note) throw new Error(`Cannot find note ID: "${id}" for line "${this.id}"`);
@@ -99,6 +113,8 @@ export default class ChartJudgeline {
 
     note.beatNum = BeatArrayToNumber(note.beat);
     note.updateHoldProps();
+    this.calcNoteTime(note);
+    this.sortNotes();
 
     this.events.emit('notes.updated', [ ...this.notes ]);
   }
@@ -132,5 +148,17 @@ export default class ChartJudgeline {
     this.props.positionY = this.calcPropTime(this.props.positionY);
     this.props.alpha = this.calcPropTime(this.props.alpha);
     this.props.rotate = this.calcPropTime(this.props.rotate);
+  }
+
+  private sortNotes() {
+    this.notes.sort((a, b) => BeatArrayToNumber(a.beat) - BeatArrayToNumber(b.beat));
+  }
+
+  private calcNoteTime(note: Note) {
+    note.time = this.bpm.getRealTime(note.beat);
+    note.holdEndTime = this.bpm.getRealTime(note.holdEndBeat);
+    note.holdLengthTime = note.holdEndTime - note.time;
+
+    return note;
   }
 }

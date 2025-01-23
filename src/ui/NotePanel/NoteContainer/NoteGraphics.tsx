@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unknown-property */
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { extend } from '@pixi/react';
 import { Container, EventMode, Sprite, Texture } from 'pixi.js';
 import { useClockTime } from '@/ui/contexts/Clock';
@@ -11,7 +11,7 @@ import { useTempo } from '@/ui/contexts/Tempo';
 import { useProps } from '../PropsContext';
 import ChartNote from '@/Chart/Note';
 import { BeatArray, Point } from '@/utils/types';
-import { BeatNumberToArray, GridValue, parseDoublePrecist } from '@/utils/math';
+import { BeatNumberToArray, GridValue } from '@/utils/math';
 
 const NOTE_SCALE = 5000;
 
@@ -23,6 +23,7 @@ const getNoteTexture = (type: NoteType) => {
 
 type NoteProps = {
   note: ChartNote,
+  holdLength: number,
   width: number,
   scale: number,
   noteScale: number,
@@ -32,6 +33,7 @@ type NoteProps = {
 
 const Note = React.memo(function Note ({
   note,
+  holdLength,
   width,
   scale,
   noteScale,
@@ -42,8 +44,8 @@ const Note = React.memo(function Note ({
 
   const widthHalf = useMemo(() => width / 2, [width]);
   const tempo = useTempo();
-  const { align } = useProps();
-  const tempoGrid = useMemo(() => parseDoublePrecist(1 / tempo, 6, -1), [tempo]);
+  const { align, writeMode } = useProps();
+  const tempoGrid = useMemo(() => 1 / tempo, [tempo]);
   const beatGrid = useMemo(() => tempoGrid * scale, [tempoGrid, scale]);
   const alignPercent = useMemo(() => 1 / align, [align]);
   const alignGrid = useMemo(() => width * alignPercent, [width, alignPercent]);
@@ -52,7 +54,7 @@ const Note = React.memo(function Note ({
   const [ posX, setPosX ] = useState(note.positionX);
   const notePosX = posX * widthHalf + widthHalf;
   const notePosY = time * -scale;
-  const noteLength = note.holdLengthBeatNum * scale / noteScale;
+  const noteLength = holdLength * scale / noteScale;
 
   const calculateNewTime = useCallback((y: number) => {
     return GridValue(note.beatNum - (y / beatGrid / tempo), tempoGrid);
@@ -100,7 +102,7 @@ const Note = React.memo(function Note ({
     alpha: isDragging ? 0.6 : 1,
     scale: noteScale,
     eventMode: 'static' as EventMode,
-    onMouseDown,
+    onMouseDown: writeMode === null ? onMouseDown : null,
     cursor: 'pointer',
   };
 
@@ -151,6 +153,7 @@ const NoteGraphics = ({
 }: NoteGraphicsProps) => {
   extend({ Container });
 
+  const [ notes, setNotes ] = useState<ChartNote[]>([ ...line.notes ]);
   const [ , setSelectedItem ] = useSelectedItem()!;
 
   const noteScale = width / NOTE_SCALE;
@@ -178,16 +181,28 @@ const NoteGraphics = ({
     });
   }, [line, setSelectedItem]);
 
+  const updateNote = useCallback((notes: ChartNote[]) => {
+    setNotes(notes);
+  }, []);
+
+  useEffect(() => {
+    line.events.on('notes.updated', updateNote);
+    return (() => {
+      line.events.off('notes.updated', updateNote);
+    });
+  }, [line, updateNote]);
+
   const noteSprites = (() => {
     const result = [];
 
-    for (const note of line.notes) {
+    for (const note of notes) {
       if (note.holdEndBeatNum < currentTime) continue;
       if (note.beatNum > timeRange) break;
 
       result.push(
         <Note
           note={note}
+          holdLength={note.holdLengthBeatNum}
           width={width}
           scale={scale}
           noteScale={noteScale}
