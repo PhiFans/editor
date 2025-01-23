@@ -69,6 +69,15 @@ const useWrite = ({
     }
   }, [onAdding, tempo, posToTime]);
 
+  const handleMoveEnd = useCallback(() => {
+    window.removeEventListener('mousemove', handleMoving);
+    window.removeEventListener('mousedown', handleMoveEnd);
+
+    posDiff.current = null;
+    holdPropRef.current = null;
+    holdIDRef.current = null;
+  }, [handleMoving]);
+
   const handleClicked = useCallback((e: PixiPointEvent) => {
     if (writeMode === null) return;
     e.preventDefault();
@@ -99,22 +108,19 @@ const useWrite = ({
         };
 
         onAddStart(holdProps, holdID);
+
         posDiff.current = { x: clientX - x, y: clientY - y };
         holdPropRef.current = holdProps;
         holdIDRef.current = holdID;
+
         window.addEventListener('mousemove', handleMoving);
-      } else {
-        posDiff.current = null;
-        holdPropRef.current = null;
-        holdIDRef.current = null;
-        window.removeEventListener('mousemove', handleMoving);
+        window.addEventListener('mousedown', handleMoveEnd);
       }
     }
-  }, [onAddStart, onAdded, tempo, writeMode, posToPositionX, posToTime, handleMoving]);
+  }, [writeMode, posToPositionX, posToTime, onAdded, tempo, onAddStart, handleMoving, handleMoveEnd]);
 
   return {
     onClick: handleClicked,
-    onMouseMove: handleMoving,
   };
 };
 

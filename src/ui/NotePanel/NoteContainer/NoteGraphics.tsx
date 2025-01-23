@@ -23,6 +23,9 @@ const getNoteTexture = (type: NoteType) => {
 
 type NoteProps = {
   note: ChartNote,
+  type: NoteType,
+  beat: number,
+  positionX: number,
   holdLength: number,
   width: number,
   scale: number,
@@ -33,6 +36,9 @@ type NoteProps = {
 
 const Note = React.memo(function Note ({
   note,
+  type,
+  beat,
+  positionX,
   holdLength,
   width,
   scale,
@@ -50,20 +56,20 @@ const Note = React.memo(function Note ({
   const alignPercent = useMemo(() => 1 / align, [align]);
   const alignGrid = useMemo(() => width * alignPercent, [width, alignPercent]);
   const [isDragging, setIsDragging] = useState(false);
-  const [ time, setTime ] = useState(note.beatNum);
-  const [ posX, setPosX ] = useState(note.positionX);
+  const [ time, setTime ] = useState(beat);
+  const [ posX, setPosX ] = useState(positionX);
   const notePosX = posX * widthHalf + widthHalf;
   const notePosY = time * -scale;
   const noteLength = holdLength * scale / noteScale;
 
   const calculateNewTime = useCallback((y: number) => {
-    return GridValue(note.beatNum - (y / beatGrid / tempo), tempoGrid);
-  }, [note.beatNum, beatGrid, tempo, tempoGrid]);
+    return GridValue(beat - (y / beatGrid / tempo), tempoGrid);
+  }, [beat, beatGrid, tempo, tempoGrid]);
 
   const calculateNewPositionX = useCallback((x: number) => {
-    const newValue = GridValue((note.positionX + (x / widthHalf) + 1) / 2, alignPercent);
+    const newValue = GridValue((positionX + (x / widthHalf) + 1) / 2, alignPercent);
     return (newValue - 0.5) * 2;
-  }, [note.positionX, widthHalf, alignPercent]);
+  }, [positionX, widthHalf, alignPercent]);
 
   const handleDragging = useCallback(({ x, y }: Point) => {
     setTime(calculateNewTime(y));
@@ -74,13 +80,13 @@ const Note = React.memo(function Note ({
   const handleDragEnd = useCallback(({ x, y }: Point) => {
     const newTime = calculateNewTime(y);
     const newPosX = calculateNewPositionX(x);
-    const newHoldEnd = note.holdEndBeatNum + (newTime - note.beatNum);
+    const newHoldEnd = note.holdEndBeatNum + (newTime - beat);
 
     setTime(newTime);
     setPosX(newPosX);
     setIsDragging(false);
     onChanged(note.id, BeatNumberToArray(newTime, tempo), BeatNumberToArray(newHoldEnd, tempo), newPosX);
-  }, [note.holdEndBeatNum, note.beatNum, note.id, onChanged, tempo, calculateNewTime, calculateNewPositionX]);
+  }, [note.holdEndBeatNum, beat, note.id, onChanged, tempo, calculateNewTime, calculateNewPositionX]);
 
   const handleClicked = useCallback(() => {
     onSelected(note.id);
@@ -96,6 +102,11 @@ const Note = React.memo(function Note ({
     onClick: handleClicked,
   });
 
+  useEffect(() => {
+    setTime(beat);
+    setPosX(positionX);
+  }, [beat, positionX]);
+
   const noteEventProps = {
     x: notePosX,
     y: notePosY,
@@ -107,9 +118,9 @@ const Note = React.memo(function Note ({
   };
 
   return (<>
-    {note.type !== NoteType.HOLD ? (
+    {type !== NoteType.HOLD ? (
       <pixiSprite
-        texture={Texture.from(getNoteTexture(note.type))}
+        texture={Texture.from(getNoteTexture(type))}
         anchor={0.5}
         {...noteEventProps}
       />
@@ -202,6 +213,9 @@ const NoteGraphics = ({
       result.push(
         <Note
           note={note}
+          type={note.type}
+          beat={note.beatNum}
+          positionX={note.positionX}
           holdLength={note.holdLengthBeatNum}
           width={width}
           scale={scale}
