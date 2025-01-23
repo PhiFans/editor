@@ -8,11 +8,8 @@ import TimelineRightPanel from './RightPanel/RightPanel';
 import ScaleContext from './ScaleContext';
 import './styles.css';
 
-export type TimelineProps = {
-  timeLength: number,
-};
-
-const Timeline: React.FC<TimelineProps> = ({ timeLength }: TimelineProps) => {
+const Timeline: React.FC = () => {
+  const [ timeLength, setTimeLength ] = useState(0);
   const [ lineList, setLineList ] = useState<ChartJudgeline[]>([]);
   const [ expandedLines, setExpandedLines ] = useState<number[]>([]);
   const [ contentScale, setContentScale ] = useState(205);
@@ -25,6 +22,19 @@ const Timeline: React.FC<TimelineProps> = ({ timeLength }: TimelineProps) => {
   const updateContentScale = (scale: number) => {
     setContentScale(10 + (scale / 100) * 390);
   };
+
+  useEffect(() => {
+    const updateTimeLength = () => {
+      setTimeLength(App.chart!.beatDuration);
+    };
+
+    App.events.once('chart.audioClip.loaded', updateTimeLength);
+    App.events.on('chart.bpms.updated', updateTimeLength);
+
+    return (() => {
+      App.events.off('chart.bpms.updated', updateTimeLength);
+    });
+  }, []);
 
   useEffect(() => {
     const updateLineList = (newLines: ChartJudgeline[]) => {

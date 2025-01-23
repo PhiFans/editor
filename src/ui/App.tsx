@@ -12,7 +12,6 @@ import BPMPanel from './BPMPanel/BPMPanel';
 
 function App() {
   const [ tempo, setTempo ] = useState(4);
-  const [ timeLength, setTimeLength ] = useState(0);
   let importedMusic: Nullable<File> = null;
 
   const onImportAudio = () => {
@@ -35,10 +34,6 @@ function App() {
       level: 'test',
       designer: 'test'
     }, importedMusic, importedMusic, true);
-    // XXX: This is the stupid way
-    GlobalApp.events.once('chart.audioClip.loaded', () => {
-      setTimeLength(GlobalApp.chart!.beatDuration);
-    });
   };
 
   const handleTempoUpdate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +68,7 @@ function App() {
       <SelectedItemProvider>
         <TempoContext.Provider value={tempo}>
           <ClockTimeProvider>
-            <Timeline timeLength={timeLength} />
+            <Timeline />
             <div className='panel-test-container'>
               <div className='note-panel-test-container'>
                 <NotePanel />
