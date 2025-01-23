@@ -70,6 +70,21 @@ export default class ChartJudgeline {
     this.events.emit('props.updated', { type, keyframes: [ ...keyframeArr ] });
   }
 
+  deleteKeyframe(type: keyof TChartJudgelineProps, id: string) {
+    const keyframeArr = this.props[type];
+    if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
+    if (keyframeArr.length === 1) return;
+
+    const keyframeIndex = keyframeArr.findIndex((e) => e.id === id);
+    if (keyframeIndex === -1) throw new Error(`Cannot find keyframe ID: "${id}" for props ${type}`);
+
+    // const keyframe = keyframeArr[keyframeIndex];
+    keyframeArr.splice(keyframeIndex, 1);
+
+    this.calcPropsTime();
+    this.events.emit('props.updated', { type, keyframes: [ ...keyframeArr ] });
+  }
+
   findKeyframeByBeat(type: keyof TChartJudgelineProps, beat: BeatArray) {
     const keyframeArr = this.props[type];
     if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
@@ -116,6 +131,17 @@ export default class ChartJudgeline {
     this.calcNoteTime(note);
     this.sortNotes();
 
+    this.events.emit('notes.updated', [ ...this.notes ]);
+  }
+
+  deleteNote(id: string) {
+    const noteIndex = this.notes.findIndex((e) => e.id === id);
+    if (noteIndex === -1) throw new Error(`Cannot find note ID: "${id}" for line "${this.id}"`);
+
+    const note = this.notes[noteIndex];
+    this.notes.splice(noteIndex, 1);
+
+    this.events.emit('note.removed', note);
     this.events.emit('notes.updated', [ ...this.notes ]);
   }
 

@@ -14,12 +14,14 @@ type KeyframeProps = {
   keyframe: ChartKeyframe,
   onSelected: (id: string) => void,
   onKeyframeMove: (id: string, newBeat: BeatArray) => void,
+  onRightClicked: (id: string) => void,
 };
 
 const Keyframe: React.FC<KeyframeProps> = ({
   keyframe,
   onSelected,
   onKeyframeMove,
+  onRightClicked,
 }) => {
   const tempo = useTempo();
   const scale = useScale();
@@ -65,6 +67,11 @@ const Keyframe: React.FC<KeyframeProps> = ({
     onClick: handleSelected,
   });
 
+  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (e.button === 2) return onRightClicked(keyframe.id);
+    else return onMouseDown(e);
+  }, [keyframe.id, onRightClicked, onMouseDown]);
+
   const className = "timeline-content-key" + (isSelected() ? " selected" : "");
 
   return <div
@@ -73,7 +80,7 @@ const Keyframe: React.FC<KeyframeProps> = ({
       "--point-time": currentTime,
       "--point-value": keyframe.value,
     })}
-    onMouseDown={onMouseDown}
+    onMouseDown={handleMouseDown}
   ></div>
 };
 
@@ -84,6 +91,7 @@ export type TimelineRightPanelKeyframesProps = {
   onKeyframeSelected: (type: keyof TChartJudgelineProps, id: string) => void,
   onDoubleClick: (type: keyof TChartJudgelineProps, clickedPosX: number) => void,
   onKeyframeMove: (type: keyof TChartJudgelineProps, id: string, newBeat: BeatArray) => void,
+  onKeyframeDeleted: (type: keyof TChartJudgelineProps, id: string) => void,
 };
 
 const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = ({
@@ -93,6 +101,7 @@ const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = 
   onKeyframeSelected,
   onDoubleClick,
   onKeyframeMove,
+  onKeyframeDeleted,
 }: TimelineRightPanelKeyframesProps) => {
   const handleKeyframeSelected = useCallback((id: string) => {
     onKeyframeSelected(type, id);
@@ -108,6 +117,10 @@ const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = 
     onKeyframeMove(type, id, newBeat);
   }, [type, onKeyframeMove]);
 
+  const handleKeyframeRightClick = useCallback((id: string) => {
+    onKeyframeDeleted(type, id);
+  }, [type, onKeyframeDeleted]);
+
   const keyframesDom = useMemo(() => {
     const result: React.ReactNode[] = [];
 
@@ -121,13 +134,14 @@ const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = 
           keyframe={keyframe}
           onSelected={handleKeyframeSelected}
           onKeyframeMove={handleKeyframeMove}
+          onRightClicked={handleKeyframeRightClick}
           key={keyframe.id}
         />
       );
     }
 
     return result;
-  }, [keyframes, timeRange, handleKeyframeMove, handleKeyframeSelected]);
+  }, [keyframes, timeRange, handleKeyframeMove, handleKeyframeSelected, handleKeyframeRightClick]);
 
   return (
     <TimelineListItem onDoubleClick={onRowDoubleClick}>

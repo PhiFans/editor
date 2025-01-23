@@ -85,6 +85,7 @@ const NoteContainer = ({
   return (
     <div
       className="note-container"
+      onContextMenu={(e) => e.preventDefault()}
       ref={containerRef}
     >
       <Application

@@ -39,8 +39,19 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
   }, [scale, tempo, line]);
 
   const onKeyframeMove = useCallback((type: keyof TChartJudgelineProps, id: string, newBeat: BeatArray) => {
-    setSelectedItem(null);
+    setSelectedItem((oldItem) => {
+      if (oldItem !== null) return { ...oldItem, keyframe: null };
+      else return null;
+    });
     line.editKeyframe(type, id, { beat: newBeat });
+  }, [line, setSelectedItem]);
+
+  const onKeyframeDeleted = useCallback((type: keyof TChartJudgelineProps, id: string) => {
+    setSelectedItem((oldItem) => {
+      if (oldItem !== null) return { ...oldItem, keyframe: null };
+      else return null;
+    });
+    line.deleteKeyframe(type, id);
   }, [line, setSelectedItem]);
 
   const handlePropsUpdate = useCallback(({
@@ -75,49 +86,41 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
     });
   }, [line, handlePropsUpdate]);
 
+  const keyframesProps = {
+    timeRange,
+    onKeyframeSelected: handleKeyframeSelected,
+    onDoubleClick: onAddKeyframe,
+    onKeyframeMove,
+    onKeyframeDeleted,
+  };
+
   return <>
     <TimelineListItem />
     {isExpanded && <>
       <Keyframes
         type='speed'
         keyframes={lineProp.speed}
-        timeRange={timeRange}
-        onKeyframeSelected={handleKeyframeSelected}
-        onDoubleClick={onAddKeyframe}
-        onKeyframeMove={onKeyframeMove}
+        {...keyframesProps}
       />
       <Keyframes
         type='positionX'
         keyframes={lineProp.positionX}
-        timeRange={timeRange}
-        onKeyframeSelected={handleKeyframeSelected}
-        onDoubleClick={onAddKeyframe}
-        onKeyframeMove={onKeyframeMove}
-
+        {...keyframesProps}
       />
       <Keyframes
         type='positionY'
         keyframes={lineProp.positionY}
-        timeRange={timeRange}
-        onKeyframeSelected={handleKeyframeSelected}
-        onDoubleClick={onAddKeyframe}
-        onKeyframeMove={onKeyframeMove}
+        {...keyframesProps}
       />
       <Keyframes
         type='rotate'
         keyframes={lineProp.rotate}
-        timeRange={timeRange}
-        onKeyframeSelected={handleKeyframeSelected}
-        onDoubleClick={onAddKeyframe}
-        onKeyframeMove={onKeyframeMove}
+        {...keyframesProps}
       />
       <Keyframes
         type='alpha'
         keyframes={lineProp.alpha}
-        timeRange={timeRange}
-        onKeyframeSelected={handleKeyframeSelected}
-        onDoubleClick={onAddKeyframe}
-        onKeyframeMove={onKeyframeMove}
+        {...keyframesProps}
       />
     </>}
   </>

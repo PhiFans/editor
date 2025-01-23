@@ -54,6 +54,7 @@ const RangeContainer: React.FC<RangeContainerProps> = ({
         '--time-length': timeLength,
       } as React.CSSProperties}
       onScroll={(e) => onContainerScrolled(e.nativeEvent)}
+      onContextMenu={(e) => e.preventDefault()}
       ref={containerRef}
     >
       {children}

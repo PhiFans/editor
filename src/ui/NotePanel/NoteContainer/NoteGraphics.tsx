@@ -32,6 +32,7 @@ type NoteProps = {
   noteScale: number,
   onChanged: (id: string, time: BeatArray, timeEnd: BeatArray, positionX: number) => void,
   onSelected: (id: string) => void,
+  onRightClicked: (id: string) => void,
 };
 
 const Note = React.memo(function Note ({
@@ -45,6 +46,7 @@ const Note = React.memo(function Note ({
   noteScale,
   onChanged,
   onSelected,
+  onRightClicked,
 }: NoteProps) {
   extend({ Container, Sprite });
 
@@ -92,6 +94,10 @@ const Note = React.memo(function Note ({
     onSelected(note.id);
   }, [onSelected, note.id]);
 
+  const handleRightClicked = useCallback(() => {
+    onRightClicked(note.id);
+  }, [note.id, onRightClicked]);
+
   const { onMouseDown } = useDrag({
     grid: {
       x: alignGrid,
@@ -114,6 +120,7 @@ const Note = React.memo(function Note ({
     scale: noteScale,
     eventMode: 'static' as EventMode,
     onMouseDown: writeMode === null ? onMouseDown : null,
+    onRightDown: handleRightClicked,
     cursor: 'pointer',
   };
 
@@ -196,6 +203,14 @@ const NoteGraphics = ({
     setNotes(notes);
   }, []);
 
+  const handleNoteDeleted = useCallback((id: string) => {
+    setSelectedItem((oldItem) => {
+      if (oldItem !== null) return { ...oldItem, note: null };
+      else return null;
+    })
+    line.deleteNote(id);
+  }, [line, setSelectedItem]);
+
   useEffect(() => {
     line.events.on('notes.updated', updateNote);
     return (() => {
@@ -222,6 +237,7 @@ const NoteGraphics = ({
           noteScale={noteScale}
           onChanged={handleNoteChanged}
           onSelected={handleNoteSelected}
+          onRightClicked={handleNoteDeleted}
           key={note.id}
         />
       );
