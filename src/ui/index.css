@@ -30,14 +30,14 @@ body {
   align-items: stretch;
 }
 
-#root .dock-panel {
+#root > .dock-panel {
   position: relative;
   width: 100%;
   height: 100%;
   flex: 1;
 }
 
-#root .dock-panel .dock-layout {
+#root > .dock-panel .dock-layout {
   width: 100%;
   height: 100%;
 }
