@@ -11,6 +11,7 @@ import { BeatArray, Nullable } from '@/utils/types';
 import { useProps } from '../PropsContext';
 import useWrite from './useWrite';
 import { ChartNoteProps } from '@/Chart/Note';
+import useWheel from './useWheel';
 
 const NOTE_OFFSET = 50;
 
@@ -79,6 +80,7 @@ const NoteContainer = ({
     line.addNote(props);
   }, [line]);
 
+  const { onWheel } = useWheel();
   const { onClick } = useWrite({
     width: size[0],
     height: size[1],
@@ -106,6 +108,7 @@ const NoteContainer = ({
     <div
       className="note-container"
       onContextMenu={(e) => e.preventDefault()}
+      onWheel={onWheel}
       ref={containerRef}
     >
       <Application
