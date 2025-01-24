@@ -31,12 +31,14 @@ const NoteContainer = ({
   const [, setSelectedItem ] = useSelectedItem()!;
   const containerRef = useRef<Nullable<HTMLDivElement>>(null);
   const appRef = useRef<Nullable<ApplicationRef>>(null);
+  const hitAreaRef = useRef<Nullable<Container>>(null);
   const timeRangeEnd = useTimeRange({ ref: containerRef, scale });
   const [ size, setSize ] = useState<[number, number]>([1, 1]);
 
   const updateSize = useCallback(() => {
     const containerDom = containerRef.current;
     if (!containerDom) return;
+    const { clientWidth, clientHeight } = containerDom;
 
     if (!appRef.current) return;
     const app = appRef.current.getApplication();
@@ -44,9 +46,15 @@ const NoteContainer = ({
 
     app.resize();
     setSize([
-      containerDom.clientWidth,
-      containerDom.clientHeight
+      clientWidth,
+      clientHeight
     ]);
+
+    const hitArea = hitAreaRef.current;
+    if (!hitArea) return;
+    (hitArea.hitArea as Rectangle).y = -clientHeight;
+    (hitArea.hitArea as Rectangle).width = clientWidth;
+    (hitArea.hitArea as Rectangle).height = clientHeight;
   }, []);
 
   const handleEmptySelect = useCallback(() => {
@@ -103,6 +111,9 @@ const NoteContainer = ({
       <Application
         backgroundAlpha={0}
         resizeTo={containerRef}
+        onInit={() => {
+          updateSize();
+        }}
         ref={appRef}
       >
         <pixiContainer
@@ -126,11 +137,11 @@ const NoteContainer = ({
           />
           <pixiContainer
             x={0} y={0}
-            width={size[0]} height={size[1]}
-            hitArea={new Rectangle(0, -size[1], size[0], size[1])}
+            hitArea={new Rectangle(0, -1, 1, 1)}
             eventMode='static'
             onMouseDown={writeMode !== null && line ? onClick : handleEmptySelect}
             zIndex={3}
+            ref={hitAreaRef}
           />
           {line && (
             <NoteGraphics
