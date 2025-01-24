@@ -23,6 +23,7 @@
     "eventemitter3": "^5.0.1",
     "hotkeys-js": "^3.13.9",
     "pixi.js": "^8.6.6",
+    "rc-dock": "^3.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-split-pane": "^0.1.92",

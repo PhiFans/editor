@@ -1,3 +1,6 @@
+/* @import url('rc-dock/dist/rc-dock.css'); */
+@import url('rc-dock/dist/rc-dock-dark.css');
+
 html.is-dragging.drag-horizontal,
 html.is-dragging.drag-horizontal * {
   cursor: ew-resize !important;
@@ -12,8 +15,31 @@ html.is-dragging.drag-all * {
 }
 
 body {
+  margin: 0;
   background-color: var(--background-primary-color);
   color: var(--text-primary-color);
+}
+
+#root {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+#root .dock-panel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}
+
+#root .dock-panel .dock-layout {
+  width: 100%;
+  height: 100%;
 }
 
 .panel-test-container {

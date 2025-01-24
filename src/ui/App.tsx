@@ -1,14 +1,9 @@
-import ClockTimeProvider from './contexts/Clock/Provider';
-import Timeline from './Timeline/Timeline';
-import NotePanel from './NotePanel/NotePanel';
 import GlobalApp from '@/App/App';
+import TempoContext from './contexts/Tempo';
+import DockPanel from './DockPanel/DockPanel';
 import { PopupReadFiles } from '@/utils/file';
 import { Nullable } from '@/utils/types';
 import { useCallback, useState } from 'react';
-import TempoContext from './contexts/Tempo';
-import SelectedItemProvider from './contexts/SelectedItem/Provider';
-import EditPanel from './EditPanel/EditPanel';
-import BPMPanel from './BPMPanel/BPMPanel';
 
 function App() {
   const [ tempo, setTempo ] = useState(4);
@@ -65,24 +60,9 @@ function App() {
           />
         </label>
       </div>
-      <SelectedItemProvider>
-        <TempoContext.Provider value={tempo}>
-          <ClockTimeProvider>
-            <Timeline />
-            <div className='panel-test-container'>
-              <div className='note-panel-test-container'>
-                <NotePanel />
-              </div>
-              <div className='bpm-panel-test-container'>
-                <BPMPanel />
-              </div>
-            </div>
-          </ClockTimeProvider>
-        </TempoContext.Provider>
-        <div className='edit-panel-container'>
-          <EditPanel />
-        </div>
-      </SelectedItemProvider>
+      <TempoContext.Provider value={tempo}>
+        <DockPanel />
+      </TempoContext.Provider>
     </>
   );
 }
