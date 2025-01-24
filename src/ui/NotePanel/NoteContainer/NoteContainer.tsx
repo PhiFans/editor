@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unknown-property */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Application, extend } from '@pixi/react';
+import { Application, ApplicationRef, extend } from '@pixi/react';
 import { Container, Rectangle, Sprite, Texture } from 'pixi.js';
 import { useSelectedItem } from '@/ui/contexts/SelectedItem';
 import ChartJudgeline from '@/Chart/Judgeline';
@@ -30,6 +30,7 @@ const NoteContainer = ({
 
   const [, setSelectedItem ] = useSelectedItem()!;
   const containerRef = useRef<Nullable<HTMLDivElement>>(null);
+  const appRef = useRef<Nullable<ApplicationRef>>(null);
   const timeRangeEnd = useTimeRange({ ref: containerRef, scale });
   const [ size, setSize ] = useState<[number, number]>([1, 1]);
 
@@ -37,6 +38,11 @@ const NoteContainer = ({
     const containerDom = containerRef.current;
     if (!containerDom) return;
 
+    if (!appRef.current) return;
+    const app = appRef.current.getApplication();
+    if (!app) return;
+
+    app.resize();
     setSize([
       containerDom.clientWidth,
       containerDom.clientHeight
@@ -75,10 +81,16 @@ const NoteContainer = ({
   });
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
     updateSize();
-    window.addEventListener('resize', updateSize);
+    const resize = new ResizeObserver(() => {
+      updateSize();
+    });
+    resize.observe(containerRef.current);
+
     return (() => {
-      window.removeEventListener('resize', updateSize);
+      resize.disconnect();
     });
   }, [updateSize]);
 
@@ -91,6 +103,7 @@ const NoteContainer = ({
       <Application
         backgroundAlpha={0}
         resizeTo={containerRef}
+        ref={appRef}
       >
         <pixiContainer
           y={size[1]}

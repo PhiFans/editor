@@ -31,19 +31,23 @@ const RangeContainer: React.FC<RangeContainerProps> = ({
   }, [updateTimeRange]);
 
   useEffect(() => {
-    const updateContainerWidth = () => {
-      const containerDom = containerRef.current;
-      if (!containerDom) return;
+    if (!containerRef.current) return;
 
+    const updateContainerWidth = () => {
+      const containerDom = containerRef.current!;
       containerWidth.current = containerDom.clientWidth;
       updateTimeRange();
     };
 
     updateContainerWidth();
-    window.addEventListener('resize', updateContainerWidth);
-    return (() => {
-      window.removeEventListener('resize', updateContainerWidth);
+    const resize = new ResizeObserver(() => {
+      updateContainerWidth();
     });
+    resize.observe(containerRef.current);
+
+    return (() => {
+      resize.disconnect();
+    })
   }, [updateTimeRange]);
 
   return (

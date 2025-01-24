@@ -22,6 +22,7 @@ const dockLayout: LayoutData = {
                   {
                     id: 'note-panel',
                     title: 'Note panel',
+                    cached: true,
                     content: (<NotePanel />),
                   }
                 ]
@@ -31,6 +32,7 @@ const dockLayout: LayoutData = {
                   {
                     id: 'live-preview',
                     title: 'Live preview',
+                    cached: true,
                     content: (<div className='live-preview'></div>)
                   }
                 ]
@@ -43,6 +45,7 @@ const dockLayout: LayoutData = {
               {
                 id: 'timeline',
                 title: 'Timeline',
+                cached: true,
                 content: (<Timeline />)
               }
             ]
@@ -55,11 +58,13 @@ const dockLayout: LayoutData = {
           {
             id: 'edit-panel',
             title: 'Edit panel',
+            cached: true,
             content: (<EditPanel />),
           },
           {
             id: 'bpm-panel',
             title: 'BPM',
+            cached: true,
             content: (<BPMPanel />)
           }
         ]
