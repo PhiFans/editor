@@ -2,24 +2,40 @@ import { useCallback } from 'react';
 import Container from './Container';
 import { PanelItemPropsBase } from '../types';
 
-export type DropdownProps = PanelItemPropsBase<string> & {
+export type DropdownPropsBase = PanelItemPropsBase<string | number> & {
+  type?: 'string' | 'number',
   options: {
-    value: string,
+    value: string | number,
     label: string,
     disabled?: boolean,
   }[],
 };
 
+export type DropdownPropsNumber = DropdownPropsBase & {
+  type: 'number',
+  onChanged: (newValue: number) => void,
+  options: {
+    value: number,
+    label: string,
+    disabled?: boolean,
+  }[],
+  defaultValue?: number,
+};
+
+export type DropdownProps = DropdownPropsBase | DropdownPropsNumber;
+
 const EditPanelDropdown = ({
   label,
   options,
+  type = 'string',
   onChanged,
   defaultValue,
 }: DropdownProps) => {
   const handleValueChanged = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const target = e.target as HTMLSelectElement;
-    onChanged(target.value);
-  }, [onChanged]);
+    if (type === 'number') onChanged(parseFloat(target.value));
+    else onChanged(target.value);
+  }, [type, onChanged]);
 
   return (
     <Container title={label}>

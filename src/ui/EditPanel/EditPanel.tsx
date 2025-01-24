@@ -39,7 +39,6 @@ const EditPanel: React.FC = () => {
       if (item.item instanceof Array) {
         // TODO: Multi note edit
       } else {
-        if (newProp['type']) newProp['type'] = parseInt(newProp['type'] as string);
         if (newProp['positionX']) newProp['positionX'] = (newProp['positionX'] as number) / 100;
 
         line.editNote(

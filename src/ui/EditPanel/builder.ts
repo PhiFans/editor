@@ -62,22 +62,23 @@ export const NotePanelBuilderSingle = (note: ChartNote): EditPanelItem[] => ([
     type: 'dropdown',
     key: 'type',
     props: {
+      type: 'number',
       options: [
         {
           label: 'Tap',
-          value: `${NoteType.TAP}`,
+          value: NoteType.TAP,
         },
         {
           label: 'Drag',
-          value: `${NoteType.DRAG}`,
+          value: NoteType.DRAG,
         },
         {
           label: 'Hold',
-          value: `${NoteType.HOLD}`,
+          value: NoteType.HOLD,
         },
         {
           label: 'Flick',
-          value: `${NoteType.FLICK}`,
+          value: NoteType.FLICK,
         },
       ],
       defaultValue: note.type,
