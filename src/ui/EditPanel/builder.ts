@@ -1,5 +1,6 @@
 import ChartNote from "@/Chart/Note";
 import { EditPanelItem } from "./List";
+import { EasingNames } from "@/utils/easings";
 import { NoteType } from "@/Chart/types";
 import ChartKeyframe from "@/Chart/Keyframe";
 
@@ -33,25 +34,14 @@ export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelIt
     type: 'dropdown',
     key: 'easing',
     props: {
-      defaultValue: `${keyframe.easing}`,
-      options: [
-        {
-          label: 'Linear',
-          value: '1',
-        },
-        {
-          label: 'EaseIn',
-          value: '2',
-        },
-        {
-          label: 'EaseOut',
-          value: '3',
-        },
-        {
-          label: 'EaseInOut',
-          value: '4',
-        },
-      ]
+      type: 'number',
+      defaultValue: keyframe.easing,
+      options: (EasingNames.map((name, index) => {
+        return {
+          label: name,
+          value: index,
+        }
+      }))
     },
   }
 ]);

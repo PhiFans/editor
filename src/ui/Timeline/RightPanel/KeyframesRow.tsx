@@ -35,7 +35,7 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
       beatSub = 0;
     }
 
-    line.addKeyframe(type, [ beatFloor, beatSub, tempo ], 1, false, 1);
+    line.addKeyframe(type, [ beatFloor, beatSub, tempo ], 1, false, 0);
   }, [scale, tempo, line]);
 
   const onKeyframeMove = useCallback((type: keyof TChartJudgelineProps, id: string, newBeat: BeatArray) => {
