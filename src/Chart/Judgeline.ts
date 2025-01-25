@@ -6,6 +6,7 @@ import JudgelineProps, { TChartJudgelineProps } from './JudgelineProps';
 import ChartKeyframe, { TChartKeyframe } from './Keyframe';
 import Note, { ChartNoteProps } from './Note';
 import { BeatArrayToNumber } from '@/utils/math';
+import { Container, Sprite, Texture } from 'pixi.js';
 
 const PropsSortFn = (a: ChartKeyframe, b: ChartKeyframe) => a.beatNum - b.beatNum;
 
@@ -18,12 +19,14 @@ export default class ChartJudgeline {
   notes: Note[] = [];
 
   readonly events: EventEmitter = new EventEmitter();
+  sprite!: Sprite;
 
   constructor(bpmList: ChartBPMList, id = uuid()) {
     this.id = id;
     this.bpm = bpmList;
 
     this.calcPropsTime();
+    this.createSprite();
   }
 
   addKeyframe(
@@ -107,6 +110,7 @@ export default class ChartJudgeline {
     }, id));
     this.notes.push(note);
     this.sortNotes();
+    this.sprite.parent.addChild(note.sprite!);
 
     this.events.emit('note.added', note);
     this.events.emit('notes.updated', [ ...this.notes ]);
@@ -130,6 +134,7 @@ export default class ChartJudgeline {
     note.updateHoldProps();
     this.calcNoteTime(note);
     this.sortNotes();
+    if (newProps['type'] !== (void 0)) note.createSprite(this.sprite.parent);
 
     this.events.emit('notes.updated', [ ...this.notes ]);
   }
@@ -140,6 +145,8 @@ export default class ChartJudgeline {
 
     const note = this.notes[noteIndex];
     this.notes.splice(noteIndex, 1);
+    note.sprite!.removeFromParent();
+    note.sprite!.destroy();
 
     this.events.emit('note.removed', note);
     this.events.emit('notes.updated', [ ...this.notes ]);
@@ -147,6 +154,17 @@ export default class ChartJudgeline {
 
   findNoteById(id: string) {
     return this.notes.find((e) => e.id === id);
+  }
+
+  createSprite(container?: Container) {
+    this.sprite = new Sprite(Texture.WHITE);
+
+    this.sprite.width = 1920;
+    this.sprite.height = 3;
+    this.sprite.anchor.set(0.5);
+
+    if (container) container.addChild(this.sprite);
+    return this.sprite;
   }
 
   private sortProps() {

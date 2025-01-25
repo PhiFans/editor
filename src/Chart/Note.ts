@@ -3,6 +3,13 @@ import ChartJudgeline from './Judgeline';
 import { BeatArrayToNumber } from '@/utils/math';
 import { NoteType } from './types';
 import { BeatArray } from '@/utils/types';
+import { Sprite, Container, Texture } from 'pixi.js';
+
+const getNoteTexture = (type: NoteType) => {
+  if (type === NoteType.DRAG) return 'note-drag';
+  else if (type === NoteType.FLICK) return 'note-flick';
+  else return 'note-tap';
+};
 
 export type ChartNoteProps = {
   line: ChartJudgeline,
@@ -36,6 +43,8 @@ export default class ChartNote {
   holdLengthTime!: number;
   floorPosition: number;
 
+  sprite?: Sprite | Container;
+
   constructor({
     line,
     type,
@@ -63,6 +72,7 @@ export default class ChartNote {
     this.floorPosition = 0;
 
     this.updateHoldProps();
+    this.createSprite();
   }
 
   updateHoldProps() {
@@ -75,5 +85,43 @@ export default class ChartNote {
     this.holdEndTime = this.time;
     this.holdLengthBeatNum = this.type === NoteType.HOLD ? this.holdEndBeatNum - this.beatNum : 0;
     this.holdLengthTime = 0;
+  }
+
+  createSprite(container?: Container) {
+    if (this.sprite) {
+      if (this.sprite.parent) this.sprite.parent.removeChild(this.sprite);
+      this.sprite.destroy();
+      this.sprite = (void 0);
+    }
+
+    if (this.type !== NoteType.HOLD) this.sprite = this.createSpriteNonHold();
+    else this.sprite = this.createSpriteHold();
+
+    if (container) container.addChild(this.sprite);
+    return this.sprite;
+  }
+
+  private createSpriteNonHold() {
+    const sprite = new Sprite(Texture.from(getNoteTexture(this.type)));
+    sprite.anchor.set(0.5);
+    return sprite;
+  }
+
+  private createSpriteHold() {
+    const container = new Container();
+    const holdHead = new Sprite(Texture.from('note-hold-head'));
+    const holdBody = new Sprite(Texture.from('note-hold-body'));
+    const holdEnd = new Sprite(Texture.from('note-hold-end'));
+
+    holdHead.anchor.set(0.5, 0);
+    holdBody.anchor.set(0.5, 1);
+    holdEnd.anchor.set(0.5, 1);
+
+    container.addChild(
+      holdHead,
+      holdBody,
+      holdEnd
+    );
+    return container;
   }
 }

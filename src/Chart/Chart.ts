@@ -6,6 +6,8 @@ import ChartJudgeline from './Judgeline';
 import ChartNote from './Note';
 import { ChartInfo } from './types';
 import { BeatArray } from '@/utils/types';
+import { Container } from 'pixi.js';
+import { CalculateRendererSize } from '@/utils/renderer';
 
 export default class Chart {
   info: ChartInfo;
@@ -17,7 +19,9 @@ export default class Chart {
   lines: ChartJudgeline[] = [];
   notes: ChartNote[] = [];
 
+  container = new Container();
   audioClip!: AudioClip;
+  rendererSize = CalculateRendererSize(1, 1);
 
   constructor(info: ChartInfo, audio: File, background: File) {
     this.info = info;
@@ -61,6 +65,7 @@ export default class Chart {
   addLine() {
     const newLine = new ChartJudgeline(this.bpm);
     this.lines.push(newLine);
+    this.container.addChild(newLine.sprite);
 
     App.events.emit('chart.lines.added', newLine);
     App.events.emit('chart.lines.updated', this.lines);

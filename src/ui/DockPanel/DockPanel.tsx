@@ -1,5 +1,6 @@
 import DockLayout, { LayoutData } from 'rc-dock';
 import NotePanel from '../NotePanel/NotePanel';
+import PreviewPanel from '../PreviewPanel/PreviewPanel';
 import Timeline from '../Timeline/Timeline';
 import EditPanel from '../EditPanel/EditPanel';
 import BPMPanel from '../BPMPanel/BPMPanel';
@@ -33,7 +34,7 @@ const dockLayout: LayoutData = {
                     id: 'live-preview',
                     title: 'Live preview',
                     cached: true,
-                    content: (<div className='live-preview'></div>)
+                    content: (<PreviewPanel />)
                   }
                 ]
               },

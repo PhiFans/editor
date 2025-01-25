@@ -1,0 +1,24 @@
+.live-preview {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.live-preview .preview-canvas {
+  position: relative;
+  flex: 1;
+}
+
+.live-preview .preview-canvas .canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
