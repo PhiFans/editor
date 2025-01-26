@@ -5,7 +5,7 @@ import ChartBPMList from './BPMList';
 import ChartJudgeline from './Judgeline';
 import ChartNote from './Note';
 import { ChartInfo } from './types';
-import { BeatArray } from '@/utils/types';
+import { BeatArray, RendererSize } from '@/utils/types';
 import { Container } from 'pixi.js';
 import { CalculateRendererSize } from '@/utils/renderer';
 
@@ -63,7 +63,7 @@ export default class Chart {
   }
 
   addLine() {
-    const newLine = new ChartJudgeline(this.bpm);
+    const newLine = new ChartJudgeline(this);
     this.lines.push(newLine);
     this.container.addChild(newLine.sprite);
 
@@ -86,6 +86,19 @@ export default class Chart {
   removeBPM(id: string) {
     this.bpm.remove(id);
     App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
+  }
+
+  resize(size: RendererSize) {
+    this.rendererSize = size;
+
+    this.container.position.set(
+      size.widthRealHalf,
+      size.heightHalf
+    );
+
+    for (const line of this.lines) {
+      line.resize(size);
+    }
   }
 
   get status() {

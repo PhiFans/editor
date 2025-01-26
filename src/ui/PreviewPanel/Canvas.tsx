@@ -27,10 +27,7 @@ const PreviewCanvas = () => {
     app.resize();
     const size = CalculateRendererSize(clientWidth, clientHeight);
     sizeRef.current = size;
-
-    if (appContainerRef.current)
-      appContainerRef.current.position.set(size.widthRealHalf, size.heightHalf);
-    if (App.chart) App.chart.rendererSize = size;
+    if (App.chart) App.chart.resize(size);
   }, []);
 
   const handleChartChanged = () => {
@@ -44,7 +41,7 @@ const PreviewCanvas = () => {
       }
     }
 
-    App.chart.rendererSize = sizeRef.current;
+    App.chart.resize(sizeRef.current);
     container.addChild(App.chart.container);
   };
 

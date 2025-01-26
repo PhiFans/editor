@@ -1,29 +1,29 @@
 import { v4 as uuid } from 'uuid';
 import { EventEmitter } from 'eventemitter3';
-import { BeatArray } from '@/utils/types';
-import ChartBPMList from './BPMList';
+import { BeatArray, RendererSize } from '@/utils/types';
 import JudgelineProps, { TChartJudgelineProps } from './JudgelineProps';
 import ChartKeyframe, { TChartKeyframe } from './Keyframe';
 import Note, { ChartNoteProps } from './Note';
 import { BeatArrayToNumber } from '@/utils/math';
 import { Container, Sprite, Texture } from 'pixi.js';
+import Chart from './Chart';
 
 const PropsSortFn = (a: ChartKeyframe, b: ChartKeyframe) => a.beatNum - b.beatNum;
 
 export default class ChartJudgeline {
   /** Internal property */
   readonly id: string;
+  readonly chart: Chart;
 
-  bpm: ChartBPMList;
   props = new JudgelineProps();
   notes: Note[] = [];
 
   readonly events: EventEmitter = new EventEmitter();
   sprite!: Sprite;
 
-  constructor(bpmList: ChartBPMList, id = uuid()) {
+  constructor(chart: Chart, id = uuid()) {
     this.id = id;
-    this.bpm = bpmList;
+    this.chart = chart;
 
     this.calcPropsTime();
     this.createSprite();
@@ -68,7 +68,7 @@ export default class ChartJudgeline {
     }
 
     keyframe.beatNum = BeatArrayToNumber(keyframe.beat);
-    keyframe.time = this.bpm.getRealTime(keyframe.beat);
+    keyframe.time = this.chart.bpm.getRealTime(keyframe.beat);
 
     this.calcPropsTime();
     this.events.emit('props.updated', { type, keyframes: [ ...keyframeArr ] });
@@ -111,6 +111,8 @@ export default class ChartJudgeline {
     }, id));
     this.notes.push(note);
     this.sortNotes();
+
+    note.resize(this.chart.rendererSize);
     this.sprite.parent.addChild(note.sprite!);
 
     this.events.emit('note.added', note);
@@ -135,6 +137,8 @@ export default class ChartJudgeline {
     note.updateHoldProps();
     this.calcNoteTime(note);
     this.sortNotes();
+
+    note.resize(this.chart.rendererSize);
     if (newProps['type'] !== (void 0)) note.createSprite(this.sprite.parent);
 
     this.events.emit('notes.updated', [ ...this.notes ]);
@@ -168,6 +172,17 @@ export default class ChartJudgeline {
     return this.sprite;
   }
 
+  resize(size: RendererSize) {
+    const scaleX = Math.round((4000 / 1920) * (size.width / 1350) * 1920);
+    const scaleY = Math.round(size.lineScale * 18.75 * 0.008);
+
+    this.sprite.scale.set(scaleX, scaleY);
+
+    for (const note of this.notes) {
+      note.resize(size);
+    }
+  }
+
   private sortProps() {
     this.props.speed.sort(PropsSortFn);
     this.props.positionX.sort(PropsSortFn);
@@ -181,7 +196,7 @@ export default class ChartJudgeline {
       const keyframe = keyframes[i];
       const keyframePrev = keyframes[i - 1];
 
-      if (isNaN(keyframe.time)) keyframe.time = this.bpm.getRealTime(keyframe.beat);
+      if (isNaN(keyframe.time)) keyframe.time = this.chart.bpm.getRealTime(keyframe.beat);
       if (keyframePrev) {
         if (keyframe.continuous) keyframe.nextKeyframe = keyframePrev;
         else keyframe.nextKeyframe = null;
@@ -206,8 +221,8 @@ export default class ChartJudgeline {
   }
 
   private calcNoteTime(note: Note) {
-    note.time = this.bpm.getRealTime(note.beat);
-    note.holdEndTime = this.bpm.getRealTime(note.holdEndBeat);
+    note.time = this.chart.bpm.getRealTime(note.beat);
+    note.holdEndTime = this.chart.bpm.getRealTime(note.holdEndBeat);
     note.holdLengthTime = note.holdEndTime - note.time;
 
     return note;

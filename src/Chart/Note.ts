@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid';
 import ChartJudgeline from './Judgeline';
 import { BeatArrayToNumber } from '@/utils/math';
 import { NoteType } from './types';
-import { BeatArray } from '@/utils/types';
+import { BeatArray, RendererSize } from '@/utils/types';
 import { Sprite, Container, Texture } from 'pixi.js';
 
 const getNoteTexture = (type: NoteType) => {
@@ -41,7 +41,10 @@ export default class ChartNote {
   holdEndTime!: number;
   holdLengthBeatNum!: number;
   holdLengthTime!: number;
+
   floorPosition: number;
+  holdLength!: number;
+  holdEndPosition!: number;
 
   sprite?: Sprite | Container;
 
@@ -85,6 +88,9 @@ export default class ChartNote {
     this.holdEndTime = this.time;
     this.holdLengthBeatNum = this.type === NoteType.HOLD ? this.holdEndBeatNum - this.beatNum : 0;
     this.holdLengthTime = 0;
+
+    this.holdLength = 0;
+    this.holdEndPosition = 0;
   }
 
   createSprite(container?: Container) {
@@ -99,6 +105,18 @@ export default class ChartNote {
 
     if (container) container.addChild(this.sprite);
     return this.sprite;
+  }
+
+  resize(size: RendererSize) {
+    if (!this.sprite) return;
+
+    if (this.type === NoteType.HOLD) {
+      const holdLength = this.holdLength * this.speed / size.noteScale;
+      this.sprite.children[1].height = holdLength;
+      this.sprite.children[2].position.y = -holdLength;
+    }
+
+    this.sprite.scale.set(size.noteScale);
   }
 
   private createSpriteNonHold() {
