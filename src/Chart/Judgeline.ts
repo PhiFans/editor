@@ -68,6 +68,7 @@ export default class ChartJudgeline {
     }
 
     keyframe.beatNum = BeatArrayToNumber(keyframe.beat);
+    keyframe.time = this.bpm.getRealTime(keyframe.beat);
 
     this.calcPropsTime();
     this.events.emit('props.updated', { type, keyframes: [ ...keyframeArr ] });
@@ -176,9 +177,15 @@ export default class ChartJudgeline {
   }
 
   private calcPropTime(keyframes: ChartKeyframe[]) {
-    for (const keyframe of keyframes) {
-      if (!isNaN(keyframe.time)) continue;
-      keyframe.time = this.bpm.getRealTime(keyframe.beat);
+    for (let i = 0; i < keyframes.length; i++) {
+      const keyframe = keyframes[i];
+      const keyframePrev = keyframes[i - 1];
+
+      if (isNaN(keyframe.time)) keyframe.time = this.bpm.getRealTime(keyframe.beat);
+      if (keyframePrev) {
+        if (keyframe.continuous) keyframe.nextKeyframe = keyframePrev;
+        else keyframe.nextKeyframe = null;
+      }
     }
 
     return keyframes;
