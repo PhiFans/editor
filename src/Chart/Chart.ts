@@ -4,6 +4,7 @@ import AudioClip, { EAudioClipStatus } from '@/Audio/Clip';
 import ChartBPMList from './BPMList';
 import ChartJudgeline from './Judgeline';
 import ChartNote from './Note';
+import ChartTick from './Tick';
 import { ChartInfo } from './types';
 import { BeatArray, RendererSize } from '@/utils/types';
 import { Container } from 'pixi.js';
@@ -22,6 +23,7 @@ export default class Chart {
   container = new Container();
   audioClip!: AudioClip;
   rendererSize = CalculateRendererSize(1, 1);
+  tick: () => void;
 
   constructor(info: ChartInfo, audio: File, background: File) {
     this.info = info;
@@ -29,6 +31,7 @@ export default class Chart {
     this.background = background;
 
     // Init
+    this.tick = ChartTick.bind(this);
     this.addLine();
     AudioClip.from(audio, Audio.channels.music)
       .then((clip) => {

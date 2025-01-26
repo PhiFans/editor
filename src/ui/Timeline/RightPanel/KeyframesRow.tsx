@@ -6,8 +6,24 @@ import { useScale } from '../ScaleContext';
 import ChartJudgeline from '@/Chart/Judgeline';
 import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
 import ChartKeyframe from '@/Chart/Keyframe';
-import { BeatArray } from '@/utils/types';
+import { BeatArray, Nullable } from '@/utils/types';
 import { useSelectedItem } from '@/ui/contexts/SelectedItem';
+import { BeatArrayToNumber } from '@/utils/math';
+
+const getLastKeyframe = (beat: BeatArray, keyframes: ChartKeyframe[]): Nullable<ChartKeyframe> => {
+  const time = BeatArrayToNumber(beat);
+
+  for (let i = 0; i < keyframes.length; i++) {
+    const keyframe = keyframes[i];
+    if (keyframe.beatNum < time) continue;
+    if (keyframe.beatNum > time) {
+      if (i === 0) break;
+      return keyframes[i - 1];
+    }
+  }
+
+  return null;
+}
 
 type KeyframesRowProps = {
   line: ChartJudgeline,
@@ -35,7 +51,15 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
       beatSub = 0;
     }
 
-    line.addKeyframe(type, [ beatFloor, beatSub, tempo ], 1, false, 0);
+    const beatArr: BeatArray = [ beatFloor, beatSub, tempo ];
+    const lastKeyframe = getLastKeyframe(beatArr, line.props[type]);
+    line.addKeyframe(
+      type,
+      beatArr,
+      lastKeyframe ? lastKeyframe.value : 0,
+      lastKeyframe ? lastKeyframe.continuous : false,
+      lastKeyframe ? lastKeyframe.easing : 0
+    );
   }, [scale, tempo, line]);
 
   const onKeyframeMove = useCallback((type: keyof TChartJudgelineProps, id: string, newBeat: BeatArray) => {

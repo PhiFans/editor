@@ -5,6 +5,15 @@ import { NoteType } from "@/Chart/types";
 import ChartKeyframe from "@/Chart/Keyframe";
 
 export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelItem[] => {
+  const valueItem: EditPanelItem = {
+    label: 'Value',
+    type: 'number',
+    key: 'value',
+    props: {
+      defaultValue: keyframe.value,
+    }
+  };
+
   const result: EditPanelItem[] = [
     {
       label: 'Time',
@@ -14,14 +23,7 @@ export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelIt
         defaultValue: keyframe.beat,
       },
     },
-    {
-      label: 'Value',
-      type: 'number',
-      key: 'value',
-      props: {
-        defaultValue: keyframe.value,
-      }
-    },
+    valueItem,
     {
       label: 'Continuous',
       type: 'boolean',
@@ -31,6 +33,12 @@ export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelIt
       }
     }
   ];
+
+  if (keyframe.type === 'alpha') {
+    valueItem.props.min = 0;
+    valueItem.props.max = 255;
+    valueItem.props.step = 1;
+  }
 
   if (keyframe.type !== 'speed') result.push({
     label: 'Easing',

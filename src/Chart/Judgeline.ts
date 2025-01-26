@@ -18,6 +18,15 @@ export default class ChartJudgeline {
   props = new JudgelineProps();
   notes: Note[] = [];
 
+  // Used for live preview
+  _speed: number = 1;
+  _posX: number = 0;
+  _posY: number = 0;
+  _alpha: number = 1;
+  _rotate: number = 0;
+  _realPosX: number = 0;
+  _realPosY: number = 0;
+
   readonly events: EventEmitter = new EventEmitter();
   sprite!: Sprite;
 
@@ -194,12 +203,15 @@ export default class ChartJudgeline {
   private calcPropTime(keyframes: ChartKeyframe[]) {
     for (let i = 0; i < keyframes.length; i++) {
       const keyframe = keyframes[i];
-      const keyframePrev = keyframes[i - 1];
+      const keyframeNext = keyframes[i + 1];
 
       if (isNaN(keyframe.time)) keyframe.time = this.chart.bpm.getRealTime(keyframe.beat);
-      if (keyframePrev) {
-        if (keyframe.continuous) keyframe.nextKeyframe = keyframePrev;
-        else keyframe.nextKeyframe = null;
+
+      if (!keyframeNext) continue;
+      if (keyframeNext.continuous) {
+        keyframe.nextKeyframe = keyframeNext
+      } else {
+        keyframe.nextKeyframe = null;
       }
     }
 

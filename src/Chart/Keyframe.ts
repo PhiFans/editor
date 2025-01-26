@@ -23,7 +23,6 @@ export default class ChartKeyframe implements TChartKeyframe {
   easing: number;
 
   time: number;
-  lastKeyframe: Nullable<ChartKeyframe> = null;
   nextKeyframe: Nullable<ChartKeyframe> = null;
 
   constructor(
