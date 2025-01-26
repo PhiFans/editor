@@ -192,6 +192,13 @@ export default class ChartJudgeline {
     }
   }
 
+  calcAllTime() {
+    this.calcPropsTime(true);
+    for (const note of this.notes) {
+      this.calcNoteTime(note);
+    }
+  }
+
   private sortProps() {
     this.props.speed.sort(PropsSortFn);
     this.props.positionX.sort(PropsSortFn);
@@ -200,12 +207,12 @@ export default class ChartJudgeline {
     this.props.rotate.sort(PropsSortFn);
   }
 
-  private calcPropTime(keyframes: ChartKeyframe[]) {
+  private calcPropTime(keyframes: ChartKeyframe[], forceUpdateTime = false) {
     for (let i = 0; i < keyframes.length; i++) {
       const keyframe = keyframes[i];
       const keyframeNext = keyframes[i + 1];
 
-      if (isNaN(keyframe.time)) keyframe.time = this.chart.bpm.getRealTime(keyframe.beat);
+      if (isNaN(keyframe.time) || forceUpdateTime) keyframe.time = this.chart.bpm.getRealTime(keyframe.beat);
 
       if (!keyframeNext) continue;
       if (keyframeNext.continuous) {
@@ -218,14 +225,14 @@ export default class ChartJudgeline {
     return keyframes;
   }
 
-  private calcPropsTime() {
+  private calcPropsTime(forceUpdateTime = false) {
     this.sortProps();
 
-    this.props.speed = this.calcPropTime(this.props.speed);
-    this.props.positionX = this.calcPropTime(this.props.positionX);
-    this.props.positionY = this.calcPropTime(this.props.positionY);
-    this.props.alpha = this.calcPropTime(this.props.alpha);
-    this.props.rotate = this.calcPropTime(this.props.rotate);
+    this.props.speed = this.calcPropTime(this.props.speed, forceUpdateTime);
+    this.props.positionX = this.calcPropTime(this.props.positionX, forceUpdateTime);
+    this.props.positionY = this.calcPropTime(this.props.positionY, forceUpdateTime);
+    this.props.alpha = this.calcPropTime(this.props.alpha, forceUpdateTime);
+    this.props.rotate = this.calcPropTime(this.props.rotate, forceUpdateTime);
   }
 
   private sortNotes() {

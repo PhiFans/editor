@@ -78,16 +78,19 @@ export default class Chart {
 
   addBPM(time: BeatArray, bpm: number) {
     this.bpm.add(time, bpm);
+    this.updateLinesTime();
     App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }
 
   editBPM(id: string, newBeat?: BeatArray, newBPM?: number) {
     this.bpm.edit(id, newBPM, newBeat);
+    this.updateLinesTime();
     App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }
 
   removeBPM(id: string) {
     this.bpm.remove(id);
+    this.updateLinesTime();
     App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }
 
@@ -101,6 +104,12 @@ export default class Chart {
 
     for (const line of this.lines) {
       line.resize(size);
+    }
+  }
+
+  private updateLinesTime() {
+    for (const line of this.lines) {
+      line.calcAllTime();
     }
   }
 
