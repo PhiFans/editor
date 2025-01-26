@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { BeatArrayToNumber } from '@/utils/math';
 import { BeatArray, Nullable } from '@/utils/types';
+import ChartJudgelineProps from './JudgelineProps';
 
 export type TChartKeyframe = {
   beat: BeatArray;
@@ -13,6 +14,7 @@ export type TChartKeyframe = {
 export default class ChartKeyframe implements TChartKeyframe {
   /** Internal property */
   readonly id: string;
+  readonly type: keyof ChartJudgelineProps;
 
   beat: BeatArray;
   beatNum: number;
@@ -25,6 +27,7 @@ export default class ChartKeyframe implements TChartKeyframe {
   nextKeyframe: Nullable<ChartKeyframe> = null;
 
   constructor(
+    type: keyof ChartJudgelineProps,
     beat: BeatArray,
     value: number,
     continuous: boolean,
@@ -32,6 +35,7 @@ export default class ChartKeyframe implements TChartKeyframe {
     id = uuid()
   ) {
     if (BeatArrayToNumber(beat) < 0) throw new Error('Cannot set a negative beat to keyframe!');
+    this.type = type;
     this.id = id;
 
     this.beat = beat;

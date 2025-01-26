@@ -40,7 +40,7 @@ export default class ChartJudgeline {
     if (!keyframeArr || !(keyframeArr instanceof Array)) throw new Error(`No such type: ${type}`);
     if (this.findKeyframeByBeat(type, beat)) return;
 
-    const newKeyframe = new ChartKeyframe(beat, value, continuous, easing);
+    const newKeyframe = new ChartKeyframe(type, beat, value, continuous, easing);
     keyframeArr.push(newKeyframe);
 
     this.calcPropsTime();

@@ -4,32 +4,35 @@ import { EasingNames } from "@/utils/easings";
 import { NoteType } from "@/Chart/types";
 import ChartKeyframe from "@/Chart/Keyframe";
 
-export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelItem[] => ([
-  {
-    label: 'Time',
-    type: 'beat',
-    key: 'beat',
-    props: {
-      defaultValue: keyframe.beat,
+export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelItem[] => {
+  const result: EditPanelItem[] = [
+    {
+      label: 'Time',
+      type: 'beat',
+      key: 'beat',
+      props: {
+        defaultValue: keyframe.beat,
+      },
     },
-  },
-  {
-    label: 'Value',
-    type: 'number',
-    key: 'value',
-    props: {
-      defaultValue: keyframe.value,
+    {
+      label: 'Value',
+      type: 'number',
+      key: 'value',
+      props: {
+        defaultValue: keyframe.value,
+      }
+    },
+    {
+      label: 'Continuous',
+      type: 'boolean',
+      key: 'continuous',
+      props: {
+        defaultValue: keyframe.continuous,
+      }
     }
-  },
-  {
-    label: 'Continuous',
-    type: 'boolean',
-    key: 'continuous',
-    props: {
-      defaultValue: keyframe.continuous,
-    }
-  },
-  {
+  ];
+
+  if (keyframe.type !== 'speed') result.push({
     label: 'Easing',
     type: 'dropdown',
     key: 'easing',
@@ -43,8 +46,10 @@ export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelIt
         }
       }))
     },
-  }
-]);
+  });
+
+  return result;
+};
 
 export const NotePanelBuilderSingle = (note: ChartNote): EditPanelItem[] => ([
   {
