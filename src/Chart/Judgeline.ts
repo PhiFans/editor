@@ -177,8 +177,8 @@ export default class ChartJudgeline {
     this.calcNoteTime(note);
     this.sortNotes();
 
-    note.resize(this.chart.rendererSize);
     if (newProps['type'] !== (void 0)) note.createSprite(this.sprite.parent);
+    note.resize(this.chart.rendererSize);
 
     this.events.emit('notes.updated', [ ...this.notes ]);
   }
