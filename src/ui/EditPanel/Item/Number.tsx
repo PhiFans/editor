@@ -26,12 +26,8 @@ const EditPanelNumber = ({
 
   const handleValueChanged = useCallback((newVal: number) => {
     setValue(newVal);
-  }, []);
-
-  const handleValueInput = useCallback((newVal: number) => {
-    handleValueChanged(newVal);
     onChanged(newVal);
-  }, [handleValueChanged, onChanged]);
+  }, [onChanged]);
 
   const inputDom = (
     <Input
@@ -41,7 +37,6 @@ const EditPanelNumber = ({
       defaultValue={value}
       placeholder={`${placeholder ?? ''}`}
       onChanged={handleValueChanged}
-      onInput={handleValueInput}
     />
   );
 
@@ -55,7 +50,6 @@ const EditPanelNumber = ({
             step={step}
             defaultValue={value}
             onChanged={handleValueChanged}
-            onInput={handleValueInput}
           />
           {inputDom}
         </>

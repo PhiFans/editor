@@ -29,7 +29,7 @@ const EditPanelBeat = ({
         min={0}
         step={1}
         defaultValue={value[0]}
-        onInput={(e) => handleInput(0, e)}
+        onChanged={(e) => handleInput(0, e)}
       />
       <span className='hr'>:</span>
       <Input
@@ -37,14 +37,14 @@ const EditPanelBeat = ({
         max={value[2] - 1}
         step={1}
         defaultValue={value[1]}
-        onInput={(e) => handleInput(1, e)}
+        onChanged={(e) => handleInput(1, e)}
       />
       <span className='hr'>/</span>
       <Input
         min={1}
         step={1}
         defaultValue={value[2]}
-        onInput={(e) => handleInput(2, e)}
+        onChanged={(e) => handleInput(2, e)}
       />
     </Container>
   )
