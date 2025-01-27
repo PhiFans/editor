@@ -82,6 +82,9 @@ export default class ChartJudgeline {
     if (!keyframe) throw new Error(`Cannot find keyframe ID: "${id}" for props ${type}`);
     if (newProps.beat && this.findKeyframeByBeat(type, newProps.beat)) return;
 
+    const prevKeyframe = keyframeArr.find((e) => e.nextKeyframe && e.nextKeyframe.id === keyframe.id);
+    if (prevKeyframe) prevKeyframe.nextKeyframe = null;
+
     for (const name in newProps) {
       // XXX: This sucks
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -109,6 +112,9 @@ export default class ChartJudgeline {
 
     const keyframeIndex = keyframeArr.findIndex((e) => e.id === id);
     if (keyframeIndex === -1) throw new Error(`Cannot find keyframe ID: "${id}" for props ${type}`);
+
+    const prevKeyframe = keyframeArr.find((e) => e.nextKeyframe && e.nextKeyframe.id === id);
+    if (prevKeyframe) prevKeyframe.nextKeyframe = null;
 
     // const keyframe = keyframeArr[keyframeIndex];
     keyframeArr.splice(keyframeIndex, 1);
