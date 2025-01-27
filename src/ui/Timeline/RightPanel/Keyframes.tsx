@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import TimelineListItem from '../List/Item';
 import { useTempo } from '@/ui/contexts/Tempo';
 import { useScale } from '../ScaleContext';
@@ -8,10 +8,12 @@ import { setCSSProperties } from '@/utils/ui';
 import { BeatNumberToArray, GridValue, parseDoublePrecist } from '@/utils/math';
 import ChartKeyframe from '@/Chart/Keyframe';
 import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
-import { BeatArray } from '@/utils/types';
+import { BeatArray, Nullable } from '@/utils/types';
 
 type KeyframeProps = {
   keyframe: ChartKeyframe,
+  time: number,
+  nextTime: Nullable<number>,
   onSelected: (id: string) => void,
   onKeyframeMove: (id: string, newBeat: BeatArray) => void,
   onRightClicked: (id: string) => void,
@@ -19,6 +21,8 @@ type KeyframeProps = {
 
 const Keyframe: React.FC<KeyframeProps> = ({
   keyframe,
+  time,
+  nextTime,
   onSelected,
   onKeyframeMove,
   onRightClicked,
@@ -28,7 +32,7 @@ const Keyframe: React.FC<KeyframeProps> = ({
   const tempoGrid = useMemo(() => parseDoublePrecist(1 / tempo, 6, -1), [tempo]);
   const beatGrid = useMemo(() => tempoGrid * scale, [tempoGrid, scale]);
   const [ selectedItem, ] = useSelectedItem()!;
-  const [ currentTime, setCurrentTime ] = useState(keyframe.beatNum);
+  const [ currentTime, setCurrentTime ] = useState(time);
 
   const isSelected = () => {
     if (selectedItem === null) return false;
@@ -72,16 +76,33 @@ const Keyframe: React.FC<KeyframeProps> = ({
     else return onMouseDown(e);
   }, [keyframe.id, onRightClicked, onMouseDown]);
 
+  useEffect(() => {
+    setCurrentTime(time);
+  }, [time]);
+
   const className = "timeline-content-key" + (isSelected() ? " selected" : "");
 
-  return <div
-    className={className}
-    style={setCSSProperties({
-      "--point-time": currentTime,
-      "--point-value": keyframe.value,
-    })}
-    onMouseDown={handleMouseDown}
-  ></div>
+  return (
+    <>
+      <div
+        className={className}
+        style={setCSSProperties({
+          "--point-time": currentTime,
+          "--point-value": keyframe.value,
+        })}
+        onMouseDown={handleMouseDown}
+      />
+      {nextTime !== null && (
+        <div
+          className='timeline-content-key-connector'
+          style={setCSSProperties({
+            "--start-time": currentTime,
+            "--end-time": nextTime,
+          })}
+        />
+      )}
+    </>
+  )
 };
 
 export type TimelineRightPanelKeyframesProps = {
@@ -132,6 +153,8 @@ const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = 
       result.push(
         <Keyframe
           keyframe={keyframe}
+          time={keyframe.beatNum}
+          nextTime={keyframe.nextKeyframe ? keyframe.nextKeyframe.beatNum : null}
           onSelected={handleKeyframeSelected}
           onKeyframeMove={handleKeyframeMove}
           onRightClicked={handleKeyframeRightClick}

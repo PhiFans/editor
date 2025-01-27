@@ -87,6 +87,7 @@
   left: calc(var(--point-time) * var(--base-scale) * 1px);
   transform: translate(-50%, -50%) rotate(45deg);
   background: color-mix(in srgb, var(--text-primary-color) 50%, transparent);
+  z-index: 2;
   cursor: pointer;
 }
 
@@ -100,6 +101,17 @@
 
 .timeline-content-key.selected:hover {
   background: var(--blue-primary);
+}
+
+.timeline-content-key-connector {
+  position: absolute;
+  top: 50%;
+  width: calc((var(--end-time) - var(--start-time)) * var(--base-scale) * 1px);
+  height: 2px;
+  left: calc(var(--start-time) * var(--base-scale) * 1px);
+  transform: translateY(-50%);
+  background: color-mix(in srgb, var(--text-primary-color) 50%, transparent);
+  z-index: 1;
 }
 
 .timeline-time-seeker {
