@@ -45,7 +45,7 @@ const useWrite = ({
 
   const posToPositionX = useCallback((pos: number) => {
     const result = GridValue(pos, alignGrid);
-    return (result - widthHalf) / widthHalf;
+    return (result - widthHalf) / widthHalf * 100;
   }, [alignGrid, widthHalf]);
 
   const posToTime = useCallback((pos: number) => {
