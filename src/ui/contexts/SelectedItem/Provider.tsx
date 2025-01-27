@@ -17,7 +17,10 @@ const SelectedItemProvider = ({
 
     const target = e.target as Nullable<HTMLElement>;
     if (!target) return;
-    if (target.closest('.timeline-panel-head-right')) return;
+    if (
+      target.closest('.timeline-panel-head-right') ||
+      target.closest('.edit-panel')
+    ) return;
 
     const parentDom = target.parentElement;
     if (parentDom) {
