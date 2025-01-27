@@ -116,7 +116,8 @@ export const NotePanelBuilderSingle = (note: ChartNote): EditPanelItem[] => ([
     type: 'number',
     key: 'positionX',
     props: {
-      defaultValue: note.positionX * 100,
+      defaultValue: note.positionX,
+      step: 0.1,
     },
   },
   {

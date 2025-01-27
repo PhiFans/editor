@@ -4,9 +4,11 @@ import { BeatArray, RendererSize } from '@/utils/types';
 import JudgelineProps, { TChartJudgelineProps } from './JudgelineProps';
 import ChartKeyframe, { TChartKeyframe } from './Keyframe';
 import Note, { ChartNoteProps } from './Note';
-import { BeatArrayToNumber } from '@/utils/math';
+import { BeatArrayToNumber, parseDoublePrecist } from '@/utils/math';
+import { getLinePropValue } from '@/utils/chart';
 import { Container, Sprite, Texture } from 'pixi.js';
 import Chart from './Chart';
+import { FloorPosition, NoteType } from './types';
 
 const PropsSortFn = (a: ChartKeyframe, b: ChartKeyframe) => a.beatNum - b.beatNum;
 
@@ -16,6 +18,7 @@ export default class ChartJudgeline {
   readonly chart: Chart;
 
   props = new JudgelineProps();
+  floorPositions: FloorPosition[] = [];
   notes: Note[] = [];
 
   // Used for live preview
@@ -24,8 +27,13 @@ export default class ChartJudgeline {
   _posY: number = 0;
   _alpha: number = 1;
   _rotate: number = 0;
+
+  _fPos: number = 0;
   _realPosX: number = 0;
   _realPosY: number = 0;
+  _radian: number = 0;
+  _cosr: number = 0;
+  _sinr: number = 0;
 
   readonly events: EventEmitter = new EventEmitter();
   sprite!: Sprite;
@@ -35,6 +43,7 @@ export default class ChartJudgeline {
     this.chart = chart;
 
     this.calcPropsTime();
+    this.calcFloorPositions();
     this.createSprite();
   }
 
@@ -53,6 +62,11 @@ export default class ChartJudgeline {
     keyframeArr.push(newKeyframe);
 
     this.calcPropsTime();
+    if (type === 'speed') {
+      this.calcFloorPositions();
+      this.updateNotesFloorPosition();
+    }
+
     this.events.emit('props.updated', { type, keyframes: [ ...keyframeArr ] });
   }
 
@@ -80,6 +94,11 @@ export default class ChartJudgeline {
     keyframe.time = this.chart.bpm.getRealTime(keyframe.beat);
 
     this.calcPropsTime();
+    if (type === 'speed') {
+      this.calcFloorPositions();
+      this.updateNotesFloorPosition();
+    }
+
     this.events.emit('props.updated', { type, keyframes: [ ...keyframeArr ] });
   }
 
@@ -95,6 +114,11 @@ export default class ChartJudgeline {
     keyframeArr.splice(keyframeIndex, 1);
 
     this.calcPropsTime();
+    if (type === 'speed') {
+      this.calcFloorPositions();
+      this.updateNotesFloorPosition();
+    }
+
     this.events.emit('props.updated', { type, keyframes: [ ...keyframeArr ] });
   }
 
@@ -170,6 +194,28 @@ export default class ChartJudgeline {
     return this.notes.find((e) => e.id === id);
   }
 
+  getFloorPosition(time: number) {
+    const getFloorPosition = (time: number) => {
+      for (const event of this.floorPositions) {
+        if (event.endTime <= time) continue;
+        if (event.time > time) break;
+
+        return event;
+      }
+
+      return {
+        time,
+        endTime: Infinity,
+        value: time,
+      };
+    };
+
+    const speed = getLinePropValue(time, this.props.speed, 1);
+    const floorPosition = getFloorPosition(time);
+
+    return parseDoublePrecist(floorPosition.value + (speed * (time - floorPosition.time)), 3, 1);
+  }
+
   createSprite(container?: Container) {
     this.sprite = new Sprite(Texture.WHITE);
 
@@ -242,8 +288,80 @@ export default class ChartJudgeline {
   private calcNoteTime(note: Note) {
     note.time = this.chart.bpm.getRealTime(note.beat);
     note.holdEndTime = this.chart.bpm.getRealTime(note.holdEndBeat);
-    note.holdLengthTime = note.holdEndTime - note.time;
+    this.updateNoteFloorPosition(note);
 
     return note;
+  }
+
+  private calcFloorPositions() {
+    this.floorPositions.length = 0;
+
+    for (const keyframe of this.props.speed) {
+      const { nextKeyframe } = keyframe;
+      if (!nextKeyframe || nextKeyframe.value === keyframe.value) {
+        this.floorPositions.push({
+          time: keyframe.time,
+          endTime: NaN,
+          value: NaN,
+        });
+        continue;
+      }
+
+      const beatBetween = nextKeyframe.beatNum - keyframe.beatNum;
+      for (let i = 0, count = Math.ceil(beatBetween / 0.125); i < count; i++) {
+        const beatPercent = i / count;
+        const beatPercentNext = i < count - 1 ? (i + 1) / count : 1;
+        const currentTime = keyframe.time * (1 - beatPercent) + nextKeyframe.time * beatPercent;
+        const nextTime = keyframe.time * (1 - beatPercentNext) + nextKeyframe.time * beatPercentNext;
+
+        this.floorPositions.push({
+          time: currentTime,
+          endTime: nextTime,
+          value: NaN,
+        });
+      }
+
+      this.floorPositions.push({
+        time: nextKeyframe.time,
+        endTime: NaN,
+        value: NaN,
+      });
+    }
+
+    this.floorPositions.sort((a, b) => a.time - b.time);
+    if (this.floorPositions[0].time !== 0) {
+      this.floorPositions.unshift({
+        time: 0,
+        endTime: this.floorPositions[0].time,
+        value: 0,
+      });
+    }
+
+    let currentFloorPosition = 0;
+    for (let i = 0; i < this.floorPositions.length; i++) {
+      const event = this.floorPositions[i];
+      const eventNext = this.floorPositions[i + 1];
+
+      event.value = currentFloorPosition;
+      event.endTime = eventNext ? eventNext.time : Infinity;
+
+      if (eventNext) currentFloorPosition = parseDoublePrecist(currentFloorPosition +
+        (eventNext.time - event.time) * getLinePropValue(event.time, this.props.speed, 1)
+      , 3, -1);
+    }
+  }
+
+  private updateNoteFloorPosition(note: Note) {
+    note.floorPosition = this.getFloorPosition(note.time);
+    if (note.type === NoteType.HOLD) note.holdEndPosition = this.getFloorPosition(note.holdEndTime);
+    else note.holdEndPosition = note.floorPosition;
+
+    note.updateHoldProps();
+  }
+
+  private updateNotesFloorPosition() {
+    for (const note of this.notes) {
+      this.updateNoteFloorPosition(note);
+    }
   }
 }

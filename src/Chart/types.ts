@@ -13,3 +13,9 @@ export enum NoteType {
   HOLD = 3,
   FLICK = 4,
 };
+
+export type FloorPosition = {
+  time: number,
+  endTime: number,
+  value: number,
+};

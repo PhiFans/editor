@@ -60,7 +60,7 @@ const Note = React.memo(function Note ({
   const [isDragging, setIsDragging] = useState(false);
   const [ time, setTime ] = useState(beat);
   const [ posX, setPosX ] = useState(positionX);
-  const notePosX = posX * widthHalf + widthHalf;
+  const notePosX = (posX / 100) * widthHalf + widthHalf;
   const notePosY = time * -scale;
   const noteLength = holdLength * scale / noteScale;
 
@@ -69,8 +69,8 @@ const Note = React.memo(function Note ({
   }, [beat, beatGrid, tempo, tempoGrid]);
 
   const calculateNewPositionX = useCallback((x: number) => {
-    const newValue = GridValue((positionX + (x / widthHalf) + 1) / 2, alignPercent);
-    return (newValue - 0.5) * 2;
+    const newValue = GridValue((100 + positionX + (x / widthHalf * 100)) / 2, alignPercent * 100);
+    return (newValue - 50) * 2;
   }, [positionX, widthHalf, alignPercent]);
 
   const handleDragging = useCallback(({ x, y }: Point) => {

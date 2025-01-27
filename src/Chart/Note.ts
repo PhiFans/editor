@@ -38,7 +38,7 @@ export default class ChartNote {
   beatNum: number;
   time: number;
   holdEndBeatNum!: number;
-  holdEndTime!: number;
+  holdEndTime: number;
   holdLengthBeatNum!: number;
   holdLengthTime!: number;
 
@@ -47,6 +47,11 @@ export default class ChartNote {
   holdEndPosition!: number;
 
   sprite?: Sprite | Container;
+
+  _realLinePosX: number = 0;
+  _realLinePosY: number = 0;
+  _realPosX: number = 0;
+  _realPosY: number = 0;
 
   constructor({
     line,
@@ -72,7 +77,9 @@ export default class ChartNote {
 
     // TODO: Auto-generating these
     this.time = 0;
+    this.holdEndTime = 0;
     this.floorPosition = 0;
+    this.holdEndPosition = 0;
 
     this.updateHoldProps();
     this.createSprite();
@@ -85,12 +92,9 @@ export default class ChartNote {
       this.holdEndBeatNum = this.beatNum;
     }
 
-    this.holdEndTime = this.time;
     this.holdLengthBeatNum = this.type === NoteType.HOLD ? this.holdEndBeatNum - this.beatNum : 0;
-    this.holdLengthTime = 0;
-
-    this.holdLength = 0;
-    this.holdEndPosition = 0;
+    this.holdLengthTime = this.type === NoteType.HOLD ? this.holdEndTime - this.time : 0;
+    this.holdLength = this.type === NoteType.HOLD ? this.holdEndPosition - this.floorPosition : 0;
   }
 
   createSprite(container?: Container) {
@@ -111,7 +115,7 @@ export default class ChartNote {
     if (!this.sprite) return;
 
     if (this.type === NoteType.HOLD) {
-      const holdLength = this.holdLength * this.speed / size.noteScale;
+      const holdLength = this.holdLength * this.speed * size.noteSpeed / size.noteScale;
       this.sprite.children[1].height = holdLength;
       this.sprite.children[2].position.y = -holdLength;
     }
