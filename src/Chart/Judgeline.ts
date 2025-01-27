@@ -42,7 +42,12 @@ export default class ChartJudgeline {
     this.id = id;
     this.chart = chart;
 
-    this.calcPropsTime();
+    this.updateProp('speed', true);
+    this.updateProp('positionX', true);
+    this.updateProp('positionY', true);
+    this.updateProp('rotate', true);
+    this.updateProp('alpha', true);
+
     this.calcFloorPositions();
     this.createSprite();
   }
@@ -61,7 +66,7 @@ export default class ChartJudgeline {
     const newKeyframe = new ChartKeyframe(type, beat, value, continuous, easing);
     keyframeArr.push(newKeyframe);
 
-    this.calcPropsTime();
+    this.updateProp(type);
     if (type === 'speed') {
       this.calcFloorPositions();
       this.updateNotesFloorPosition();
@@ -96,7 +101,7 @@ export default class ChartJudgeline {
     keyframe.beatNum = BeatArrayToNumber(keyframe.beat);
     keyframe.time = this.chart.bpm.getRealTime(keyframe.beat);
 
-    this.calcPropsTime();
+    this.updateProp(type);
     if (type === 'speed') {
       this.calcFloorPositions();
       this.updateNotesFloorPosition();
@@ -119,7 +124,7 @@ export default class ChartJudgeline {
     // const keyframe = keyframeArr[keyframeIndex];
     keyframeArr.splice(keyframeIndex, 1);
 
-    this.calcPropsTime();
+    this.updateProp(type);
     if (type === 'speed') {
       this.calcFloorPositions();
       this.updateNotesFloorPosition();
@@ -244,19 +249,10 @@ export default class ChartJudgeline {
     }
   }
 
-  calcAllTime() {
-    this.calcPropsTime(true);
-    for (const note of this.notes) {
-      this.calcNoteTime(note);
-    }
-  }
-
-  private sortProps() {
-    this.props.speed.sort(PropsSortFn);
-    this.props.positionX.sort(PropsSortFn);
-    this.props.positionY.sort(PropsSortFn);
-    this.props.alpha.sort(PropsSortFn);
-    this.props.rotate.sort(PropsSortFn);
+  updateProp(type: keyof TChartJudgelineProps, forceUpdateTime = false) {
+    this.props[type].sort(PropsSortFn);
+    this.props[type] = this.calcPropTime(this.props[type], forceUpdateTime);
+    return this.props[type];
   }
 
   private calcPropTime(keyframes: ChartKeyframe[], forceUpdateTime = false) {
@@ -275,16 +271,6 @@ export default class ChartJudgeline {
     }
 
     return keyframes;
-  }
-
-  private calcPropsTime(forceUpdateTime = false) {
-    this.sortProps();
-
-    this.props.speed = this.calcPropTime(this.props.speed, forceUpdateTime);
-    this.props.positionX = this.calcPropTime(this.props.positionX, forceUpdateTime);
-    this.props.positionY = this.calcPropTime(this.props.positionY, forceUpdateTime);
-    this.props.alpha = this.calcPropTime(this.props.alpha, forceUpdateTime);
-    this.props.rotate = this.calcPropTime(this.props.rotate, forceUpdateTime);
   }
 
   private sortNotes() {
@@ -368,6 +354,7 @@ export default class ChartJudgeline {
   private updateNotesFloorPosition() {
     for (const note of this.notes) {
       this.updateNoteFloorPosition(note);
+      note.resize(this.chart.rendererSize);
     }
   }
 }
