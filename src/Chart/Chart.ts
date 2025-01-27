@@ -76,6 +76,18 @@ export default class Chart {
     return newLine;
   }
 
+  removeLine(id: string) {
+    const lineIndex = this.lines.findIndex((e) => e.id === id);
+    if (lineIndex === -1) return;
+
+    const line = this.lines[lineIndex];
+    line.destroy();
+    this.lines.splice(lineIndex, 1);
+
+    App.events.emit('chart.lines.removed', line);
+    App.events.emit('chart.lines.updated', [ ...this.lines ]);
+  }
+
   addBPM(time: BeatArray, bpm: number) {
     this.bpm.add(time, bpm);
     this.updateLinesTime();
@@ -109,7 +121,16 @@ export default class Chart {
 
   private updateLinesTime() {
     for (const line of this.lines) {
-      line.calcAllTime();
+      line.updateProp('speed', true);
+      line.updateProp('positionX', true);
+      line.updateProp('positionY', true);
+      line.updateProp('rotate', true);
+      line.updateProp('alpha', true);
+
+      line.calcFloorPositions();
+      for (const note of line.notes) {
+        line.calcNoteTime(note);
+      }
     }
   }
 

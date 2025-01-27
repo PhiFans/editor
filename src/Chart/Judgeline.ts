@@ -255,6 +255,17 @@ export default class ChartJudgeline {
     return this.props[type];
   }
 
+  destroy() {
+    this.sprite.removeFromParent();
+    this.sprite.destroy();
+
+    for (const note of this.notes) {
+      if (!note.sprite) continue;
+      note.sprite.removeFromParent();
+      note.sprite.destroy();
+    }
+  }
+
   private calcPropTime(keyframes: ChartKeyframe[], forceUpdateTime = false) {
     for (let i = 0; i < keyframes.length; i++) {
       const keyframe = keyframes[i];
@@ -277,7 +288,7 @@ export default class ChartJudgeline {
     this.notes.sort((a, b) => BeatArrayToNumber(a.beat) - BeatArrayToNumber(b.beat));
   }
 
-  private calcNoteTime(note: Note) {
+  calcNoteTime(note: Note) {
     note.time = this.chart.bpm.getRealTime(note.beat);
     note.holdEndTime = this.chart.bpm.getRealTime(note.holdEndBeat);
     this.updateNoteFloorPosition(note);
@@ -285,7 +296,7 @@ export default class ChartJudgeline {
     return note;
   }
 
-  private calcFloorPositions() {
+  calcFloorPositions() {
     this.floorPositions.length = 0;
 
     for (const keyframe of this.props.speed) {
@@ -351,7 +362,7 @@ export default class ChartJudgeline {
     note.updateHoldProps();
   }
 
-  private updateNotesFloorPosition() {
+  updateNotesFloorPosition() {
     for (const note of this.notes) {
       this.updateNoteFloorPosition(note);
       note.resize(this.chart.rendererSize);
