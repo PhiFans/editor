@@ -1,3 +1,4 @@
+import { Nullable } from '@/utils/types';
 
 export type ChartInfo = {
   name: string,
@@ -5,6 +6,13 @@ export type ChartInfo = {
   illustration: string,
   level: string,
   designer: string,
+};
+
+export type ChartBookmark = {
+  id: string;
+  beatNum: number;
+  label: string;
+  color: Nullable<string>;
 };
 
 export enum NoteType {

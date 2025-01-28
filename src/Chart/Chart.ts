@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import App from '@/App/App';
 import Audio from '@/Audio/Audio';
 import AudioClip, { EAudioClipStatus } from '@/Audio/Clip';
@@ -5,7 +6,7 @@ import ChartBPMList from './BPMList';
 import ChartJudgeline from './Judgeline';
 import ChartNote from './Note';
 import ChartTick from './Tick';
-import { ChartInfo } from './types';
+import { ChartBookmark, ChartInfo } from './types';
 import { BeatArray, RendererSize } from '@/utils/types';
 import { Container } from 'pixi.js';
 import { CalculateRendererSize } from '@/utils/renderer';
@@ -19,6 +20,7 @@ export default class Chart {
   bpm: ChartBPMList = new ChartBPMList();
   lines: ChartJudgeline[] = [];
   notes: ChartNote[] = [];
+  bookmarks: ChartBookmark[] = [];
 
   container = new Container();
   audioClip!: AudioClip;
@@ -86,6 +88,21 @@ export default class Chart {
 
     App.events.emit('chart.lines.removed', line);
     App.events.emit('chart.lines.updated', [ ...this.lines ]);
+  }
+
+  addBookmark(beatNum: number, label: string, color?: string, id = uuid()) {
+    this.bookmarks.push({
+      id,
+      beatNum,
+      label,
+      color: color || null,
+    });
+  }
+
+  removeBookmark(id: string) {
+    const bookmarkId = this.bookmarks.findIndex((e) => e.id === id);
+    if (bookmarkId === -1) return;
+    this.bookmarks.splice(bookmarkId, 1);
   }
 
   addBPM(time: BeatArray, bpm: number) {
