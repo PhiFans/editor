@@ -1,4 +1,4 @@
-import ChartKeyframe from './Keyframe';
+import ChartKeyframe, { ChartKeyframeExported } from './Keyframe';
 
 export type TChartJudgelineProps = {
   speed: ChartKeyframe[],
@@ -6,6 +6,14 @@ export type TChartJudgelineProps = {
   positionY: ChartKeyframe[],
   alpha: ChartKeyframe[],
   rotate: ChartKeyframe[],
+};
+
+export type ChartJudgelinePropsExported = {
+  speed: ChartKeyframeExported[],
+  positionX: ChartKeyframeExported[],
+  positionY: ChartKeyframeExported[],
+  rotate: ChartKeyframeExported[],
+  alpha: ChartKeyframeExported[],
 };
 
 export default class ChartJudgelineProps implements TChartJudgelineProps {
@@ -30,4 +38,14 @@ export default class ChartJudgelineProps implements TChartJudgelineProps {
    * Unit: Angle
    */
   rotate: ChartKeyframe[] = [ new ChartKeyframe('rotate', [ 0, 0, 1 ], 0, false, 0) ];
+
+  get json(): ChartJudgelinePropsExported {
+    return {
+      speed: this.speed.map((e) => e.json),
+      positionX: this.positionX.map((e) => e.json),
+      positionY: this.positionY.map((e) => e.json),
+      rotate: this.rotate.map((e) => e.json),
+      alpha: this.alpha.map((e) => e.json),
+    };
+  }
 }

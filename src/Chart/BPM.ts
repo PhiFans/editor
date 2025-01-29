@@ -2,6 +2,11 @@ import { v4 as uuid } from 'uuid';
 import { BeatArrayToNumber, parseDoublePrecist } from '@/utils/math';
 import { BeatArray } from '@/utils/types';
 
+export type ChartBPMExported = {
+  beat: BeatArray,
+  bpm: number,
+};
+
 export default class ChartBPM {
   /** Internal property */
   readonly id: string;
@@ -39,5 +44,12 @@ export default class ChartBPM {
   update() {
     this.beatNum = BeatArrayToNumber(this.beat);
     this.timePerBeat = parseDoublePrecist(60 / this.bpm, 6, -1);
+  }
+
+  get json(): ChartBPMExported {
+    return {
+      beat: this.beat,
+      bpm: this.bpm,
+    };
   }
 }

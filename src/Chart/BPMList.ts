@@ -1,5 +1,5 @@
 import { BeatArrayToNumber, parseDoublePrecist } from '@/utils/math';
-import ChartBPM from './BPM';
+import ChartBPM, { ChartBPMExported } from './BPM';
 import { BeatArray } from '@/utils/types';
 
 const BPMSortFn = (a: ChartBPM, b: ChartBPM) => BeatArrayToNumber(a.beat) - BeatArrayToNumber(b.beat);
@@ -103,6 +103,10 @@ export default class ChartBPMList extends Array<ChartBPM> {
         bpm.timePerBeat * (bpm.endBeatNum - bpm.beatNum)
       ), 6, -1) : Infinity;
     }
+  }
+
+  get json(): ChartBPMExported[] {
+    return this.map((e) => e.json);
   }
 
   private getRealTimeByBeatNum(beat: number) {

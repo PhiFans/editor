@@ -3,13 +3,21 @@ import App from '@/App/App';
 import Audio from '@/Audio/Audio';
 import AudioClip, { EAudioClipStatus } from '@/Audio/Clip';
 import ChartBPMList from './BPMList';
-import ChartJudgeline from './Judgeline';
+import ChartJudgeline, { ChartJudgelineExported } from './Judgeline';
 import ChartNote from './Note';
 import ChartTick from './Tick';
 import { ChartBookmark, ChartInfo } from './types';
 import { BeatArray, RendererSize } from '@/utils/types';
 import { Container } from 'pixi.js';
 import { CalculateRendererSize } from '@/utils/renderer';
+import { ChartBPMExported } from './BPM';
+
+export type ChartExported = {
+  info: ChartInfo,
+  offset: number,
+  bpm: ChartBPMExported[],
+  lines: ChartJudgelineExported[],
+};
 
 export default class Chart {
   info: ChartInfo;
@@ -134,6 +142,15 @@ export default class Chart {
     for (const line of this.lines) {
       line.resize(size);
     }
+  }
+
+  get json(): ChartExported {
+    return {
+      info: this.info,
+      offset: this.offset,
+      bpm: this.bpm.json,
+      lines: this.lines.map((e) => e.json),
+    };
   }
 
   private updateLinesTime() {

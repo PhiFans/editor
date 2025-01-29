@@ -1,9 +1,9 @@
 import { v4 as uuid } from 'uuid';
 import { EventEmitter } from 'eventemitter3';
 import { BeatArray, RendererSize } from '@/utils/types';
-import JudgelineProps, { TChartJudgelineProps } from './JudgelineProps';
+import JudgelineProps, { ChartJudgelinePropsExported, TChartJudgelineProps } from './JudgelineProps';
 import ChartKeyframe, { TChartKeyframe } from './Keyframe';
-import Note, { ChartNoteProps } from './Note';
+import Note, { ChartNoteExported, ChartNoteProps } from './Note';
 import { BeatArrayToNumber, parseDoublePrecist } from '@/utils/math';
 import { getLinePropValue } from '@/utils/chart';
 import { Container, Sprite, Texture } from 'pixi.js';
@@ -11,6 +11,11 @@ import Chart from './Chart';
 import { FloorPosition, NoteType } from './types';
 
 const PropsSortFn = (a: ChartKeyframe, b: ChartKeyframe) => a.beatNum - b.beatNum;
+
+export type ChartJudgelineExported = {
+  props: ChartJudgelinePropsExported,
+  notes: ChartNoteExported[],
+};
 
 export default class ChartJudgeline {
   /** Internal property */
@@ -264,6 +269,13 @@ export default class ChartJudgeline {
       note.sprite.removeFromParent();
       note.sprite.destroy();
     }
+  }
+
+  get json(): ChartJudgelineExported {
+    return {
+      props: this.props.json,
+      notes: this.notes.map((e) => e.json),
+    };
   }
 
   private calcPropTime(keyframes: ChartKeyframe[], forceUpdateTime = false) {

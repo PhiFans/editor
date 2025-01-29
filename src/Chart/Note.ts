@@ -22,6 +22,10 @@ export type ChartNoteProps = {
   holdEndBeat?: BeatArray
 };
 
+export type ChartNotePropsNoLine = Omit<ChartNoteProps, 'line'>;
+
+export type ChartNoteExported = ChartNotePropsNoLine & { holdEndBeat: BeatArray };
+
 export default class ChartNote {
   /** Internal property */
   readonly id: string;
@@ -121,6 +125,17 @@ export default class ChartNote {
     }
 
     this.sprite.scale.set(size.noteScale);
+  }
+
+  get json(): ChartNoteExported {
+    return {
+      type: this.type,
+      beat: this.beat,
+      positionX: this.positionX,
+      speed: this.speed,
+      isAbove: this.isAbove,
+      holdEndBeat: this.holdEndBeat || this.beat,
+    };
   }
 
   private createSpriteNonHold() {

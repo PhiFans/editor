@@ -31,6 +31,19 @@ function App() {
     }, importedMusic, importedMusic, true);
   };
 
+  const onExportChart = () => {
+    if (!GlobalApp.chart) return;
+
+    const chartText = JSON.stringify(GlobalApp.chart.json, null, 4);
+    const chartBlob = new Blob([ chartText ], { type: 'text/json' });
+    const chartUrl = URL.createObjectURL(chartBlob);
+
+    const downloadDom = document.createElement('a');
+    downloadDom.href = chartUrl;
+    downloadDom.download = 'exported.json';
+    downloadDom.click();
+  };
+
   const handleTempoUpdate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     const newValue = parseInt(target.value);
@@ -45,6 +58,7 @@ function App() {
       <div className="files">
         <button onClick={() => onImportAudio()}>Import music</button>
         <button onClick={() => onCreateChart()}>Create chart</button>
+        <button onClick={() => onExportChart()}>Export chart</button>
       </div>
       <div className="settings">
         <label>

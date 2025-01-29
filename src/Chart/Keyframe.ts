@@ -11,6 +11,8 @@ export type TChartKeyframe = {
   easing: number;
 };
 
+export type ChartKeyframeExported = Omit<TChartKeyframe, 'beatNum'>;
+
 export default class ChartKeyframe implements TChartKeyframe {
   /** Internal property */
   readonly id: string;
@@ -45,5 +47,14 @@ export default class ChartKeyframe implements TChartKeyframe {
 
     // TODO: Auto-generating these
     this.time = NaN;
+  }
+
+  get json(): ChartKeyframeExported {
+    return {
+      beat: this.beat,
+      value: this.value,
+      continuous: this.continuous,
+      easing: this.easing,
+    };
   }
 }
