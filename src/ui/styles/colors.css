@@ -13,6 +13,7 @@
   --button-primary-margin: 2px;
 
   /* Text Area */
+  --text-area-border-radius: var(--roundness);
   --text-area-margin: 2px;
 
   /* Dock */
