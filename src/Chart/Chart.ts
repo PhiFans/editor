@@ -11,6 +11,7 @@ import { BeatArray, RendererSize } from '@/utils/types';
 import { Container } from 'pixi.js';
 import { CalculateRendererSize } from '@/utils/renderer';
 import { ChartBPMExported } from './BPM';
+import ChartHistory from './History/History';
 
 export type ChartExported = {
   info: ChartInfo,
@@ -29,6 +30,7 @@ export default class Chart {
   lines: ChartJudgeline[] = [];
   notes: ChartNote[] = [];
   bookmarks: ChartBookmark[] = [];
+  histories: ChartHistory = new ChartHistory(this);
 
   container = new Container();
   audioClip!: AudioClip;
@@ -75,10 +77,16 @@ export default class Chart {
     this.audioClip.stop();
   }
 
-  addLine() {
+  addLine(addToHistory = true) {
     const newLine = new ChartJudgeline(this);
     this.lines.push(newLine);
     this.container.addChild(newLine.sprite);
+    if (addToHistory) this.histories.add({
+      name: 'line',
+      action: 'add',
+      id: newLine.id,
+      after: newLine.json,
+    });
 
     App.events.emit('chart.lines.added', newLine);
     App.events.emit('chart.lines.updated', this.lines);
@@ -86,13 +94,19 @@ export default class Chart {
     return newLine;
   }
 
-  removeLine(id: string) {
+  removeLine(id: string, addToHistory = true) {
     const lineIndex = this.lines.findIndex((e) => e.id === id);
     if (lineIndex === -1) return;
 
     const line = this.lines[lineIndex];
     line.destroy();
     this.lines.splice(lineIndex, 1);
+    if (addToHistory) this.histories.add({
+      name: 'line',
+      action: 'delete',
+      id: line.id,
+      before: line.json,
+    });
 
     App.events.emit('chart.lines.removed', line);
     App.events.emit('chart.lines.updated', [ ...this.lines ]);
@@ -113,8 +127,15 @@ export default class Chart {
     this.bookmarks.splice(bookmarkId, 1);
   }
 
-  addBPM(time: BeatArray, bpm: number) {
-    this.bpm.add(time, bpm);
+  addBPM(time: BeatArray, bpm: number, addToHistory = true) {
+    const newBPM = this.bpm.add(time, bpm);
+    if (addToHistory) this.histories.add({
+      name: 'bpm',
+      action: 'add',
+      id: newBPM.id,
+      after: newBPM.json,
+    });
+
     this.updateLinesTime();
     App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }
@@ -125,8 +146,16 @@ export default class Chart {
     App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }
 
-  removeBPM(id: string) {
-    this.bpm.remove(id);
+  removeBPM(id: string, addToHistory = true) {
+    const oldBPM = this.bpm.remove(id);
+    if (!oldBPM) return;
+    if (addToHistory) this.histories.add({
+      name: 'bpm',
+      action: 'delete',
+      id: oldBPM.id,
+      before: oldBPM.json,
+    })
+
     this.updateLinesTime();
     App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }

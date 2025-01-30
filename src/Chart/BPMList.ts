@@ -18,9 +18,10 @@ export default class ChartBPMList extends Array<ChartBPM> {
   }
 
   add(beat: BeatArray, bpm: number) {
-    this.push(new ChartBPM(beat, bpm));
+    const newBPM = new ChartBPM(beat, bpm);
+    this.push(newBPM);
     this.calcRealTime();
-    return this;
+    return newBPM;
   }
 
   remove(id: string) {
@@ -28,10 +29,11 @@ export default class ChartBPMList extends Array<ChartBPM> {
 
     const bpmIndex = this.findIndex((e) => e.id === id);
     if (bpmIndex === -1) return;
+    const oldBPM = this[bpmIndex];
 
     this.splice(bpmIndex, 1);
     this.calcRealTime();
-    return this;
+    return oldBPM;
   }
 
   edit(id: string, newBPM?: number, newBeat?: BeatArray) {
