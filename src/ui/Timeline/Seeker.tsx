@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useClockTime } from '../contexts/Clock';
 import { useScale } from './ScaleContext';
-import { setDragStyle } from '@/utils/ui';
+import useDrag from '../hooks/useDrag';
+import { Point } from '@/utils/types';
 
 export type TimelineSeekerProps = {
   timeLength: number;
@@ -14,49 +15,29 @@ const TimelineSeeker: React.FC<TimelineSeekerProps> = ({
 }: TimelineSeekerProps) => {
   const currentTime = useClockTime().beat;
   const scale = useScale();
-  const isHandling = useRef(false);
-  const handleStartPosX = useRef(0);
-  const handleStartTime = useRef(0);
+  const handleStartTime = useRef(NaN);
 
-  const onHandlerHold = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (isHandling.current) return;
+  const handleMouseMove = ({ x }: Point) => {
+    if (isNaN(handleStartTime.current)) handleStartTime.current = currentTime;
 
-    isHandling.current = true;
-    handleStartPosX.current = e.screenX;
-    handleStartTime.current = currentTime;
-    setDragStyle('horizontal');
-  }, [currentTime]);
-
-  const onHandlerMove = useCallback((e: MouseEvent) => {
-    if (!isHandling.current) return;
-    const posBetween = e.screenX - handleStartPosX.current;
-    const timeBetween = posBetween / scale;
+    const timeBetween = x / scale;
     const newTime = handleStartTime.current + timeBetween;
 
     if (newTime > timeLength) onSeek(timeLength);
     else if (newTime < 0) onSeek(0);
     else onSeek(newTime);
-  }, [scale, timeLength, onSeek]);
+  };
 
-  const onHandlerUnhold = useCallback((e: MouseEvent) => {
-    if (!isHandling.current) return;
-    onHandlerMove(e);
+  const handleMouseUp = (point: Point) => {
+    handleMouseMove(point);
+    handleStartTime.current = NaN;
+  };
 
-    isHandling.current = false;
-    handleStartPosX.current = 0;
-    handleStartTime.current = 0;
-    setDragStyle();
-  }, [onHandlerMove]);
-
-  useEffect(() => {
-    document.addEventListener("mousemove", onHandlerMove);
-    document.addEventListener("mouseup", onHandlerUnhold);
-
-    return () => {
-      document.removeEventListener("mousemove", onHandlerMove);
-      document.removeEventListener("mouseup", onHandlerUnhold);
-    };
-  }, [scale, timeLength, onHandlerMove, onHandlerUnhold]);
+  const { onMouseDown } = useDrag({
+    allowY: false,
+    onDrag: handleMouseMove,
+    onDragEnd: handleMouseUp,
+  });
 
   return (
     <div
@@ -67,7 +48,7 @@ const TimelineSeeker: React.FC<TimelineSeekerProps> = ({
     >
       <div
         className="timeline-time-seeker-handle"
-        onMouseDown={onHandlerHold}
+        onMouseDown={onMouseDown}
       ></div>
     </div>
   );
