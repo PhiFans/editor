@@ -18,7 +18,7 @@ export default tseslint.config(
         tsconfigRootDir: import.meta.dirname,
       },
     },
-    settings: { react: { version: '18.3' } },
+    settings: { react: { version: '19.0' } },
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
@@ -46,6 +46,10 @@ export default tseslint.config(
       ],
       '@typescript-eslint/no-unsafe-call': [
         'off'
+      ],
+      'react/no-unknown-property': [
+        'error',
+        { ignores: [ '@pixi/react' ] }
       ],
     },
   },

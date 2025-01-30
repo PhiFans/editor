@@ -80,15 +80,12 @@ const PreviewCanvas = () => {
       >
         <pixiContainer
           label='Preview game container'
-          // eslint-disable-next-line react/no-unknown-property
           boundsArea={ZeroSizeRectangle}
-          // eslint-disable-next-line react/no-unknown-property
           zIndex={1}
           ref={appContainerRef}
         />
         <pixiContainer
           label='Preview UI container'
-          // eslint-disable-next-line react/no-unknown-property
           zIndex={2}
         />
       </Application>

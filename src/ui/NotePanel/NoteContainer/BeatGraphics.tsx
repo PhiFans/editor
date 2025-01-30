@@ -36,27 +36,22 @@ const BeatScale = React.memo(function BeatScale({
   return (
     <>
       <pixiSprite
-        // eslint-disable-next-line react/no-unknown-property
         texture={Texture.WHITE}
         width={width}
         height={2}
         x={0}
         y={time * -scale}
-        // eslint-disable-next-line react/no-unknown-property
         tint={getScaleTint(tempo, 0)}
       />
       {new Array(tempo - 1).fill(0).map((_, index) => {
         return (
           <pixiSprite
-            // eslint-disable-next-line react/no-unknown-property
             texture={Texture.WHITE}
             width={width}
             height={1}
             x={0}
             y={(time + (index + 1) * beatSubscale) * -scale}
-            // eslint-disable-next-line react/no-unknown-property
             anchor={{ x: 0, y: 0.5 }}
-            // eslint-disable-next-line react/no-unknown-property
             tint={getScaleTint(tempo, index + 1)}
             key={index}
           />
@@ -88,7 +83,6 @@ const BeatGraphics = ({
   const scaleCount = useMemo(() => Math.ceil(timeRangeEnd + _timeOffset), [timeRangeEnd, _timeOffset]);
 
   return (
-    // eslint-disable-next-line react/no-unknown-property
     <pixiContainer zIndex={1} y={currentTime * scale}>
       {new Array(scaleCount).fill(0).map((_, index) => {
         return (

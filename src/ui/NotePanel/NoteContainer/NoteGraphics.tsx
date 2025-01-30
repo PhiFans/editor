@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unknown-property */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { extend } from '@pixi/react';
 import { Container, EventMode, Sprite, Texture } from 'pixi.js';
