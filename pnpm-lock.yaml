@@ -52,6 +52,9 @@ importers:
       react-split-pane:
         specifier: ^0.1.92
         version: 0.1.92(patch_hash=we2kgptptkdh5cuho4fck6fmnu)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      redux:
+        specifier: ^5.0.1
+        version: 5.0.1
       uuid:
         specifier: ^11.0.4
         version: 11.0.4
@@ -1427,6 +1430,9 @@ packages:
   react@19.0.0:
     resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
     engines: {node: '>=0.10.0'}
+
+  redux@5.0.1:
+    resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
 
   reflect.getprototypeof@1.0.10:
     resolution: {integrity: sha512-00o4I+DVrefhv+nX0ulyi3biSHCPDe+yLv5o/p6d/UVlirijB8E16FtfwSAi4g3tcqrQ4lRAqQSoFEZJehYEcw==}
@@ -3138,6 +3144,8 @@ snapshots:
       prop-types: 15.8.1
 
   react@19.0.0: {}
+
+  redux@5.0.1: {}
 
   reflect.getprototypeof@1.0.10:
     dependencies:
