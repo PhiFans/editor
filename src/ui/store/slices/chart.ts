@@ -1,7 +1,7 @@
 import { CaseReducer, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {v4 as uuid } from 'uuid';
 import { BeatArray, Nullable } from '@/utils/types';
-import { Chart, ChartNote, ChartJudgeline, NoteType } from '@/Chart/types';
+import { Chart, ChartNote, ChartJudgeline, NoteType, ChartKeyframe, ChartJudglineProps } from '@/Chart/types';
 
 type ChartState = Chart & {
   selectedLineID: Nullable<string>,
@@ -79,6 +79,58 @@ const unselectLineReducer: CaseReducer<ChartState> = (state) => {
   state.selectedLineID = null;
 };
 
+const addKeyframeReducer: CaseReducer<ChartState, PayloadAction<Omit<ChartKeyframe, 'id'> & { type: keyof ChartJudglineProps }>> = (state, action) => {
+  console.log('addKeyframe');
+  const { lineID, type, time, value, continuous, easing } = action.payload;
+  const line = state.lines.find((e) => e.id === lineID);
+  if (!line) return;
+
+  const newKeyframe: ChartKeyframe = {
+    id: uuid(),
+    lineID: line.id,
+    time,
+    value,
+    continuous,
+    easing,
+  };
+
+  line.props[type].push(newKeyframe);
+};
+
+const editKeyframeReducer: CaseReducer<ChartState, PayloadAction<Partial<ChartKeyframe> & { lineID: string, type: keyof ChartJudglineProps, id: string }>> = (state, action) => {
+  const { lineID, type, id } = action.payload;
+  const line = state.lines.find((e) => e.id === lineID);
+  if (!line) return;
+
+  const keyframe = line.props[type].find((e) => e.id === id);
+  if (!keyframe) return;
+
+  for (const name in action.payload) {
+    if (
+      name === 'lineID' ||
+      name === 'type' ||
+      name === 'id'
+    ) continue;
+
+    // XXX: This sucks
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    keyframe[name] = action.payload[name];
+  }
+};
+
+const removeKeyframeReducer: CaseReducer<ChartState, PayloadAction<{ lineID: string, type: keyof ChartJudglineProps, id: string }>> = (state, action) => {
+  const { lineID, type, id } = action.payload;
+  const line = state.lines.find((e) => e.id === lineID);
+  if (!line) return;
+
+  const props = line.props[type];
+  if (props.findIndex((e) => e.id === id) === -1) return;
+
+  line.props[type] = props.filter((e) => e.id !== id);
+};
+
 const addNoteReducer: CaseReducer<ChartState, PayloadAction<Omit<ChartNote, 'id'> & { holdEndTime?: BeatArray }>> = (state, action) => {
   const noteProps = action.payload;
   const { lineID } = noteProps;
@@ -144,6 +196,10 @@ const chartSlice = createSlice({
     selectLine: selectLineReducer,
     unselectLine: unselectLineReducer,
 
+    addKeyframe: addKeyframeReducer,
+    editKeyframe: editKeyframeReducer,
+    removeKeyframe: removeKeyframeReducer,
+
     addNote: addNoteReducer,
     removeNote: removeNoteReducer,
     selectNote: selectNoteReducer,
@@ -156,6 +212,10 @@ export const {
   removeLine,
   selectLine,
   unselectLine,
+
+  addKeyframe,
+  editKeyframe,
+  removeKeyframe,
 
   addNote,
   removeNote,
