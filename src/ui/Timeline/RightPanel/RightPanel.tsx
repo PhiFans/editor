@@ -8,6 +8,8 @@ import RightPanelHead from './Head';
 import KeyframesRow from './KeyframesRow';
 import { useScale } from '../ScaleContext';
 import './styles.css';
+import { useAppSelector } from '@/ui/store/hooks';
+import { selectAllLinesState } from '@/ui/store/selectors/chart';
 
 export type TimelineRightPanelProps = {
   timeLength: number,
@@ -17,10 +19,10 @@ export type TimelineRightPanelProps = {
 
 const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   timeLength,
-  lines,
   expandedLines,
 }) => {
   const scale = useScale();
+  const lines = useAppSelector((state) => selectAllLinesState(state));
   const [ timeRange, setTimeRange ] = useState<[number, number]>([ 0, 0 ]);
 
   const handleRangeChanged = useCallback((newRange: [number, number]) => {
@@ -43,7 +45,7 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   const keyframeRowMemoed = useMemo(() => {
     return lines.map((line, index) => { // TODO: Render keyframes
       return <KeyframesRow
-        line={line}
+        lineID={line.id}
         isExpanded={expandedLines.includes(index)}
         timeRange={timeRange}
         key={line.id}

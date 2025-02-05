@@ -2,31 +2,28 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback } from 'react';
 import TimelineList from '../List/List';
 import TimelineListItem from '../List/Item';
-import { useSelectedItem } from '@/ui/contexts/SelectedItem';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
-import ChartJudgeline from '@/Chart/Judgeline';
+import { selectLine } from "@/ui/store/slices/chart";
+import { useAppDispatch } from '@/ui/store/hooks';
 
 export type TimelineLeftPanelLineProps = {
-  line: ChartJudgeline,
+  lineID: string,
   name: string,
   isExpanded: boolean,
   onExpandClick: (isExpanded: boolean) => void
 };
 
 const TimelineLeftPanelLine: React.FC<TimelineLeftPanelLineProps> = ({
-  line,
+  lineID,
   name,
   isExpanded,
   onExpandClick
 }: TimelineLeftPanelLineProps) => {
-  const [ , setSelectedItem ] = useSelectedItem()!;
+  const dispatch = useAppDispatch();
 
   const handleLineClicked = useCallback(() => {
-    setSelectedItem((oldItem) => {
-      if (oldItem === null) return { line, keyframe: null, note: null };
-      else return { ...oldItem, line };
-    });
-  }, [line, setSelectedItem]);
+    dispatch(selectLine(lineID));
+  }, [dispatch, lineID]);
 
   return <TimelineListItem className="line-detail" onClick={handleLineClicked}>
     <div className="line-info">
