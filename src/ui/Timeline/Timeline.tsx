@@ -3,12 +3,15 @@ import SplitPane from 'react-split-pane';
 import TimelineFooter from './Footer';
 import App from '@/App/App';
 import ChartJudgeline from '@/Chart/Judgeline';
+import { addLine } from '../store/slices/chart';
 import TimelineLeftPanel from './LeftPanel/LeftPanel';
 import TimelineRightPanel from './RightPanel/RightPanel';
 import ScaleContext from './ScaleContext';
 import './styles.css';
+import { useAppDispatch } from '../store/hooks';
 
 const Timeline: React.FC = () => {
+  const dispatch = useAppDispatch();
   const [ timeLength, setTimeLength ] = useState(0);
   const [ lineList, setLineList ] = useState<ChartJudgeline[]>([]);
   const [ expandedLines, setExpandedLines ] = useState<number[]>([]);
@@ -62,7 +65,6 @@ const Timeline: React.FC = () => {
           }}
         >
           <TimelineLeftPanel
-            lines={lineList}
             expandedLines={expandedLines}
             onLineExpanded={(id, e) => setLineExpand(id, e)}
           />
@@ -80,6 +82,11 @@ const Timeline: React.FC = () => {
           <>
             <button
               onClick={() => App.chart ? App.chart.addLine() : void 0}
+            >
+              Add line
+            </button>
+            <button
+              onClick={() => dispatch(addLine())}
             >
               Add line
             </button>

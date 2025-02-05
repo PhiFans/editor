@@ -40,6 +40,7 @@ export type ChartNote = {
 
 export type ChartKeyframe = {
   id: string,
+  lineID: string,
   time: BeatArray,
   value: number,
   continuous: boolean,

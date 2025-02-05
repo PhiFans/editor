@@ -9,6 +9,8 @@ import ChartKeyframe from '@/Chart/Keyframe';
 import { BeatArray, Nullable } from '@/utils/types';
 import { useSelectedItem } from '@/ui/contexts/SelectedItem';
 import { BeatArrayToNumber } from '@/utils/math';
+import { selectLineState, selectLinePropsState } from '@/ui/store/selectors/chart';
+import { useAppSelector } from '@/ui/store/hooks';
 
 const getLastKeyframe = (beat: BeatArray, keyframes: ChartKeyframe[]): Nullable<ChartKeyframe> => {
   const time = BeatArrayToNumber(beat);
@@ -26,19 +28,20 @@ const getLastKeyframe = (beat: BeatArray, keyframes: ChartKeyframe[]): Nullable<
 }
 
 type KeyframesRowProps = {
-  line: ChartJudgeline,
+  lineID: string,
   isExpanded: boolean,
   timeRange: [number, number],
 };
 
 const KeyframesRow: React.FC<KeyframesRowProps> = ({
-  line,
+  lineID,
   isExpanded,
   timeRange,
 }) => {
+  const lineProps = useAppSelector((state) => selectLinePropsState(state, lineID))!;
+  const line = useAppSelector((state) => selectLineState(state, lineID))!;
   const tempo = useTempo();
   const scale = useScale();
-  const [ lineProp, setLineProp ] = useState<TChartJudgelineProps>({ ...line.props });
   const [ , setSelectedItem ] = useSelectedItem()!;
 
   const onAddKeyframe = useCallback((type: keyof TChartJudgelineProps, clickedPosX: number) => {
@@ -52,14 +55,14 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
     }
 
     const beatArr: BeatArray = [ beatFloor, beatSub, tempo ];
-    const lastKeyframe = getLastKeyframe(beatArr, line.props[type]);
-    line.addKeyframe(
-      type,
-      beatArr,
-      lastKeyframe ? lastKeyframe.value : 0,
-      lastKeyframe ? lastKeyframe.continuous : false,
-      lastKeyframe ? lastKeyframe.easing : 0
-    );
+    // const lastKeyframe = getLastKeyframe(beatArr, line.props[type]);
+    // line.addKeyframe(
+    //   type,
+    //   beatArr,
+    //   lastKeyframe ? lastKeyframe.value : 0,
+    //   lastKeyframe ? lastKeyframe.continuous : false,
+    //   lastKeyframe ? lastKeyframe.easing : 0
+    // );
   }, [scale, tempo, line]);
 
   const onKeyframeMove = useCallback((type: keyof TChartJudgelineProps, id: string, newBeat: BeatArray) => {
@@ -67,7 +70,7 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
       if (oldItem !== null) return { ...oldItem, keyframe: null };
       else return null;
     });
-    line.editKeyframe(type, id, { beat: newBeat });
+    // line.editKeyframe(type, id, { beat: newBeat });
   }, [line, setSelectedItem]);
 
   const onKeyframeDeleted = useCallback((type: keyof TChartJudgelineProps, id: string) => {
@@ -75,75 +78,70 @@ const KeyframesRow: React.FC<KeyframesRowProps> = ({
       if (oldItem !== null) return { ...oldItem, keyframe: null };
       else return null;
     });
-    line.deleteKeyframe(type, id);
+    // line.deleteKeyframe(type, id);
   }, [line, setSelectedItem]);
 
-  const handlePropsUpdate = useCallback(({
-    type,
-    keyframes,
-  }: {
-    type: keyof TChartJudgelineProps,
-    keyframes: ChartKeyframe[],
-  }) => {
-    const newProp: Partial<TChartJudgelineProps> = {};
-    newProp[type] = keyframes;
-    setLineProp({ ...lineProp, ...newProp });
-  }, [lineProp]);
+  // const handlePropsUpdate = useCallback(({
+  //   type,
+  //   keyframes,
+  // }: {
+  //   type: keyof TChartJudgelineProps,
+  //   keyframes: ChartKeyframe[],
+  // }) => {
+  //   const newProp: Partial<TChartJudgelineProps> = {};
+  //   newProp[type] = keyframes;
+  //   setLineProp({ ...lineProp, ...newProp });
+  // }, [lineProp]);
 
   const handleKeyframeSelected = useCallback((type: keyof TChartJudgelineProps, id: string) => {
-    const keyframe = line.findKeyframeById(type, id);
-    if (!keyframe) return;
+    // const keyframe = line.findKeyframeById(type, id);
+    // if (!keyframe) return;
 
-    setSelectedItem({
-      line,
-      keyframe: {
-        type, id
-      },
-      note: null,
-    });
+    // setSelectedItem({
+    //   line,
+    //   keyframe: {
+    //     type, id
+    //   },
+    //   note: null,
+    // });
   }, [line, setSelectedItem]);
-
-  useEffect(() => {
-    line.events.on('props.updated', handlePropsUpdate);
-    return (() => {
-      line.events.off('props.updated', handlePropsUpdate);
-    });
-  }, [line, handlePropsUpdate]);
 
   const keyframesProps = {
     timeRange,
     onKeyframeSelected: handleKeyframeSelected,
-    onDoubleClick: onAddKeyframe,
-    onKeyframeMove,
-    onKeyframeDeleted,
   };
 
   return <>
     <TimelineListItem />
     {isExpanded && <>
       <Keyframes
+        lineID={lineID}
         type='speed'
-        keyframes={lineProp.speed}
+        keyframes={lineProps.speed}
         {...keyframesProps}
       />
       <Keyframes
+        lineID={lineID}
         type='positionX'
-        keyframes={lineProp.positionX}
+        keyframes={lineProps.positionX}
         {...keyframesProps}
       />
       <Keyframes
+        lineID={lineID}
         type='positionY'
-        keyframes={lineProp.positionY}
+        keyframes={lineProps.positionY}
         {...keyframesProps}
       />
       <Keyframes
+        lineID={lineID}
         type='rotate'
-        keyframes={lineProp.rotate}
+        keyframes={lineProps.rotate}
         {...keyframesProps}
       />
       <Keyframes
+        lineID={lineID}
         type='alpha'
-        keyframes={lineProp.alpha}
+        keyframes={lineProps.alpha}
         {...keyframesProps}
       />
     </>}

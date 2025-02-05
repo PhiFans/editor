@@ -5,28 +5,34 @@ import { useScale } from '../ScaleContext';
 import { useSelectedItem } from '@/ui/contexts/SelectedItem';
 import useDrag from '@/ui/hooks/useDrag';
 import { setCSSProperties } from '@/utils/ui';
-import { BeatNumberToArray, GridValue, parseDoublePrecist } from '@/utils/math';
-import ChartKeyframe from '@/Chart/Keyframe';
+import { BeatArrayToNumber, BeatNumberToArray, GridValue, parseDoublePrecist } from '@/utils/math';
+import { ChartJudglineProps, ChartKeyframe } from '@/Chart/types';
 import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
 import { BeatArray, Nullable } from '@/utils/types';
+import { useAppDispatch, useAppSelector } from '@/ui/store/hooks';
+import { selectKeyframeState, selectLinePropState } from '@/ui/store/selectors/chart';
+import { addKeyframe, editKeyframe, removeKeyframe } from '@/ui/store/slices/chart';
 
 type KeyframeProps = {
-  keyframe: ChartKeyframe,
-  time: number,
+  lineID: string,
+  type: keyof ChartJudglineProps,
+  id: string,
   nextTime: Nullable<number>,
   onSelected: (id: string) => void,
-  onKeyframeMove: (id: string, newBeat: BeatArray) => void,
-  onRightClicked: (id: string) => void,
 };
 
 const Keyframe: React.FC<KeyframeProps> = ({
-  keyframe,
-  time,
+  lineID,
+  type,
+  id,
   nextTime,
   onSelected,
-  onKeyframeMove,
-  onRightClicked,
 }) => {
+  const dispatch = useAppDispatch();
+  const keyframe = useAppSelector((state) => selectKeyframeState(state, lineID, type, id));
+  if (!keyframe) return;
+
+  const time = BeatArrayToNumber(keyframe.time);
   const tempo = useTempo();
   const scale = useScale();
   const tempoGrid = useMemo(() => parseDoublePrecist(1 / tempo, 6, -1), [tempo]);
@@ -45,19 +51,25 @@ const Keyframe: React.FC<KeyframeProps> = ({
   };
 
   const calculateNewTime = useCallback((x: number) => {
-    return GridValue(keyframe.beatNum + (x / beatGrid / tempo), tempoGrid);
-  }, [keyframe, beatGrid, tempo, tempoGrid]);
+    return GridValue(time + (x / beatGrid / tempo), tempoGrid);
+  }, [time, beatGrid, tempo, tempoGrid]);
 
-  const handleDragging = useCallback(({ x }: { x: number }) => {
+  const handleDragging = ({ x }: { x: number }) => {
     setCurrentTime(calculateNewTime(x));
-  }, [calculateNewTime]);
+  };
 
-  const handleDragEnd = useCallback(({ x }: { x: number }) => {
+  const handleDragEnd = ({ x }: { x: number }) => {
     const newTime = calculateNewTime(x);
+    const newBeat = BeatNumberToArray(newTime, tempo);
 
     setCurrentTime(newTime);
-    onKeyframeMove(keyframe.id, BeatNumberToArray(newTime, tempo));
-  }, [calculateNewTime, keyframe.id, onKeyframeMove, tempo]);
+    dispatch(editKeyframe({
+      lineID,
+      type,
+      id,
+      time: newBeat,
+    }));
+  };
 
   const handleSelected = useCallback(() => {
     onSelected(keyframe.id);
@@ -71,10 +83,15 @@ const Keyframe: React.FC<KeyframeProps> = ({
     onClick: handleSelected,
   });
 
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (e.button === 2) return onRightClicked(keyframe.id);
-    else return onMouseDown(e);
-  }, [keyframe.id, onRightClicked, onMouseDown]);
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (e.button === 2) {
+      dispatch(removeKeyframe({
+        lineID,
+        type,
+        id,
+      }));
+    } else return onMouseDown(e);
+  };
 
   useEffect(() => {
     setCurrentTime(time);
@@ -106,65 +123,83 @@ const Keyframe: React.FC<KeyframeProps> = ({
 };
 
 export type TimelineRightPanelKeyframesProps = {
+  lineID: string,
   type: keyof TChartJudgelineProps,
   keyframes: ChartKeyframe[],
   timeRange: [number, number],
   onKeyframeSelected: (type: keyof TChartJudgelineProps, id: string) => void,
-  onDoubleClick: (type: keyof TChartJudgelineProps, clickedPosX: number) => void,
-  onKeyframeMove: (type: keyof TChartJudgelineProps, id: string, newBeat: BeatArray) => void,
-  onKeyframeDeleted: (type: keyof TChartJudgelineProps, id: string) => void,
 };
 
 const TimelineRightPanelKeyframes: React.FC<TimelineRightPanelKeyframesProps> = ({
+  lineID,
   type,
-  keyframes,
   timeRange,
   onKeyframeSelected,
-  onDoubleClick,
-  onKeyframeMove,
-  onKeyframeDeleted,
 }: TimelineRightPanelKeyframesProps) => {
+  const dispatch = useAppDispatch();
+  const keyframes = useAppSelector((state) => selectLinePropState(state, lineID, type));
+  const tempo = useTempo();
+  const scale = useScale();
+
   const handleKeyframeSelected = useCallback((id: string) => {
     onKeyframeSelected(type, id);
   }, [type, onKeyframeSelected]);
 
-  const onRowDoubleClick = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  // const onRowDoubleClick = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  //   const target = e.target as HTMLDivElement;
+  //   const rect = target.getBoundingClientRect();
+  //   console.log(e.clientX - rect.x);
+  //   addKeyframe({
+  //     lineID,
+  //     type,
+  //     time: [ 1, 0, 1 ],
+  //     value: 1,
+  //     continuous: false,
+  //     easing: 0,
+  //   });
+  //   // onDoubleClick(type, e.clientX - rect.x);
+  // }, [type, addKeyframe, onDoubleClick]);
+
+  const onRowDoubleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const target = e.target as HTMLDivElement;
     const rect = target.getBoundingClientRect();
-    onDoubleClick(type, e.clientX - rect.x);
-  }, [type, onDoubleClick]);
+    const time = BeatNumberToArray((e.clientX - rect.x) / scale, tempo)
 
-  const handleKeyframeMove = useCallback((id: string, newBeat: BeatArray) => {
-    onKeyframeMove(type, id, newBeat);
-  }, [type, onKeyframeMove]);
-
-  const handleKeyframeRightClick = useCallback((id: string) => {
-    onKeyframeDeleted(type, id);
-  }, [type, onKeyframeDeleted]);
+    dispatch(addKeyframe({
+      lineID: lineID,
+      type: type,
+      time: time,
+      value: 1,
+      continuous: false,
+      easing: 0,
+    }));
+  };
 
   const keyframesDom = useMemo(() => {
     const result: React.ReactNode[] = [];
 
     for (let i = 0; i < keyframes.length; i++) {
       const keyframe = keyframes[i];
-      if (keyframe.beatNum < timeRange[0]) continue;
-      if (keyframe.beatNum > timeRange[1]) break;
+      const time = BeatArrayToNumber(keyframe.time);
+
+      if (time < timeRange[0]) continue;
+      if (time > timeRange[1]) break;
 
       result.push(
         <Keyframe
-          keyframe={keyframe}
-          time={keyframe.beatNum}
-          nextTime={keyframe.nextKeyframe ? keyframe.nextKeyframe.beatNum : null}
+          lineID={lineID}
+          type={type}
+          id={keyframe.id}
+          // TODO: Next keyframe
+          nextTime={null}
           onSelected={handleKeyframeSelected}
-          onKeyframeMove={handleKeyframeMove}
-          onRightClicked={handleKeyframeRightClick}
           key={keyframe.id}
         />
       );
     }
 
     return result;
-  }, [keyframes, timeRange, handleKeyframeMove, handleKeyframeSelected, handleKeyframeRightClick]);
+  }, [keyframes, timeRange, handleKeyframeSelected]);
 
   return (
     <TimelineListItem onDoubleClick={onRowDoubleClick}>
