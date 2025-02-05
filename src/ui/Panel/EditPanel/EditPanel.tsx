@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSelectedItem } from '../contexts/SelectedItem';
+import { useSelectedItem } from '../../contexts/SelectedItem';
 import List from './List';
 import { BeatArray, Nullable } from '@/utils/types';
 import ChartKeyframe, { TChartKeyframe } from '@/Chart/Keyframe';

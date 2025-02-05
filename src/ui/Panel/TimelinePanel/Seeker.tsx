@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
-import { useClockTime } from '../contexts/Clock';
+import { useClockTime } from '../../contexts/Clock';
 import { useScale } from './ScaleContext';
-import useDrag from '../hooks/useDrag';
+import useDrag from '../../hooks/useDrag';
 import { Point } from '@/utils/types';
 
 export type TimelineSeekerProps = {

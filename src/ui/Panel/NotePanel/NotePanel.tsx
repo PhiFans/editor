@@ -2,7 +2,7 @@ import { ChangeEvent, useCallback, useState } from 'react';
 import Grid from './Grid';
 import './styles.css';
 import PropsContext from './PropsContext';
-import { useSelectedItem } from '../contexts/SelectedItem';
+import { useSelectedItem } from '../../contexts/SelectedItem';
 import { Nullable } from '@/utils/types';
 import { NoteType } from '@/Chart/types';
 

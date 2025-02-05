@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import App from '@/App/App';
-import { useTempo } from '../contexts/Tempo';
+import { useTempo } from '../../contexts/Tempo';
 import { GridValue } from '@/utils/math';
 
 const PreviewController = () => {

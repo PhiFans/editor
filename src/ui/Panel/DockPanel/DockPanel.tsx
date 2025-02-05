@@ -1,11 +1,11 @@
 import DockLayout, { LayoutData } from 'rc-dock';
 import NotePanel from '../NotePanel/NotePanel';
 import PreviewPanel from '../PreviewPanel/PreviewPanel';
-import Timeline from '../Timeline/Timeline';
+import Timeline from '../TimelinePanel/Timeline';
 import EditPanel from '../EditPanel/EditPanel';
 import BPMPanel from '../BPMPanel/BPMPanel';
-import SelectedItemProvider from '../contexts/SelectedItem/Provider';
-import ClockTimeProvider from '../contexts/Clock/Provider';
+import SelectedItemProvider from '../../contexts/SelectedItem/Provider';
+import ClockTimeProvider from '../../contexts/Clock/Provider';
 
 const dockLayout: LayoutData = {
   dockbox: {

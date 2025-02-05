@@ -1,4 +1,4 @@
-import { useSelectedItem } from "../contexts/SelectedItem";
+import { useSelectedItem } from "../../contexts/SelectedItem";
 import GridAlignScale from "./AlignScale";
 import NoteContainer from "./NoteContainer/NoteContainer";
 
