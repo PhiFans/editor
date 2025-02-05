@@ -49,7 +49,18 @@ export default tseslint.config(
       ],
       'react/no-unknown-property': [
         'error',
-        { ignores: [ '@pixi/react' ] }
+        {
+          ignore: [
+            // For `@pixi/react`
+            'texture',
+            'anchor',
+            'zIndex',
+            'tint',
+            'hitArea',
+            'boundsArea',
+            'eventMode',
+          ]
+        }
       ],
     },
   },
