@@ -1,11 +1,11 @@
 import DockLayout, { LayoutData } from 'rc-dock';
-import NotePanel from '../NotePanel/NotePanel';
-import PreviewPanel from '../PreviewPanel/PreviewPanel';
-import Timeline from '../TimelinePanel/Timeline';
-import EditPanel from '../EditPanel/EditPanel';
-import BPMPanel from '../BPMPanel/BPMPanel';
-import SelectedItemProvider from '../../contexts/SelectedItem/Provider';
-import ClockTimeProvider from '../../contexts/Clock/Provider';
+import NotePanel from './NotePanel/NotePanel';
+import PreviewPanel from './PreviewPanel/PreviewPanel';
+import Timeline from './TimelinePanel/Timeline';
+import EditPanel from './EditPanel/EditPanel';
+import BPMPanel from './BPMPanel/BPMPanel';
+import SelectedItemProvider from '../contexts/SelectedItem/Provider';
+import ClockTimeProvider from '../contexts/Clock/Provider';
 import { Ref } from 'react';
 
 const dockLayout: LayoutData = {
@@ -75,13 +75,13 @@ const dockLayout: LayoutData = {
   },
 };
 
-type DockPanelProps = {
+type PanelDockProps = {
   ref?: Ref<DockLayout>,
 };
 
-const DockPanel = ({
+const PanelDock = ({
   ref
-}: DockPanelProps) => {
+}: PanelDockProps) => {
   return (
     <div className='dock-panel'>
       <SelectedItemProvider>
@@ -96,4 +96,4 @@ const DockPanel = ({
   );
 };
 
-export default DockPanel;
+export default PanelDock;

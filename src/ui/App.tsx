@@ -1,6 +1,6 @@
 import GlobalApp from '@/App/App';
 import TempoContext from './contexts/Tempo';
-import DockPanel from './DockPanel/DockPanel';
+import PanelDock from './Panel/PanelDock';
 import { PopupReadFiles } from '@/utils/file';
 import { Nullable } from '@/utils/types';
 import { useCallback, useState } from 'react';
@@ -75,7 +75,7 @@ function App() {
         </label>
       </div>
       <TempoContext.Provider value={tempo}>
-        <DockPanel />
+          <PanelDock />
       </TempoContext.Provider>
     </>
   );
