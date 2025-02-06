@@ -36,6 +36,7 @@ textarea {
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: stretch;
+  gap: 4px;
   background-color: var(--background-primary-color);
   color: var(--text-primary-color);
   font-family: var(--font-family);

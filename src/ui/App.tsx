@@ -4,6 +4,8 @@ import PanelDock from './Panel/PanelDock';
 import { PopupReadFiles } from '@/utils/file';
 import { Nullable } from '@/utils/types';
 import { useCallback, useState } from 'react';
+import AppBar from './Bar/AppBar';
+import SettingsProvider from './contexts/Settings/Provider';
 
 function App() {
   const [ tempo, setTempo ] = useState(4);
@@ -55,28 +57,32 @@ function App() {
 
   return (
     <>
-      <div className="files">
-        <button onClick={() => onImportAudio()}>Import music</button>
-        <button onClick={() => onCreateChart()}>Create chart</button>
-        <button onClick={() => onExportChart()}>Export chart</button>
-      </div>
-      <div className="settings">
-        <label>
-          Set tempo: 1/
-          <input
-            type='number'
-            min={1}
-            defaultValue={4}
-            onChange={handleTempoUpdate}
-            style={{
-              width: 38
-            }}
-          />
-        </label>
-      </div>
-      <TempoContext.Provider value={tempo}>
+      <SettingsProvider>
+        <AppBar />
+        <div className="files">
+          <button onClick={() => onImportAudio()}>Import music</button>
+          <button onClick={() => onCreateChart()}>Create chart</button>
+          <button onClick={() => onExportChart()}>Export chart</button>
+        </div>
+        <div className="settings">
+          <label>
+            Set tempo: 1/
+            <input
+              type='number'
+              min={1}
+              defaultValue={4}
+              onChange={handleTempoUpdate}
+              style={{
+                width: 38
+              }}
+            />
+          </label>
+        </div>
+        <TempoContext.Provider value={tempo}>
           <PanelDock />
-      </TempoContext.Provider>
+        </TempoContext.Provider>
+        <AppBar />
+      </SettingsProvider>
     </>
   );
 }
