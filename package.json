@@ -14,6 +14,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@blueprintjs/core": "^5.16.4",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
@@ -22,6 +23,7 @@
     "audio-decode": "^2.2.2",
     "eventemitter3": "^5.0.1",
     "hotkeys-js": "^3.13.9",
+    "normalize.css": "^8.0.1",
     "pixi.js": "^8.6.6",
     "rc-dock": "^3.3.0",
     "react": "^19.0.0",

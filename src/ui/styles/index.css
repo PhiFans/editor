@@ -4,6 +4,10 @@
 /* Default look of `rc-docs` */
 @import url('rc-dock/dist/rc-dock.css');
 
+/* Default look of BlueprintJS */
+@import url('normalize.css');
+@import url('@blueprintjs/core/lib/css/blueprint.css');
+
 html.is-dragging.drag-horizontal,
 html.is-dragging.drag-horizontal * {
   cursor: ew-resize !important;

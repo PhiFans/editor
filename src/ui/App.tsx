@@ -3,11 +3,14 @@ import TempoContext from './contexts/Tempo';
 import PanelDock from './Panel/PanelDock';
 import { PopupReadFiles } from '@/utils/file';
 import { Nullable } from '@/utils/types';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import AppBar from './Bar/AppBar';
 import SettingsProvider from './contexts/Settings/Provider';
+import DockLayout from 'rc-dock';
+import SettingsPanel from './Panel/SettingsPanel/SettingsPanel';
 
 function App() {
+  const dockRef = useRef<Nullable<DockLayout>>(null);
   const [ tempo, setTempo ] = useState(4);
   let importedMusic: Nullable<File> = null;
 
@@ -55,6 +58,20 @@ function App() {
     setTempo(newValue);
   }, []);
 
+  const showSettingsPanel = () => {
+    const dock = dockRef.current;
+    if (!dock) return;
+
+    dock.dockMove({
+      id: 'settings-panel',
+      title: 'Settings',
+      cached: true,
+      closable: true,
+      group: 'single-window',
+      content: (<SettingsPanel />),
+    }, null, 'float');
+  };
+
   return (
     <>
       <SettingsProvider>
@@ -64,9 +81,15 @@ function App() {
             <button onClick={() => onCreateChart()}>Create chart</button>
             <button onClick={() => onExportChart()}>Export chart</button>
           </div>
+          <span className='hr'>|</span>
+          <div>
+            <button onClick={showSettingsPanel}>Settings</button>
+          </div>
         </AppBar>
         <TempoContext.Provider value={tempo}>
-          <PanelDock />
+          <PanelDock
+            ref={dockRef}
+          />
         </TempoContext.Provider>
         <AppBar>
           <div className="settings">

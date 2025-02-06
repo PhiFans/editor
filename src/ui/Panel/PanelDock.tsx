@@ -93,6 +93,11 @@ const PanelDock = ({
         <ClockTimeProvider>
           <DockLayout
             defaultLayout={dockLayout}
+            groups={{
+              'single-window': {
+                floatable: 'singleTab',
+              }
+            }}
             ref={ref}
           />
         </ClockTimeProvider>
