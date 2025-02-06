@@ -10,64 +10,69 @@ import { Ref } from 'react';
 
 const dockLayout: LayoutData = {
   dockbox: {
-    mode: 'horizontal',
+    mode: 'vertical',
     children: [
       {
-        mode: 'vertical',
+        mode: 'horizontal',
         children: [
           {
-            mode: 'horizontal',
+            mode: 'vertical',
             children: [
               {
-                size: 60,
-                tabs: [
+                mode: 'horizontal',
+                children: [
                   {
-                    id: 'note-panel',
-                    title: 'Note panel',
-                    cached: true,
-                    content: (<NotePanel />),
-                  }
-                ]
-              },
-              {
-                tabs: [
+                    size: 60,
+                    tabs: [
+                      {
+                        id: 'note-panel',
+                        title: 'Note panel',
+                        cached: true,
+                        content: (<NotePanel />),
+                      }
+                    ]
+                  },
                   {
-                    id: 'live-preview',
-                    title: 'Live preview',
-                    cached: true,
-                    content: (<PreviewPanel />)
-                  }
+                    tabs: [
+                      {
+                        id: 'live-preview',
+                        title: 'Live preview',
+                        cached: true,
+                        content: (<PreviewPanel />)
+                      }
+                    ]
+                  },
                 ]
               },
             ]
           },
           {
-            size: 80,
+            size: 60,
             tabs: [
               {
-                id: 'timeline',
-                title: 'Timeline',
+                id: 'edit-panel',
+                title: 'Edit panel',
                 cached: true,
-                content: (<Timeline />)
+                content: (<EditPanel />),
+              },
+              {
+                id: 'bpm-panel',
+                title: 'BPM',
+                cached: true,
+                content: (<BPMPanel />)
               }
             ]
           }
         ]
       },
       {
-        size: 60,
+        size: 80,
         tabs: [
           {
-            id: 'edit-panel',
-            title: 'Edit panel',
+            id: 'timeline',
+            title: 'Timeline',
             cached: true,
-            content: (<EditPanel />),
-          },
-          {
-            id: 'bpm-panel',
-            title: 'BPM',
-            cached: true,
-            content: (<BPMPanel />)
+            content: (<Timeline />)
           }
         ]
       }
