@@ -58,30 +58,32 @@ function App() {
   return (
     <>
       <SettingsProvider>
-        <AppBar />
-        <div className="files">
-          <button onClick={() => onImportAudio()}>Import music</button>
-          <button onClick={() => onCreateChart()}>Create chart</button>
-          <button onClick={() => onExportChart()}>Export chart</button>
-        </div>
-        <div className="settings">
-          <label>
-            Set tempo: 1/
-            <input
-              type='number'
-              min={1}
-              defaultValue={4}
-              onChange={handleTempoUpdate}
-              style={{
-                width: 38
-              }}
-            />
-          </label>
-        </div>
+        <AppBar>
+          <div className="files">
+            <button onClick={() => onImportAudio()}>Import music</button>
+            <button onClick={() => onCreateChart()}>Create chart</button>
+            <button onClick={() => onExportChart()}>Export chart</button>
+          </div>
+        </AppBar>
         <TempoContext.Provider value={tempo}>
           <PanelDock />
         </TempoContext.Provider>
-        <AppBar />
+        <AppBar>
+          <div className="settings">
+            <label>
+              Set tempo: 1/
+              <input
+                type='number'
+                min={1}
+                defaultValue={4}
+                onChange={handleTempoUpdate}
+                style={{
+                  width: 38
+                }}
+              />
+            </label>
+          </div>
+        </AppBar>
       </SettingsProvider>
     </>
   );
