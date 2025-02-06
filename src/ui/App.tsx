@@ -61,6 +61,7 @@ function App() {
   const showSettingsPanel = () => {
     const dock = dockRef.current;
     if (!dock) return;
+    if (dock.find('settings-panel')) return;
 
     dock.dockMove({
       id: 'settings-panel',
