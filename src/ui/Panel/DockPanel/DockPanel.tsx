@@ -6,6 +6,7 @@ import EditPanel from '../EditPanel/EditPanel';
 import BPMPanel from '../BPMPanel/BPMPanel';
 import SelectedItemProvider from '../../contexts/SelectedItem/Provider';
 import ClockTimeProvider from '../../contexts/Clock/Provider';
+import { Ref } from 'react';
 
 const dockLayout: LayoutData = {
   dockbox: {
@@ -74,13 +75,20 @@ const dockLayout: LayoutData = {
   },
 };
 
-const DockPanel = () => {
+type DockPanelProps = {
+  ref?: Ref<DockLayout>,
+};
+
+const DockPanel = ({
+  ref
+}: DockPanelProps) => {
   return (
     <div className='dock-panel'>
       <SelectedItemProvider>
         <ClockTimeProvider>
           <DockLayout
             defaultLayout={dockLayout}
+            ref={ref}
           />
         </ClockTimeProvider>
       </SelectedItemProvider>
