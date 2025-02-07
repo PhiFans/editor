@@ -1,3 +1,5 @@
+import { ChartExported } from '@/Chart/Chart';
+import AudioClip from '@/Audio/Clip';
 
 export type Nullable<T> = T | null;
 
@@ -33,4 +35,64 @@ export type RendererSize = {
 
   lineScale: number,
   heightPercent: number,
+};
+
+/* ==================== Files ==================== */
+export interface IFileBasic {
+  filename: string,
+  type: string,
+  data: unknown,
+}
+
+export interface IFileChart extends IFileBasic {
+  type: 'chart',
+  data: ChartExported,
+}
+
+export interface IFileImage extends IFileBasic {
+  type: 'image',
+  data: ImageBitmap,
+}
+
+export interface IFileAudio extends IFileBasic {
+  type: 'audio',
+  data: AudioClip,
+}
+
+export type IFile = IFileChart | IFileImage | IFileAudio;
+
+export type TChartInfo = {
+  name: string,
+  artist: string,
+  designer: string,
+  level: string,
+  illustrator: string,
+
+  // Files
+  chart: string,
+  audio: string,
+  image?: string,
+  extraFiles: string[],
+};
+
+export type TChartInfoCSV = {
+  Name: string,
+  Designer: string,
+  Level: string,
+  Illustrator: string,
+
+  Chart: string,
+  Music: string,
+  Image: string,
+}
+
+export type TChartInfoTXT = {
+  Name: string,
+  Charter: string,
+  Level: string,
+  Composer: string,
+
+  Song: string,
+  Picture: string,
+  Chart: string,
 };
