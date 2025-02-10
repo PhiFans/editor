@@ -39,7 +39,6 @@ export type RendererSize = {
 
 /* ==================== Files ==================== */
 export interface IFileBasic {
-  filename: string,
   type: string,
   data: unknown,
 }

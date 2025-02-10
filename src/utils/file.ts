@@ -94,7 +94,6 @@ export const DecodeFile = (file: File): Promise<IFile> => new Promise((res, rej)
     const fileText = await ReadFileAsText(file);
     const chartJson = JSON.parse(fileText) as ChartExported;
     res({
-      filename: file.name,
       type: 'chart',
       data: chartJson,
     });
@@ -102,7 +101,6 @@ export const DecodeFile = (file: File): Promise<IFile> => new Promise((res, rej)
     // Decode as image
     const bitmap = await window.createImageBitmap(file);
     res({
-      filename: file.name,
       type: 'image',
       data: bitmap
     });
@@ -110,7 +108,6 @@ export const DecodeFile = (file: File): Promise<IFile> => new Promise((res, rej)
     // Decode as audio file
     const audioResult = await AudioClip.from(file);
     res({
-      filename: file.name,
       type: 'audio',
       data: audioResult,
     });
