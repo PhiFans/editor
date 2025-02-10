@@ -2,7 +2,7 @@ import DatabaseEngine from '@/Database/Engine';
 import { GetFileMD5 } from '@/utils/file';
 import { TStorageFile } from './types';
 
-class Storage {
+class StorageFile {
   readonly db = new DatabaseEngine<TStorageFile>('editor_storage', 1, {
     structures: [
       { name: 'md5', options: { key: true } },
@@ -31,6 +31,6 @@ class Storage {
   })}
 }
 
-const storage = new Storage;
-export default storage;
-export { Storage };
+const file = new StorageFile;
+export default file;
+export { StorageFile };
