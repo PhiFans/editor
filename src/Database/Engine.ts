@@ -20,7 +20,7 @@ export type TDatabaseData = {
   [x: string]: TDatabaseDataType | TDatabaseDataType[],
 };
 
-export default class DatabaseEngine<TData extends TDatabaseData> {
+export default class DatabaseEngine<TData> {
   readonly name: string;
   readonly version: number;
 
@@ -73,7 +73,7 @@ export default class DatabaseEngine<TData extends TDatabaseData> {
     };
   }
 
-  add(data: TDatabaseData) {return new Promise(async (res, rej) => {
+  add(data: TData) {return new Promise(async (res, rej) => {
     await this.waitReady();
     const { db } = this;
 
@@ -146,7 +146,7 @@ export default class DatabaseEngine<TData extends TDatabaseData> {
     };
   })}
 
-  update(index: string | number, data: TDatabaseData): Promise<TData> {return new Promise(async (res, rej) => {
+  update(index: string | number, data: TData): Promise<TData> {return new Promise(async (res, rej) => {
     await this.waitReady();
     const { db } = this;
 

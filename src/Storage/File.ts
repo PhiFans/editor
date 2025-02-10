@@ -1,16 +1,17 @@
 import DatabaseEngine from '@/Database/Engine';
 import { GetFileMD5 } from '@/utils/file';
 import { TStorageFile } from './types';
+import { Nullable } from '@/utils/types';
 
 class StorageFile {
-  readonly db = new DatabaseEngine<TStorageFile>('editor_storage', 1, {
+  readonly db = new DatabaseEngine<TStorageFile>('editor_storage_files', 1, {
     structures: [
       { name: 'md5', options: { key: true } },
       { name: 'blob' },
     ]
   });
 
-  addFile(blob: Blob): Promise<{ md5: string }> {return new Promise(async (res, rej) => {
+  add(blob: Blob): Promise<{ md5: string }> {return new Promise(async (res, rej) => {
     const md5 = await GetFileMD5(blob);
     const fileData = await this.db.get(md5);
     if (fileData) return res(fileData);
@@ -21,14 +22,17 @@ class StorageFile {
       .catch(e => rej(e));
   })}
 
-  getFile(md5: string) {
-    return this.db.get(md5);
+  remove(md5: string) {
+    return this.db.delete(md5);
   }
 
-  getFiles(md5s: string[]): Promise<TStorageFile[]> {return new Promise(async (res) => {
-    const allFiles = await this.db.getAll();
-    res(allFiles.filter((e) => md5s.includes(e.md5)));
-  })}
+  get(md5: string | string[]): Promise<Nullable<TStorageFile | TStorageFile[]>> {
+    if (typeof md5 === 'string') return this.db.get(md5);
+    return new Promise(async (res) => {
+      const allFiles = await this.db.getAll();
+      res(allFiles.filter((e) => md5.includes(e.md5)));
+    });
+  }
 }
 
 const file = new StorageFile;
