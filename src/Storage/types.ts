@@ -21,7 +21,7 @@ export type TStorageItem = TStorageItemFile | TStorageItemPath;
 export type TStorageStructure = Record<string, TStorageItem>;
 
 export type TStorage = {
-  projectID: string,
+  id: string,
   structure: TStorageStructure,
 };
 

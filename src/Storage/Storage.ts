@@ -6,14 +6,14 @@ class Storage {
   readonly file = StorageFile;
   readonly db = new DatabaseEngine<TStorage>('editor_storage_structure', 1, {
     structures: [
-      { name: 'projectID', options: { key: true, unique: true } },
+      { name: 'id', options: { key: true, unique: true } },
       { name: 'structure' }
     ],
   });
 
   add(id: string, structure: TStorageStructure) {
     return this.db.add({
-      projectID: id, structure
+      id, structure
     });
   }
 
@@ -31,7 +31,7 @@ class Storage {
 
   update(id: string, structure: TStorageStructure) {
     return this.db.update(id, {
-      projectID: id, structure
+      id, structure
     });
   }
 }
