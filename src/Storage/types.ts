@@ -26,6 +26,7 @@ export type TStorage = {
 };
 
 export type TStorageFile = {
+  id: string,
   md5: string,
   blob: Blob,
 };
