@@ -1,21 +1,15 @@
 import { useState } from 'react';
-import { Button, Card } from '@blueprintjs/core';
+import { Card } from '@blueprintjs/core';
 import { ChartInfo } from '@/Chart/types';
 import ProjectInput from './Input';
 
 type ProjectPanelProps = {
   project?: ChartInfo,
-  showButton?: boolean,
-  onCreate?: (newInfo: ChartInfo) => void,
-  onCancel?: () => void,
   onChanged?: (newInfo: ChartInfo) => void,
 };
 
 const ProjectPanel = ({
   project: defaultProject,
-  showButton,
-  onCreate,
-  onCancel,
   onChanged,
 }: ProjectPanelProps) => {
   const [ project, setProject ] = useState<ChartInfo>({
@@ -36,7 +30,6 @@ const ProjectPanel = ({
 
   const handleInputBlur = () => {
     if (!onChanged) return;
-    if (showButton) return;
     onChanged(project);
   };
 
@@ -87,15 +80,6 @@ const ProjectPanel = ({
           onInput={handleInfoInput}
           onBlur={handleInputBlur}
         />
-
-        {showButton && (<>
-          {onCreate && (
-          <Button intent='primary' onClick={() => onCreate(project)}>{defaultProject ? 'Update' : 'Create'}</Button>
-          )}
-          {onCancel && (
-            <Button onClick={onCancel}>Cancel</Button>
-          )}
-        </>)}
       </Card>
     </div>
   );
