@@ -49,7 +49,7 @@ export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelIt
       defaultValue: keyframe.easing,
       options: (EasingNames.map((name, index) => {
         return {
-          label: name,
+          label: `#${index} ${name}`,
           value: index,
         }
       }))
