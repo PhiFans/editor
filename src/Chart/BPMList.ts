@@ -5,18 +5,6 @@ import { BeatArray } from '@/utils/types';
 const BPMSortFn = (a: ChartBPM, b: ChartBPM) => BeatArrayToNumber(a.beat) - BeatArrayToNumber(b.beat);
 
 export default class ChartBPMList extends Array<ChartBPM> {
-  constructor() {
-    super();
-
-    // Add default BPM
-    this.push(
-      new ChartBPM([ 0, 0, 1 ], 120)
-    );
-
-    // Init
-    this.calcRealTime();
-  }
-
   add(beat: BeatArray, bpm: number) {
     const newBPM = new ChartBPM(beat, bpm);
     this.push(newBPM);
@@ -113,6 +101,7 @@ export default class ChartBPMList extends Array<ChartBPM> {
 
   private getRealTimeByBeatNum(beat: number) {
     if (!isFinite(beat)) return beat;
+    if (this.length <= 0) return parseDoublePrecist(beat * 0.5, 6, -1);
 
     for (const bpm of this) {
       if (bpm.endBeatNum <= beat) continue;

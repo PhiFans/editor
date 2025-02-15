@@ -1,13 +1,14 @@
 import GlobalApp from '@/App/App';
 import TempoContext from './contexts/Tempo';
 import PanelDock from './Panel/PanelDock';
-import { PopupReadFiles } from '@/utils/file';
+import { PopupReadFiles, ReadFileAsText } from '@/utils/file';
 import { Nullable } from '@/utils/types';
 import { useCallback, useRef, useState } from 'react';
 import AppBar from './Bar/AppBar';
 import SettingsProvider from './contexts/Settings/Provider';
 import DockLayout from 'rc-dock';
 import SettingsPanel from './Panel/SettingsPanel/SettingsPanel';
+import { ChartExported } from '@/Chart/Chart';
 
 function App() {
   const dockRef = useRef<Nullable<DockLayout>>(null);
@@ -34,6 +35,19 @@ function App() {
       level: 'test',
       designer: 'test'
     }, importedMusic, importedMusic, true);
+  };
+
+  const onLoadChart = () => {
+    if (!importedMusic) return;
+    if (GlobalApp.chart) return;
+
+    PopupReadFiles(false)
+      .then(async (files) => {
+        if (!files || files.length === 0) return;
+        const chartRaw = JSON.parse(await ReadFileAsText(files[0])) as ChartExported;
+        GlobalApp.loadChart(chartRaw, importedMusic!, importedMusic!);
+      })
+      .catch((e) => console.error(e));
   };
 
   const onExportChart = () => {
@@ -68,7 +82,6 @@ function App() {
       title: 'Settings',
       cached: true,
       closable: true,
-      group: 'single-window',
       content: (<SettingsPanel />),
     }, null, 'float');
   };
@@ -80,6 +93,7 @@ function App() {
           <div className="files">
             <button onClick={() => onImportAudio()}>Import music</button>
             <button onClick={() => onCreateChart()}>Create chart</button>
+            <button onClick={onLoadChart}>Load chart</button>
             <button onClick={() => onExportChart()}>Export chart</button>
           </div>
           <span className='hr'>|</span>

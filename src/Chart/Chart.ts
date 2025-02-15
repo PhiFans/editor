@@ -37,14 +37,18 @@ export default class Chart {
   rendererSize = CalculateRendererSize(1, 1);
   tick: () => void;
 
-  constructor(info: ChartInfo, audio: File, background: File) {
+  constructor(info: ChartInfo, audio: File, background: File, noDefaultValues = false) {
     this.info = info;
     this.audio = audio;
     this.background = background;
 
     // Init
+    if (!noDefaultValues) {
+      this.addBPM([ 0, 0, 1 ], 120, false, false);
+      this.addLine(true, false);
+    }
+
     this.tick = ChartTick.bind(this);
-    this.addLine();
     AudioClip.from(audio, Audio.channels.music)
       .then((clip) => {
         this.audioClip = clip;
@@ -77,7 +81,7 @@ export default class Chart {
     this.audioClip.stop();
   }
 
-  addLine(addToHistory = true) {
+  addLine(emit = true, addToHistory = true) {
     const newLine = new ChartJudgeline(this);
     this.lines.push(newLine);
     this.container.addChild(newLine.sprite);
@@ -88,13 +92,15 @@ export default class Chart {
       after: newLine.json,
     });
 
-    App.events.emit('chart.lines.added', newLine);
-    App.events.emit('chart.lines.updated', this.lines);
+    if (emit) {
+      App.events.emit('chart.lines.added', newLine);
+      App.events.emit('chart.lines.updated', this.lines);
+    }
 
     return newLine;
   }
 
-  removeLine(id: string, addToHistory = true) {
+  removeLine(id: string, emit = true, addToHistory = true) {
     const lineIndex = this.lines.findIndex((e) => e.id === id);
     if (lineIndex === -1) return;
 
@@ -108,8 +114,10 @@ export default class Chart {
       before: line.json,
     });
 
-    App.events.emit('chart.lines.removed', line);
-    App.events.emit('chart.lines.updated', [ ...this.lines ]);
+    if (emit) {
+      App.events.emit('chart.lines.removed', line);
+      App.events.emit('chart.lines.updated', [ ...this.lines ]);
+    }
   }
 
   addBookmark(beatNum: number, label: string, color?: string, id = uuid()) {
@@ -127,7 +135,7 @@ export default class Chart {
     this.bookmarks.splice(bookmarkId, 1);
   }
 
-  addBPM(time: BeatArray, bpm: number, addToHistory = true) {
+  addBPM(time: BeatArray, bpm: number, emit = true, addToHistory = true) {
     const newBPM = this.bpm.add(time, bpm);
     if (addToHistory) this.histories.add({
       name: 'bpm',
@@ -137,16 +145,16 @@ export default class Chart {
     });
 
     this.updateLinesTime();
-    App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
+    if (emit) App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }
 
-  editBPM(id: string, newBeat?: BeatArray, newBPM?: number) {
+  editBPM(id: string, newBeat?: BeatArray, newBPM?: number, emit = true) {
     this.bpm.edit(id, newBPM, newBeat);
     this.updateLinesTime();
-    App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
+    if (emit) App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }
 
-  removeBPM(id: string, addToHistory = true) {
+  removeBPM(id: string, emit = true, addToHistory = true) {
     const oldBPM = this.bpm.remove(id);
     if (!oldBPM) return;
     if (addToHistory) this.histories.add({
@@ -157,7 +165,7 @@ export default class Chart {
     })
 
     this.updateLinesTime();
-    App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
+    if (emit) App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }
 
   resize(size: RendererSize) {
