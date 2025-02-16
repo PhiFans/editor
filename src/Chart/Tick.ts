@@ -100,9 +100,10 @@ function ChartTick(this: Chart) {
           note._realPosY -= realYCos;
 
           spriteHead.visible = false;
-          spriteBody.height = realHoldLength;
-          spriteEnd.position.y = -realHoldLength;
         }
+
+        spriteBody.height = realHoldLength;
+        spriteEnd.position.y = -realHoldLength;
       }
 
       sprite.position.set(note._realPosX, note._realPosY);
