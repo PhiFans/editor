@@ -15,12 +15,17 @@
 }
 
 .bpm-list-item {
+  display: flex;
   padding: 8px;
   border-bottom: 1px solid var(--border-primary-color);
   box-sizing: border-box;
+  align-items: center;
 }
 .bpm-list-item:last-child {
   border-bottom: unset;
+}
+.bpm-list-item .bpm-props {
+  flex: 1;
 }
 
 .bpm-list-item .bpm-prop {
