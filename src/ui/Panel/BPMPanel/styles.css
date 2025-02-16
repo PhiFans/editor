@@ -42,12 +42,3 @@
 .bpm-prop .bpm-prop-input {
   flex: 0.6;
 }
-
-.bpm-prop-input .bpm-input-beat {
-  display: flex;
-}
-
-.bpm-prop-input .bpm-input-beat input {
-  width: 0;
-  flex: 0.3;
-}

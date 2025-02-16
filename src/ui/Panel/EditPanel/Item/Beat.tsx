@@ -1,5 +1,5 @@
 import Container from './Container';
-import Input from '@/ui/components/NumberInput';
+import BeatInput from '@/ui/components/BeatInput';
 import { PanelItemPropsBase } from '../types';
 import { BeatArray } from '@/utils/types';
 import { useCallback, useState } from 'react';
@@ -14,37 +14,17 @@ const EditPanelBeat = ({
 }: BeatProps) => {
   const [ value, setValue ] = useState<BeatArray>(defaultValue ?? [ 0, 0, 1 ]);
 
-  const handleInput = useCallback((index: number, newValue: number) => {
-    const _value: BeatArray = [ ...value ];
-    _value[index] = newValue;
-
-    if (isNaN(BeatArrayToNumber(_value))) return;
-    setValue(_value);
-    onChanged(_value);
-  }, [onChanged, value]);
+  const handleInput = useCallback((newBeat: BeatArray) => {
+    if (isNaN(BeatArrayToNumber(newBeat))) return;
+    setValue(newBeat);
+    onChanged(newBeat);
+  }, [onChanged]);
 
   return (
     <Container title={label} className='edit-panel-input-beat'>
-      <Input
-        min={0}
-        step={1}
-        defaultValue={value[0]}
-        onChanged={(e) => handleInput(0, e)}
-      />
-      <span className='hr'>:</span>
-      <Input
-        min={0}
-        max={value[2] - 1}
-        step={1}
-        defaultValue={value[1]}
-        onChanged={(e) => handleInput(1, e)}
-      />
-      <span className='hr'>/</span>
-      <Input
-        min={1}
-        step={1}
-        defaultValue={value[2]}
-        onChanged={(e) => handleInput(2, e)}
+      <BeatInput
+        beat={value}
+        onInput={handleInput}
       />
     </Container>
   )

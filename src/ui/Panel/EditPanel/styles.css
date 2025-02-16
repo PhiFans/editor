@@ -31,15 +31,6 @@
   flex: 0.6;
 }
 
-.edit-panel-item-input.edit-panel-input-beat {
-  display: flex;
-}
-
-.edit-panel-item-input.edit-panel-input-beat input {
-  width: 0;
-  flex: 0.3;
-}
-
 .edit-panel-slider {
   --value-percent: 0;
 

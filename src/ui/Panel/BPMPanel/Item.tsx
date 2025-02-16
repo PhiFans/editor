@@ -1,6 +1,6 @@
 import App from '@/App/App';
 import ChartBPM from "@/Chart/BPM";
-import BeatInput from './BeatInput';
+import BeatInput from '@/ui/components/BeatInput';
 import NumberInput from '@/ui/components/NumberInput';
 import { useCallback } from "react";
 import { BeatArray } from "@/utils/types";
@@ -35,6 +35,7 @@ const BPMListItem = ({
             <BeatInput
               beat={bpm.beat}
               onInput={(e) => handleUpdate(e)}
+              className='bpm-input-beat'
             />
           </div>
         </div>
@@ -45,6 +46,7 @@ const BPMListItem = ({
               defaultValue={bpm.bpm}
               min={1}
               step={0.001}
+              dragStep={1}
               onInput={(e) => handleUpdate((void 0), e)}
             />
           </div>

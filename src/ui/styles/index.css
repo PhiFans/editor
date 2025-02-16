@@ -388,3 +388,15 @@ input[type="color"] {
   border-radius: var(--text-area-border-radius);
   margin: var(--text-area-margin);
 }
+
+/* Beat Input */
+.input-beat {
+  display: flex;
+  align-items: center;
+}
+
+.input-beat input {
+  display: block;
+  width: 100%;
+  flex: 0.333333;
+}
