@@ -16,6 +16,7 @@ type NumberInputProps = {
   min?: number,
   max?: number,
   step?: number,
+  dragStep?: number,
   defaultValue?: number,
   placeholder?: string,
   onChanged?: (newValue: number) => void,
@@ -26,6 +27,7 @@ const NumberInput = ({
   min,
   max,
   step,
+  dragStep,
   defaultValue,
   placeholder,
   onChanged,
@@ -140,7 +142,7 @@ const NumberInput = ({
       if (isNaN(dragDelta.current)) dragDelta.current = 0;
 
       const dy = e.clientY - dragPrevPosY.current;
-      dragDelta.current -= dy * (step ?? getDragStep(min, max));
+      dragDelta.current -= dy * (dragStep ?? step ?? getDragStep(min, max));
 
       if (max !== (void 0) && dragStartValue.current + dragDelta.current > max) {
         dragDelta.current = max - dragStartValue.current;
@@ -148,7 +150,7 @@ const NumberInput = ({
         dragDelta.current = min - dragStartValue.current;
       }
 
-      const dragValue = parseFloat((dragDelta.current + dragStartValue.current).toPrecision(10));
+      const dragValue = clampSnapValue(parseFloat((dragDelta.current + dragStartValue.current).toPrecision(10)));
       if (dragValue !== lastChanged.current) {
         setValue(dragValue);
         if (onChanged) onChanged(dragValue);
@@ -157,7 +159,7 @@ const NumberInput = ({
 
       dragPrevPosY.current = e.clientY;
     }
-  }, [min, max, step, onChanged, handleMouseUp]);
+  }, [min, max, dragStep, step, onChanged, handleMouseUp, clampSnapValue]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
     isDragging.current = true;
