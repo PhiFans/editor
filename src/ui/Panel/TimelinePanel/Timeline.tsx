@@ -56,7 +56,8 @@ const Timeline: React.FC = () => {
           className='timeline-panel'
           style={{
             position: 'relative',
-            minHeight: '50px',
+            height: 'unset',
+            minHeight: '100%',
             overflowX: 'hidden',
             overflowY: 'visible',
           }}
