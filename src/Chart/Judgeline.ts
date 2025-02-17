@@ -22,7 +22,7 @@ export default class ChartJudgeline {
   readonly id: string;
   readonly chart: Chart;
 
-  props = new JudgelineProps();
+  props: JudgelineProps;
   floorPositions: FloorPosition[] = [];
   notes: Note[] = [];
 
@@ -43,17 +43,22 @@ export default class ChartJudgeline {
   readonly events: EventEmitter = new EventEmitter();
   sprite!: Sprite;
 
-  constructor(chart: Chart, id = uuid()) {
+  constructor(chart: Chart, addDefaultKeyframes = true, id = uuid()) {
     this.id = id;
     this.chart = chart;
 
-    this.updateProp('speed', true);
-    this.updateProp('positionX', true);
-    this.updateProp('positionY', true);
-    this.updateProp('rotate', true);
-    this.updateProp('alpha', true);
+    this.props = new JudgelineProps(addDefaultKeyframes);
 
-    this.calcFloorPositions();
+    if (addDefaultKeyframes) {
+      this.updateProp('speed', true);
+      this.updateProp('positionX', true);
+      this.updateProp('positionY', true);
+      this.updateProp('rotate', true);
+      this.updateProp('alpha', true);
+
+      this.calcFloorPositions();
+    }
+
     this.createSprite();
   }
 

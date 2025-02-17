@@ -81,8 +81,8 @@ export default class Chart {
     this.audioClip.stop();
   }
 
-  addLine(emit = true, addToHistory = true) {
-    const newLine = new ChartJudgeline(this);
+  addLine(addDefaultKeyframes = true, addToHistory = true) {
+    const newLine = new ChartJudgeline(this, addDefaultKeyframes);
     this.lines.push(newLine);
     this.container.addChild(newLine.sprite);
     if (addToHistory) this.histories.add({
@@ -92,10 +92,8 @@ export default class Chart {
       after: newLine.json,
     });
 
-    if (emit) {
-      App.events.emit('chart.lines.added', newLine);
-      App.events.emit('chart.lines.updated', this.lines);
-    }
+    App.events.emit('chart.lines.added', newLine);
+    App.events.emit('chart.lines.updated', this.lines);
 
     return newLine;
   }

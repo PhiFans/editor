@@ -104,13 +104,21 @@ export const ImportChart = (chart: ChartExported, audio: File, background: File)
   }
 
   for (const line of chart.lines) {
-    const newLine = result.addLine(true, false);
+    const newLine = result.addLine(false, false);
 
     addKeyframesToLine(newLine, 'speed', line.props.speed);
     addKeyframesToLine(newLine, 'positionX', line.props.positionX);
     addKeyframesToLine(newLine, 'positionY', line.props.positionY);
     addKeyframesToLine(newLine, 'rotate', line.props.rotate);
     addKeyframesToLine(newLine, 'alpha', line.props.alpha);
+
+    newLine.updateProp('speed', true);
+    newLine.updateProp('positionX', true);
+    newLine.updateProp('positionY', true);
+    newLine.updateProp('rotate', true);
+    newLine.updateProp('alpha', true);
+
+    newLine.calcFloorPositions();
 
     for (const note of line.notes) {
       newLine.addNote({
