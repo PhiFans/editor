@@ -8,6 +8,11 @@
   flex-wrap: nowrap;
 }
 
+.bpm-offset {
+  padding: 8px;
+  padding-bottom: 0;
+}
+
 .bpm-list {
   overflow-x: hidden;
   overflow-y: auto;
@@ -28,7 +33,7 @@
   flex: 1;
 }
 
-.bpm-list-item .bpm-prop {
+.bpm-prop {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -41,4 +46,12 @@
 
 .bpm-prop .bpm-prop-input {
   flex: 0.6;
+}
+
+.bpm-offset .bpm-prop .bpm-prop-name {
+  flex: 0.354;
+}
+
+.bpm-offset .bpm-prop .bpm-prop-input {
+  flex: 0.646;
 }

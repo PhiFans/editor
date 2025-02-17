@@ -53,6 +53,8 @@ export default class ChartBPMList extends Array<ChartBPM> {
   }
 
   timeToBeatNum(time: number) {
+    if (this.length === 1 || time <= 0) return parseDoublePrecist(time / this[0].timePerBeat, 6, -1);
+
     for (const bpm of this) {
       if (bpm.endTime <= time) continue;
       if (bpm.time > time) break;
