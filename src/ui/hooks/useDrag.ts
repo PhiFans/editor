@@ -1,9 +1,7 @@
-import { useRef, useCallback, useEffect, useMemo } from 'react';
+import { useRef, useCallback, useMemo } from 'react';
 import { setDragStyle } from '@/utils/ui';
 import { GridValue } from '@/utils/math';
 import { Nullable, Point } from '@/utils/types';
-
-const DRAG_THRESH = 5;
 
 type MouseDownEvent = {
   clientX: number,
@@ -12,8 +10,10 @@ type MouseDownEvent = {
 
 type UseDragProps = {
   grid?: number | Point,
+  thresh?: number,
   allowX?: boolean,
   allowY?: boolean,
+  onDragStart?: () => void,
   onDrag?: (point: Point) => void,
   onDragEnd?: (point: Point) => void,
   onClick?: () => void,
@@ -26,14 +26,16 @@ const getGrid = (grid: number | Point, type: keyof Point) => typeof grid === 'nu
 
 const useDrag = ({
   grid = void 0,
+  thresh = 5,
   allowX = true,
   allowY = true,
-  onDrag, onDragEnd, onClick,
+  onDragStart, onDrag, onDragEnd, onClick,
 }: UseDragProps) => {
   const _grid: Point = useMemo(() => ({
     x: grid !== (void 0) ? getGrid(grid, 'x') : 1,
     y: grid !== (void 0) ? getGrid(grid, 'y') : 1,
   }), [grid]);
+  const _thresh = thresh >= 0 ? thresh : 0;
   const isDragging = useRef(false);
   const isDragTesting = useRef(false);
   const dragStartPos = useRef<Point>({ x: NaN, y: NaN });
@@ -45,14 +47,17 @@ const useDrag = ({
     else return GridValue(value, _grid[type]);
   }, [grid, _grid]);
 
-  const handleMouseDown = useCallback((e: MouseDownEvent) => {
+  const handleMouseDown = (e: MouseDownEvent) => {
     isDragging.current = true;
     isDragTesting.current = true;
 
     dragStartPos.current = { x: e.clientX, y: e.clientY };
-  }, []);
 
-  const handleMouseUp = useCallback(() => {
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleMouseUp = () => {
     if (!isDragging.current) return;
     if (dragDelta.current === null && onClick) onClick();
     else if (dragDelta.current !== null && onDragEnd) onDragEnd(dragDelta.current);
@@ -64,9 +69,11 @@ const useDrag = ({
     dragDelta.current = null;
 
     setDragStyle(null);
-  }, [onClick, onDragEnd]);
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+  };
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
+  const handleMouseMove = (e: MouseEvent) => {
     if (!isDragging.current) return;
 
     if (isDragTesting.current) {
@@ -74,15 +81,24 @@ const useDrag = ({
       const dy = e.clientY - dragStartPos.current.y;
 
       if (
-        (allowX && Math.abs(dx) > DRAG_THRESH) ||
-        (allowY && Math.abs(dy) > DRAG_THRESH)
+        (allowX && Math.abs(dx) > _thresh) ||
+        (allowY && Math.abs(dy) > _thresh)
       ) {
         e.preventDefault();
         isDragTesting.current = false;
+        if (onDragStart) onDragStart();
 
         if (!allowX && allowY) setDragStyle('vertical');
         else if (allowX && !allowY) setDragStyle('horizontal');
         else setDragStyle('all');
+      } else if (
+        _thresh > 0 && (
+          (!allowX && Math.abs(dx) > _thresh) ||
+          (!allowY && Math.abs(dy) > _thresh)
+        )
+      ) {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
       }
     }
 
@@ -107,17 +123,7 @@ const useDrag = ({
         lastDragPos.current = { ...dragDelta.current };
       }
     }
-  }, [allowX, allowY, gridDrag, onDrag]);
-
-  useEffect(() => {
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [handleMouseMove, handleMouseUp]);
+  };
 
   return {
     onMouseDown: handleMouseDown,
