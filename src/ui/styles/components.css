@@ -56,7 +56,7 @@
   flex-direction: column;
 }
 
-.scroll-bar.horizonta .scroll-bar-point {
+.scroll-bar.horizontal .scroll-bar-point {
   width: 4px;
 }
 .scroll-bar.vertical .scroll-bar-point {
@@ -66,13 +66,21 @@
 .scroll-bar .scroll-bar-point.normal {
   cursor: pointer;
 }
-.scroll-bar.horizonta .scroll-bar-point.resizer {
+.scroll-bar.horizontal .scroll-bar-point.resizer {
   cursor: ew-resize;
 }
 .scroll-bar.vertical .scroll-bar-point.resizer {
   cursor: ns-resize;
 }
 
+.scroll-bar.horizontal .scroll-bar-point:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.scroll-bar.horizontal .scroll-bar-point:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
 .scroll-bar.vertical .scroll-bar-point:first-child {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
@@ -86,8 +94,11 @@
 .scroll-bar.scrolling {
   opacity: 1;
 };
+/* XXX: For some reason delete this will cause CSS selector failed to fetch */
+/* WTF?? */
+.scroll-bar > * {}
 .scroll-bar:hover.horizontal,
-.scroll-bar.horizontal.scrolling {
+.scroll-bar.scrolling.horizontal {
   height: 8px;
 }
 .scroll-bar:hover.vertical,
@@ -98,8 +109,8 @@
 .scroll-bar.scrolling .scroll-bar-point {
   border-radius: 8px;
 }
-.scroll-bar:hover.horizonta .scroll-bar-point,
-.scroll-bar.scrolling.horizonta .scroll-bar-point {
+.scroll-bar:hover.horizontal .scroll-bar-point,
+.scroll-bar.scrolling.horizontal .scroll-bar-point {
   width: 8px;
 }
 .scroll-bar:hover.vertical .scroll-bar-point,
