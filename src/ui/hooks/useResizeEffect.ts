@@ -1,53 +1,50 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Nullable } from '@/utils/types';
-
-type useResizeEffectProps = {
-  domRef: React.RefObject<Nullable<HTMLElement>>,
-  onResize?: (size: Size) => void,
-};
 
 type Size = {
   width: number,
   height: number,
 };
 
-const useResizeEffect = ({
-  domRef,
-  onResize
-}: useResizeEffectProps): Size => {
-  const [ size, setSize ] = useState<Size>({ width: 0, height: 0 });
+const useResizeEffect = (
+  callback: (size: Size) => void,
+  domRef: React.RefObject<Nullable<HTMLElement>>
+): void => {
+  const lastSizeRef = useRef<Size>({ width: 0, height: 0 });
 
   const updateSize = useCallback(() => {
     const dom = domRef.current;
     if (!dom) return;
+
     const { clientWidth, clientHeight } = dom;
-    setSize({
-      width: clientWidth,
-      height: clientHeight,
-    });
-    if (onResize) onResize({
-      width: clientWidth,
-      height: clientHeight,
-    });
-  }, [domRef, onResize]);
+    if (
+      lastSizeRef.current.width !== clientWidth ||
+      lastSizeRef.current.height !== clientHeight
+    ) {
+      callback({
+        width: clientWidth,
+        height: clientHeight,
+      });
+      lastSizeRef.current.width = clientWidth;
+      lastSizeRef.current.height = clientHeight;
+    }
+  }, [callback, domRef]);
 
   useEffect(() => {
     const dom = domRef.current;
     if (!dom) return;
 
-    const observer = new ResizeObserver(() => {
+    const resizer = new ResizeObserver(() => {
       updateSize();
     });
 
     updateSize();
-    observer.observe(dom);
+    resizer.observe(dom);
 
     return (() => {
-      observer.disconnect();
+      resizer.disconnect();
     });
   }, [domRef, updateSize]);
-
-  return { ...size };
 };
 
 export default useResizeEffect;
