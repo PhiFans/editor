@@ -22,9 +22,9 @@ export type ChartExported = {
 
 export default class Chart {
   info: ChartInfo;
-  offset: number = 0;
   audio: File;
   background: File;
+  _offset: number = 0;
 
   bpm: ChartBPMList = new ChartBPMList();
   lines: ChartJudgeline[] = [];
@@ -222,7 +222,7 @@ export default class Chart {
   }
 
   get beatNum() {
-    return this.bpm.timeToBeatNum(this.time);
+    return this.bpm.timeToBeatNum(this.time - this._offset);
   }
 
   set beatNum(beatNum: number) {
@@ -232,7 +232,15 @@ export default class Chart {
   }
 
   get beatDuration() {
-    return this.bpm.timeToBeatNum(this.duration);
+    return this.bpm.timeToBeatNum(this.duration + this._offset);
+  }
+
+  get offset() {
+    return this._offset * 1000;
+  }
+
+  set offset(offset: number) {
+    this._offset = offset / 1000;
   }
 
   private waitAudio() {return new Promise((res) => {

@@ -7,10 +7,10 @@ function ChartTick(this: Chart) {
     rendererSize,
     lines,
     time: _time,
-    offset,
+    _offset,
     container,
   } = this;
-  const time = _time - (offset / 1000);
+  const time = _time - _offset;
 
   const {
     widthHalf,
