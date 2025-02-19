@@ -12,8 +12,8 @@ export enum EAudioClipStatus {
 
 export default class AudioClip {
   readonly source: AudioBuffer;
-  readonly duration: number;
 
+  private _timeOffset: number = 0;
   private _channel: Nullable<AudioChannel> = null;
   private buffer?: AudioBufferSourceNode;
   private readonly audioCtx: AudioContext;
@@ -25,7 +25,6 @@ export default class AudioClip {
 
   constructor(audioCtx: AudioContext, clock: AudioClock, audioBuffer: AudioBuffer, channel: Nullable<AudioChannel> = null) {
     this.source = audioBuffer;
-    this.duration = this.source.duration;
     this._channel = channel;
 
     this.audioCtx = audioCtx;
@@ -82,16 +81,19 @@ export default class AudioClip {
    * @param {number} time Seek seconds
    */
   seek(time: number) {
+    let _time = time + this._timeOffset;
+    if (_time < 0) _time = 0;
+
     if (this.status === EAudioClipStatus.STOP) {
       const currentTime = this.clock.time;
-      this.startTime = currentTime - time;
+      this.startTime = currentTime - _time;
       this.pauseTime = currentTime;
       return;
     }
 
     const isPlayingBefore = this.status === EAudioClipStatus.PLAY;
     this.pause();
-    this.startTime = this.pauseTime - time;
+    this.startTime = this.pauseTime - _time;
 
     if (this.startTime > this.pauseTime) this.startTime = this.pauseTime;
     if (isPlayingBefore) this.play();
@@ -111,9 +113,21 @@ export default class AudioClip {
   }
 
   get time() {
-    if (isNaN(this.startTime)) return 0;
-    else if (isNaN(this.pauseTime)) return this.clock.time - this.startTime;
-    else return this.pauseTime - this.startTime;
+    if (isNaN(this.startTime)) return -this._timeOffset;
+    else if (isNaN(this.pauseTime)) return this.clock.time - this.startTime - this._timeOffset;
+    else return this.pauseTime - this.startTime - this._timeOffset;
+  }
+
+  get duration() {
+    return this.source.duration - this._timeOffset;
+  }
+
+  get timeOffset() {
+    return this._timeOffset;
+  }
+
+  set timeOffset(offset: number) {
+    this._timeOffset = offset;
   }
 
   get speed() {

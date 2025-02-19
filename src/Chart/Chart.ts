@@ -25,6 +25,7 @@ export default class Chart {
   audio: File;
   background: File;
   _offset: number = 0;
+  offsetBeat: number = 0;
 
   bpm: ChartBPMList = new ChartBPMList();
   lines: ChartJudgeline[] = [];
@@ -52,6 +53,8 @@ export default class Chart {
     AudioClip.from(audio, Audio.channels.music)
       .then((clip) => {
         this.audioClip = clip;
+        clip.timeOffset = this._offset;
+        this.updateOffsetBeat();
         App.events.emit('chart.audioClip.loaded', clip);
       })
       .catch((e) => { throw e });
@@ -143,12 +146,14 @@ export default class Chart {
     });
 
     this.updateLinesTime();
+    this.updateOffsetBeat();
     if (emit) App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }
 
   editBPM(id: string, newBeat?: BeatArray, newBPM?: number, emit = true) {
     this.bpm.edit(id, newBPM, newBeat);
     this.updateLinesTime();
+    this.updateOffsetBeat();
     if (emit) App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }
 
@@ -163,6 +168,7 @@ export default class Chart {
     })
 
     this.updateLinesTime();
+    this.updateOffsetBeat();
     if (emit) App.events.emit('chart.bpms.updated', [ ...this.bpm ]);
   }
 
@@ -188,19 +194,14 @@ export default class Chart {
     };
   }
 
-  private updateLinesTime() {
-    for (const line of this.lines) {
-      line.updateProp('speed', true);
-      line.updateProp('positionX', true);
-      line.updateProp('positionY', true);
-      line.updateProp('rotate', true);
-      line.updateProp('alpha', true);
+  updateOffsetBeat() {
+    if (this.bpm.length <= 0) return;
 
-      line.calcFloorPositions();
-      for (const note of line.notes) {
-        line.calcNoteTime(note);
-      }
-    }
+    const offsetBeat = this.bpm.timeToBeatNum(this._offset);
+    if (this.offsetBeat === offsetBeat) return;
+
+    this.offsetBeat = offsetBeat;
+    App.events.emit('chart.offset.updated', { offset: this.offset, offsetBeat: offsetBeat });
   }
 
   get status() {
@@ -222,7 +223,7 @@ export default class Chart {
   }
 
   get beatNum() {
-    return this.bpm.timeToBeatNum(this.time - this._offset);
+    return this.bpm.timeToBeatNum(this.time);
   }
 
   set beatNum(beatNum: number) {
@@ -232,7 +233,7 @@ export default class Chart {
   }
 
   get beatDuration() {
-    return this.bpm.timeToBeatNum(this.duration + this._offset);
+    return this.bpm.timeToBeatNum(this.duration);
   }
 
   get offset() {
@@ -240,10 +241,18 @@ export default class Chart {
   }
 
   set offset(offset: number) {
-    this._offset = offset / 1000;
+    const _offset = offset / 1000;
+    this._offset = _offset;
+
+    this.updateOffsetBeat();
+    this.waitAudio()
+      .then((clip) => {
+        clip.timeOffset = _offset;
+      })
+      .catch(() => void 0);
   }
 
-  private waitAudio() {return new Promise((res) => {
+  private waitAudio(): Promise<AudioClip> {return new Promise((res) => {
     if (this.audioClip) return res(this.audioClip);
     const clockId = setInterval(() => {
       if (!this.audioClip) return;
@@ -251,4 +260,19 @@ export default class Chart {
       clearInterval(clockId);
     }, 200);
   })}
+
+  private updateLinesTime() {
+    for (const line of this.lines) {
+      line.updateProp('speed', true);
+      line.updateProp('positionX', true);
+      line.updateProp('positionY', true);
+      line.updateProp('rotate', true);
+      line.updateProp('alpha', true);
+
+      line.calcFloorPositions();
+      for (const note of line.notes) {
+        line.calcNoteTime(note);
+      }
+    }
+  }
 }

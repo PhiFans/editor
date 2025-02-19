@@ -13,12 +13,12 @@ const TimelineSeeker: React.FC<TimelineSeekerProps> = ({
   timeLength,
   onSeek,
 }: TimelineSeekerProps) => {
-  const currentTime = useClockTime().beat;
+  const { beat } = useClockTime();
   const { scale } = useContext();
   const handleStartTime = useRef(NaN);
 
   const handleMouseMove = ({ x }: Point) => {
-    if (isNaN(handleStartTime.current)) handleStartTime.current = currentTime;
+    if (isNaN(handleStartTime.current)) handleStartTime.current = beat;
 
     const timeBetween = x / scale;
     const newTime = handleStartTime.current + timeBetween;
@@ -43,7 +43,7 @@ const TimelineSeeker: React.FC<TimelineSeekerProps> = ({
     <div
       className="timeline-time-seeker"
       style={{
-        "--current-time": currentTime,
+        "--current-time": beat,
       } as React.CSSProperties}
     >
       <div

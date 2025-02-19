@@ -29,6 +29,7 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   const contentHeight = useRef(0);
   const listScrollRef = useRef(0);
   const [ timeLength, setTimeLength ] = useState(0);
+  const [ timeOffset, setTimeOffset ] = useState(0);
 
   const onSeeked = useCallback((time: number) => {
     if (!App.chart) return;
@@ -77,6 +78,17 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
     });
   }, []);
 
+  useEffect(() => {
+    const updateTimeOffset = ({ offsetBeat }: { offsetBeat: number }) => {
+      setTimeOffset(offsetBeat);
+    };
+
+    App.events.on('chart.offset.updated', updateTimeOffset);
+    return (() => {
+      App.events.off('chart.offset.updated', updateTimeOffset);
+    });
+  });
+
   return (
     <RightPanelProvider timeLength={timeLength}>
       <RightPanelHead
@@ -99,6 +111,14 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
         >
           {keyframeRowMemoed}
         </TimelineList>
+
+        <div
+          className='timeline-keyframes-offset-flap'
+          style={{
+            '--offset-length': -timeOffset,
+          } as React.CSSProperties}
+        />
+
         <ScrollBar
           type="vertical"
           size={20}

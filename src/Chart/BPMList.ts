@@ -104,6 +104,7 @@ export default class ChartBPMList extends Array<ChartBPM> {
   private getRealTimeByBeatNum(beat: number) {
     if (!isFinite(beat)) return beat;
     if (this.length <= 0) return parseDoublePrecist(beat * 0.5, 6, -1);
+    if (this.length === 1 || beat < 0) return parseDoublePrecist((beat - this[0].beatNum) * this[0].timePerBeat, 6, -1);
 
     for (const bpm of this) {
       if (bpm.endBeatNum <= beat) continue;

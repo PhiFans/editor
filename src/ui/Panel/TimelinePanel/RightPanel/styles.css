@@ -52,3 +52,28 @@
   margin-top: 4px;
   height: calc(100% - 4px);
 }
+
+.timeline-keyframes-offset-flap {
+  --offset-length: 0;
+
+  position: absolute;
+  top: 0;
+  left: calc(var(--time-scrolled) * var(--base-scale) * -1px);
+  width: calc(var(--offset-length) * var(--base-scale) * 1px);
+  height: 100%;
+  background: linear-gradient(135deg,
+    var(--box-1) 25%, var(--box-3) 0,
+    var(--box-3) 50%, var(--box-1) 0,
+    var(--box-1) 75%, var(--box-3) 0
+  );
+  background-size: 20px 20px;
+  background-repeat: repeat;
+  z-index: 10;
+  opacity: 0.5;
+
+  -webkit-pointer-events: none;
+  -moz-pointer-events: none;
+  -ms-pointer-events: none;
+  -o-pointer-events: none;
+  pointer-events: none;
+}
