@@ -5,22 +5,17 @@ import App from '@/App/App';
 import ChartJudgeline from '@/Chart/Judgeline';
 import TimelineLeftPanel from './LeftPanel/LeftPanel';
 import TimelineRightPanel from './RightPanel/RightPanel';
-import ScaleContext from './ScaleContext';
 import './styles.css';
 
 const Timeline: React.FC = () => {
   const [ timeLength, setTimeLength ] = useState(0);
   const [ lineList, setLineList ] = useState<ChartJudgeline[]>([]);
   const [ expandedLines, setExpandedLines ] = useState<number[]>([]);
-  const [ contentScale, setContentScale ] = useState(205);
+  const [ listScrolled, setListScrolled ] = useState<number>(0);
 
   const setLineExpand = (lineId: number, isExpanded: boolean) => {
     if (isExpanded) setExpandedLines([ ...expandedLines, lineId ]);
     else setExpandedLines([ ...expandedLines.filter((e) => e !== lineId) ]);
-  };
-
-  const updateContentScale = (scale: number) => {
-    setContentScale(10 + (scale / 100) * 390);
   };
 
   useEffect(() => {
@@ -56,8 +51,6 @@ const Timeline: React.FC = () => {
           className='timeline-panel'
           style={{
             position: 'relative',
-            height: 'unset',
-            minHeight: '100%',
             overflowX: 'hidden',
             overflowY: 'visible',
           }}
@@ -65,15 +58,16 @@ const Timeline: React.FC = () => {
           <TimelineLeftPanel
             lines={lineList}
             expandedLines={expandedLines}
+            listScrolled={listScrolled}
             onLineExpanded={(id, e) => setLineExpand(id, e)}
           />
-          <ScaleContext.Provider value={contentScale}>
             <TimelineRightPanel
               timeLength={timeLength}
               lines={lineList}
               expandedLines={expandedLines}
+              listScrolled={listScrolled}
+              onListScroll={setListScrolled}
             />
-          </ScaleContext.Provider>
         </SplitPane>
       </div>
       <TimelineFooter
@@ -98,16 +92,7 @@ const Timeline: React.FC = () => {
           </>
         }
         rightContent={
-          <>
-            <input
-              type='range'
-              min={0}
-              max={100}
-              defaultValue={50}
-              onChange={(e) => updateContentScale(100 - parseInt(e.target.value))}
-              key={'footer-right-scale'}
-            />
-          </>
+          <></>
         }
       />
     </div>

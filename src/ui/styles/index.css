@@ -117,21 +117,16 @@ button,
   flex-wrap: nowrap;
 }
 
-.note-panel-test-container,
-.bpm-panel-test-container {
-  width: 400px;
-  height: 600px;
-}
-
 span.hr {
   margin: 0px 4px;
   color: var(--border-secondary-color);
 }
 
-.edit-panel-container {
-  display: block;
-  border: 1px solid var(--border-primary-color);
-  width: 300px;
+.scroller-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
 /* Default styles of react-split-pane */

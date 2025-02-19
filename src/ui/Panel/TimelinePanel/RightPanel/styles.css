@@ -15,7 +15,7 @@
   width: 1px;
   height: 100%;
   margin-top: 0px;
-  left: calc(var(--time) * var(--base-scale) * 1px);
+  left: calc((var(--time) - var(--time-scrolled)) * var(--base-scale) * 1px);
   background: var(--beat-black);
   transform: translateX(-50%);
 }

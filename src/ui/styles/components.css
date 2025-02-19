@@ -8,6 +8,7 @@
   position: absolute;
   flex-wrap: nowrap;
   align-items: stretch;
+  z-index: 10;
 
   -webkit-user-select: none;
   -moz-user-select: none;

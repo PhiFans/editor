@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useClockTime } from '../../contexts/Clock';
-import { useScale } from './ScaleContext';
+import { useContext } from './RightPanel/Context';
 import useDrag from '../../hooks/useDrag';
 import { Point } from '@/utils/types';
 
@@ -14,7 +14,7 @@ const TimelineSeeker: React.FC<TimelineSeekerProps> = ({
   onSeek,
 }: TimelineSeekerProps) => {
   const currentTime = useClockTime().beat;
-  const scale = useScale();
+  const { scale } = useContext();
   const handleStartTime = useRef(NaN);
 
   const handleMouseMove = ({ x }: Point) => {

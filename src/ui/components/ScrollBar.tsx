@@ -113,8 +113,8 @@ const ScrollBar = ({
       if (newSize > maxSize) newSize = maxSize;
 
       setRealSize(newSize);
-      updatePosition(_parentSize, resizePosition.current === 'head' ? -sizeDiff : 0, newSize);
       onResize!(parseDoublePrecist((newSize / _parentSize) * 100, 2));
+      updatePosition(_parentSize, resizePosition.current === 'head' ? -sizeDiff : 0, newSize);
     }, [type, minSize, updatePosition, onResize]),
 
     onDragEnd: useCallback(() => {

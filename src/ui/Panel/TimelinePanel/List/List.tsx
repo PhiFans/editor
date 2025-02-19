@@ -6,13 +6,15 @@ export type TimelineListProps = {
   className?: string,
   style?: React.CSSProperties,
   children?: React.ReactNode,
+  ref?: React.Ref<HTMLDivElement>,
 };
 
 const TimelineList: React.FC<TimelineListProps> = ({
   itemHeight,
   className,
   style,
-  children
+  children,
+  ref,
 }) => {
   let styles: React.CSSProperties = {};
   if (style) styles = { ...style };
@@ -21,6 +23,7 @@ const TimelineList: React.FC<TimelineListProps> = ({
   return <div
     className={`timeline-list ${className ? className : ''}`}
     style={styles}
+    ref={ref}
   >{children}</div>
 };
 
