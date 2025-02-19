@@ -1,17 +1,16 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useState, useEffect, useMemo, useRef } from 'react';
 import App from '@/App/App';
 import ChartJudgeline from "@/Chart/Judgeline";
 import RightPanelProvider from './Context/Provider';
 import ScrollBar from '@/ui/components/ScrollBar';
 import TimelineList from "../List/List";
-import TimelineSeeker from '../Seeker';
+import TimelineSeeker from './Seeker';
 import RightPanelHead from './Head';
 import KeyframesRow from './KeyframesRow';
 import './styles.css';
 import useResizeEffect from '@/ui/hooks/useResizeEffect';
 
 export type TimelineRightPanelProps = {
-  timeLength: number,
   lines: ChartJudgeline[],
   expandedLines: number[],
   listScrolled: number,
@@ -19,7 +18,6 @@ export type TimelineRightPanelProps = {
 };
 
 const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
-  timeLength,
   lines,
   expandedLines,
   listScrolled,
@@ -30,6 +28,7 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   const containerHeight = useRef(0);
   const contentHeight = useRef(0);
   const listScrollRef = useRef(0);
+  const [ timeLength, setTimeLength ] = useState(0);
 
   const onSeeked = useCallback((time: number) => {
     if (!App.chart) return;
@@ -64,8 +63,22 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
     updateListScroll(listScrollRef.current);
   }, scrollContentRef);
 
+  useEffect(() => {
+    const updateTimeLength = () => {
+      setTimeLength(App.chart!.beatDuration);
+    };
+
+    App.events.once('chart.audioClip.loaded', updateTimeLength);
+    App.events.on('chart.bpms.updated', updateTimeLength);
+
+    return (() => {
+      App.events.off('chart.audioClip.loaded', updateTimeLength);
+      App.events.off('chart.bpms.updated', updateTimeLength);
+    });
+  }, []);
+
   return (
-    <RightPanelProvider>
+    <RightPanelProvider timeLength={timeLength}>
       <RightPanelHead
         onSeek={onSeeked}
       />

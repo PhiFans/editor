@@ -2,13 +2,14 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 import useResizeEffect from '@/ui/hooks/useResizeEffect';
 import ScrollBar from '@/ui/components/ScrollBar';
 import RightPanelContext from '.';
-import App from '@/App/App';
 
 type RightPanelProviderProps = {
+  timeLength: number,
   children: React.ReactNode,
 };
 
 const RightPanelProvider = ({
+  timeLength,
   children
 }: RightPanelProviderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -17,7 +18,6 @@ const RightPanelProvider = ({
   const scrollerScale = useRef<number>(0.05);
   const lastScrolled = useRef<number>(0);
   const lastScale = useRef<number>(0);
-  const [ timeLength, setTimeLength ] = useState(0);
   const [ scale, setScale ] = useState(10);
   const [ timeScrolled, setTimeScrolled ] = useState(0);
   const [ timeRange, setTimeRange ] = useState<[number, number]>([ 0, 10 ]);
@@ -64,19 +64,8 @@ const RightPanelProvider = ({
   }, containerRef);
 
   useEffect(() => {
-    const updateTimeLength = () => {
-      setTimeLength(App.chart!.beatDuration);
-      updateTimeRange();
-    };
-
-    App.events.once('chart.audioClip.loaded', updateTimeLength);
-    App.events.on('chart.bpms.updated', updateTimeLength);
-
-    return (() => {
-      App.events.off('chart.audioClip.loaded', updateTimeLength);
-      App.events.off('chart.bpms.updated', updateTimeLength);
-    });
-  }, [updateTimeRange]);
+    updateTimeRange();
+  }, [timeLength, updateTimeRange]);
 
   return (
     <RightPanelContext.Provider

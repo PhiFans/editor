@@ -8,7 +8,6 @@ import TimelineRightPanel from './RightPanel/RightPanel';
 import './styles.css';
 
 const Timeline: React.FC = () => {
-  const [ timeLength, setTimeLength ] = useState(0);
   const [ lineList, setLineList ] = useState<ChartJudgeline[]>([]);
   const [ expandedLines, setExpandedLines ] = useState<number[]>([]);
   const [ listScrolled, setListScrolled ] = useState<number>(0);
@@ -17,19 +16,6 @@ const Timeline: React.FC = () => {
     if (isExpanded) setExpandedLines([ ...expandedLines, lineId ]);
     else setExpandedLines([ ...expandedLines.filter((e) => e !== lineId) ]);
   };
-
-  useEffect(() => {
-    const updateTimeLength = () => {
-      setTimeLength(App.chart!.beatDuration);
-    };
-
-    App.events.once('chart.audioClip.loaded', updateTimeLength);
-    App.events.on('chart.bpms.updated', updateTimeLength);
-
-    return (() => {
-      App.events.off('chart.bpms.updated', updateTimeLength);
-    });
-  }, []);
 
   useEffect(() => {
     const updateLineList = (newLines: ChartJudgeline[]) => {
@@ -61,13 +47,12 @@ const Timeline: React.FC = () => {
             listScrolled={listScrolled}
             onLineExpanded={(id, e) => setLineExpand(id, e)}
           />
-            <TimelineRightPanel
-              timeLength={timeLength}
-              lines={lineList}
-              expandedLines={expandedLines}
-              listScrolled={listScrolled}
-              onListScroll={setListScrolled}
-            />
+          <TimelineRightPanel
+            lines={lineList}
+            expandedLines={expandedLines}
+            listScrolled={listScrolled}
+            onListScroll={setListScrolled}
+          />
         </SplitPane>
       </div>
       <TimelineFooter
@@ -78,21 +63,7 @@ const Timeline: React.FC = () => {
             >
               Add line
             </button>
-            <span className='hr'>|</span>
-            <button
-              onClick={() => App.chart ? App.chart.play().catch(() => void 0) : void 0}
-            >
-              Play
-            </button>
-            <button
-              onClick={() => App.chart ? App.chart.pause().catch(() => void 0) : void 0}
-            >
-              Pause
-            </button>
           </>
-        }
-        rightContent={
-          <></>
         }
       />
     </div>
