@@ -90,6 +90,7 @@ const RightPanelProvider = ({
           minSize={30}
           onScroll={updateScroll}
           onResize={updateScrollResize}
+          useWheelWithShift
         />
       </div>
     </RightPanelContext.Provider>

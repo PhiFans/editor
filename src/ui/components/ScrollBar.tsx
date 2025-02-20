@@ -18,7 +18,8 @@ type ScrollBarProps = {
   position?: number,
   minSize?: number,
   onResize?: (size: number) => void,
-  flipSide?: boolean,
+  useWheel?: boolean,
+  useWheelWithShift?: boolean,
 };
 
 const ScrollBar = ({
@@ -28,6 +29,8 @@ const ScrollBar = ({
   minSize = 10,
   onResize,
   position = 0,
+  useWheel = true,
+  useWheelWithShift = false,
 }: ScrollBarProps) => {
   const domRef = useRef<Nullable<HTMLDivElement>>(null);
   const parentDomRef = useRef<Nullable<HTMLElement>>(null);
@@ -135,10 +138,35 @@ const ScrollBar = ({
     handleResize(e);
   };
 
+  const handleMouseWheel = useCallback((e: WheelEvent) => {
+    if (e.ctrlKey) return;
+    if (useWheelWithShift !== e.shiftKey) return;
+    e.preventDefault();
+
+    const _parentSize = getParentSize(parentSize, type);
+    const _realSize = currentSize.current * _parentSize;
+    const _realPosition = 2 + ((_parentSize - _realSize) - 4) * currentPosition.current;
+    const scrollDiff = e.deltaY / 10;
+
+    startPosition.current = _realPosition;
+    updatePosition(_parentSize, scrollDiff, _realSize);
+  }, [type, useWheelWithShift, updatePosition]);
+
   useEffect(() => {
     if (!domRef.current) return;
     parentDomRef.current = domRef.current.parentElement;
   }, [domRef]);
+
+  useEffect(() => {
+    if (!useWheel) return;
+    if (!parentDomRef.current) return;
+    const parentDom = parentDomRef.current;
+
+    parentDom.addEventListener('wheel', handleMouseWheel);
+    return (() => {
+      parentDom.removeEventListener('wheel', handleMouseWheel);
+    });
+  }, [useWheel, parentDomRef, handleMouseWheel]);
 
   // Listen to parent resize
   useResizeEffect((size) => {
