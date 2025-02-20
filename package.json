@@ -20,7 +20,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@pixi/react": "8.0.0-beta.21",
+    "@pixi/react": "8.0.0-beta.24",
     "@types/node": "^22.10.5",
     "audio-decode": "^2.2.2",
     "eventemitter3": "^5.0.1",
