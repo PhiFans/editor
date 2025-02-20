@@ -34,7 +34,7 @@
 }
 
 /* Default dark theme */
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) { */
   :root {
     color-scheme: dark;
 
@@ -181,4 +181,4 @@
     --select-border-color: none;
     --select-shadow: var(--shadow);
   }
-}
+/* } */
