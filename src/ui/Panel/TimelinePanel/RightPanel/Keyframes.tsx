@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import TimelineListItem from '../List/Item';
 import { useTempo } from '@/ui/contexts/Tempo';
-import { useScale } from '../ScaleContext';
+import { useContext } from './Context';
 import { useSelectedItem } from '@/ui/contexts/SelectedItem';
 import useDrag from '@/ui/hooks/useDrag';
 import { setCSSProperties } from '@/utils/ui';
@@ -28,7 +28,7 @@ const Keyframe: React.FC<KeyframeProps> = ({
   onRightClicked,
 }) => {
   const tempo = useTempo();
-  const scale = useScale();
+  const { scale } = useContext();
   const tempoGrid = useMemo(() => parseDoublePrecist(1 / tempo, 6, -1), [tempo]);
   const beatGrid = useMemo(() => tempoGrid * scale, [tempoGrid, scale]);
   const [ selectedItem, ] = useSelectedItem()!;
