@@ -5,6 +5,7 @@ import PropsContext from './PropsContext';
 import { useSelectedItem } from '../../contexts/SelectedItem';
 import { Nullable } from '@/utils/types';
 import { NoteType } from '@/Chart/types';
+import NumberInput from '@/ui/components/NumberInput';
 
 const NotePanel = () => {
   const [, setSelectedItem ] = useSelectedItem()!;
@@ -100,14 +101,15 @@ const NotePanel = () => {
         </label>
         <label>
           Align:
-          <input
-            type='number'
+          <NumberInput
             min={1}
             defaultValue={8}
+            step={1}
+            dragStep={0.1}
+            onChanged={setAlighCount}
             style={{
               width: 50
             }}
-            onChange={(e) => setAlighCount(parseInt(e.target.value))}
           />
         </label>
       </div>

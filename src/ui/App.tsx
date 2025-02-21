@@ -9,6 +9,7 @@ import SettingsProvider from './contexts/Settings/Provider';
 import DockLayout from 'rc-dock';
 import SettingsPanel from './Panel/SettingsPanel/SettingsPanel';
 import { ChartExported } from '@/Chart/Chart';
+import NumberInput from './components/NumberInput';
 
 function App() {
   const dockRef = useRef<Nullable<DockLayout>>(null);
@@ -63,13 +64,8 @@ function App() {
     downloadDom.click();
   };
 
-  const handleTempoUpdate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const target = e.target as HTMLInputElement;
-    const newValue = parseInt(target.value);
-
-    if (isNaN(newValue)) return;
-    if (newValue <= 0) return;
-    setTempo(newValue);
+  const handleTempoUpdate = useCallback((tempo: number) => {
+    setTempo(tempo);
   }, []);
 
   const showSettingsPanel = () => {
@@ -110,13 +106,14 @@ function App() {
           <div className="settings">
             <label>
               Set tempo: 1/
-              <input
-                type='number'
+              <NumberInput
                 min={1}
                 defaultValue={4}
-                onChange={handleTempoUpdate}
+                step={1}
+                dragStep={0.1}
+                onChanged={handleTempoUpdate}
                 style={{
-                  width: 38
+                  width: 50
                 }}
               />
             </label>
