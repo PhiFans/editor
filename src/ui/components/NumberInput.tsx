@@ -21,6 +21,8 @@ type NumberInputProps = {
   placeholder?: string,
   onChanged?: (newValue: number) => void,
   onInput?: (newValue: number) => void,
+  className?: string,
+  style?: React.CSSProperties,
 };
 
 const NumberInput = ({
@@ -31,8 +33,11 @@ const NumberInput = ({
   defaultValue,
   placeholder,
   onChanged,
-  onInput
+  onInput,
+  className,
+  style
 }: NumberInputProps) => {
+  const inputStyle = style ? style : {};
   const [ value, setValue ] = useState<Nullable<number>>(defaultValue ?? null);
   const inputRef = useRef<Nullable<HTMLInputElement>>(null);
   const lastChanged = useRef<number>(defaultValue ?? (min ?? 0));
@@ -198,6 +203,8 @@ const NumberInput = ({
       onBlur={handleChangeEnd}
       onKeyDown={handleKeydown}
       onMouseDown={handleMouseDown}
+      className={className}
+      style={inputStyle}
       ref={inputRef}
     />
   )
