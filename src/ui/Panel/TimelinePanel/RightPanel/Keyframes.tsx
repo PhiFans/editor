@@ -45,7 +45,9 @@ const Keyframe: React.FC<KeyframeProps> = ({
   };
 
   const calculateNewTime = useCallback((x: number) => {
-    return GridValue(keyframe.beatNum + (x / beatGrid / tempo), tempoGrid);
+    let newValue = GridValue(keyframe.beatNum + (x / beatGrid / tempo), tempoGrid);
+    if (newValue < 0) newValue = 0;
+    return newValue;
   }, [keyframe, beatGrid, tempo, tempoGrid]);
 
   const handleDragging = useCallback(({ x }: { x: number }) => {
