@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Application, ApplicationRef, extend } from '@pixi/react';
 import { Container, Rectangle, Sprite, Texture } from 'pixi.js';
 import { useSelectedItem } from '@/ui/contexts/SelectedItem';
+import useResizeEffect from '@/ui/hooks/useResizeEffect';
 import ChartJudgeline from '@/Chart/Judgeline';
 import useTimeRange from './TimeRange';
 import BeatGraphics from './BeatGraphics';
@@ -35,26 +36,29 @@ const NoteContainer = ({
   const timeRangeEnd = useTimeRange({ ref: containerRef, scale });
   const [ size, setSize ] = useState<[number, number]>([1, 1]);
 
-  const updateSize = useCallback(() => {
-    const containerDom = containerRef.current;
-    if (!containerDom) return;
-    const { clientWidth, clientHeight } = containerDom;
-
+  const updateSize = useCallback((width: number, height: number) => {
     if (!appRef.current) return;
     const app = appRef.current.getApplication();
     if (!app) return;
 
     app.resize();
     setSize([
-      clientWidth,
-      clientHeight
+      width,
+      height
     ]);
 
     const hitArea = hitAreaRef.current;
     if (!hitArea) return;
-    (hitArea.hitArea as Rectangle).y = -clientHeight;
-    (hitArea.hitArea as Rectangle).width = clientWidth;
-    (hitArea.hitArea as Rectangle).height = clientHeight;
+
+    const hitRectangle = hitArea.hitArea as Rectangle | undefined;
+    if (!hitRectangle) {
+      hitArea.hitArea = new Rectangle(0, -height, width, height);
+      return;
+    }
+
+    hitRectangle.y = -height;
+    hitRectangle.width = width;
+    hitRectangle.height = height;
   }, []);
 
   const handleEmptySelect = useCallback(() => {
@@ -89,19 +93,9 @@ const NoteContainer = ({
     timeOffset,
   });
 
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    updateSize();
-    const resize = new ResizeObserver(() => {
-      updateSize();
-    });
-    resize.observe(containerRef.current);
-
-    return (() => {
-      resize.disconnect();
-    });
-  }, [updateSize]);
+  useResizeEffect(({ width, height }) => {
+    updateSize(width, height);
+  }, containerRef);
 
   return (
     <div
@@ -113,8 +107,8 @@ const NoteContainer = ({
       <Application
         backgroundAlpha={0}
         resizeTo={containerRef}
-        onInit={() => {
-          updateSize();
+        onInit={(app) => {
+          updateSize(app.canvas.width, app.canvas.height);
         }}
         ref={appRef}
       >
@@ -139,10 +133,10 @@ const NoteContainer = ({
           />
           <pixiContainer
             x={0} y={0}
-            hitArea={new Rectangle(0, -1, 1, 1)}
             eventMode='static'
             onMouseDown={writeMode !== null && line ? onClick : handleEmptySelect}
             zIndex={3}
+            key='note-container-hitarea'
             ref={hitAreaRef}
           />
           {line && (
