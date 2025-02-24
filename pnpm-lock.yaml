@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   react-split-pane:
-    hash: we2kgptptkdh5cuho4fck6fmnu
+    hash: 15b3bc41b3c9ea6e7a5c245069978ef071c4655082c4e9b0e14eb5d4eb57da5c
     path: patches/react-split-pane.patch
 
 importers:
@@ -57,7 +57,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       react-split-pane:
         specifier: ^0.1.92
-        version: 0.1.92(patch_hash=we2kgptptkdh5cuho4fck6fmnu)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 0.1.92(patch_hash=15b3bc41b3c9ea6e7a5c245069978ef071c4655082c4e9b0e14eb5d4eb57da5c)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       spark-md5:
         specifier: ^3.0.2
         version: 3.0.2
@@ -3487,7 +3487,7 @@ snapshots:
       react: 19.0.0
       scheduler: 0.25.0
 
-  react-split-pane@0.1.92(patch_hash=we2kgptptkdh5cuho4fck6fmnu)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  react-split-pane@0.1.92(patch_hash=15b3bc41b3c9ea6e7a5c245069978ef071c4655082c4e9b0e14eb5d4eb57da5c)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       prop-types: 15.8.1
       react: 19.0.0
