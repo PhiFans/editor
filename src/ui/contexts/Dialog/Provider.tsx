@@ -14,7 +14,7 @@ const DialogProvider = ({
   const [ isOpen, setIsOpen ] = useState(false);
 
   const openDialog = () => setIsOpen(true);
-  const closeDialog = () => setIsOpen(true);
+  const closeDialog = () => setIsOpen(false);
 
   const showDialog = (props: $DialogProps) => {
     setDialogProps(props);
@@ -28,6 +28,7 @@ const DialogProvider = ({
     }}>
       {children}
       <Dialog
+        onClose={closeDialog}
         {...dialogProps}
         isOpen={isOpen}
       />
