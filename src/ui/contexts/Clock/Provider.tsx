@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Ticker } from 'pixi.js';
 import ClockTimeContext from '.';
-import App from '@/App/App';
+import Chart from '@/Chart/Chart';
 
 export type ClockTimeProviderProps = {
   children: React.ReactNode,
@@ -17,10 +17,9 @@ const ClockTimeProvider: React.FC<ClockTimeProviderProps> = ({
   useEffect(() => {
     const ticker = Ticker.shared;
     const updateTime = () => {
-      if (!App.chart) return;
-      setTime(App.chart.time);
-      setBeat(App.chart.beatNum);
-      setBeatOffset(App.chart.offsetBeat);
+      setTime(Chart.time);
+      setBeat(Chart.beatNum);
+      setBeatOffset(Chart.offsetBeat);
     };
     ticker.add(updateTime);
 

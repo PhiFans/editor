@@ -2,10 +2,7 @@ import decodeAudio from 'audio-decode';
 import SparkMD5 from 'spark-md5';
 import AudioClip from '@/Audio/Clip';
 import { IFile, Nullable } from './types';
-import Chart, { ChartExported } from '@/Chart/Chart';
-import ChartJudgeline from '@/Chart/Judgeline';
-import { TChartJudgelineProps } from '@/Chart/JudgelineProps';
-import { ChartKeyframeExported } from '@/Chart/Keyframe';
+import { ChartExported } from '@/Chart/Chart';
 
 export const PopupReadFiles = (multiple = false, accept: string | Array<string> = ''): Promise<Nullable<FileList>> => new Promise((res) => {
   const fileDOM = document.createElement('input');
@@ -88,47 +85,6 @@ export const GetFileMD5 = (file: Blob, chunkSize = 2097152): Promise<string> => 
 
   loadChunk();
 });
-
-export const ImportChart = (chart: ChartExported, audio: File, background: File) => {
-  const addKeyframesToLine = (line: ChartJudgeline, type: keyof TChartJudgelineProps, keyframes: ChartKeyframeExported[]) => {
-    for (const keyframe of keyframes) {
-      line.addKeyframe(type, keyframe.beat, keyframe.value, keyframe.continuous, keyframe.easing);
-    }
-  };
-
-  const result = new Chart(chart.info, audio, background, true);
-  result.offset = chart.offset;
-
-  for (const bpm of chart.bpm) {
-    result.addBPM(bpm.beat, bpm.bpm, false, false);
-  }
-
-  for (const line of chart.lines) {
-    const newLine = result.addLine(false, false);
-
-    addKeyframesToLine(newLine, 'speed', line.props.speed);
-    addKeyframesToLine(newLine, 'positionX', line.props.positionX);
-    addKeyframesToLine(newLine, 'positionY', line.props.positionY);
-    addKeyframesToLine(newLine, 'rotate', line.props.rotate);
-    addKeyframesToLine(newLine, 'alpha', line.props.alpha);
-
-    newLine.updateProp('speed', true);
-    newLine.updateProp('positionX', true);
-    newLine.updateProp('positionY', true);
-    newLine.updateProp('rotate', true);
-    newLine.updateProp('alpha', true);
-
-    newLine.calcFloorPositions();
-
-    for (const note of line.notes) {
-      newLine.addNote({
-        ...note
-      });
-    }
-  }
-
-  return result;
-};
 
 export const DecodeFile = (file: File): Promise<IFile> => new Promise((res, rej) => {
   (new Promise(() => {

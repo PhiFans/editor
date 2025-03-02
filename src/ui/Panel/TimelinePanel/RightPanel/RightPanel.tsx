@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect, useMemo, useRef } from 'react';
-import App from '@/App/App';
+import Chart from '@/Chart/Chart';
 import ChartJudgeline from "@/Chart/Judgeline";
 import RightPanelProvider from './Context/Provider';
 import ScrollBar from '@/ui/components/ScrollBar';
@@ -32,8 +32,8 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
   const [ timeOffset, setTimeOffset ] = useState(0);
 
   const onSeeked = useCallback((time: number) => {
-    if (!App.chart) return;
-    App.chart.beatNum = time;
+    if (!Chart.info) return;
+    Chart.beatNum = time;
   }, []);
 
   const keyframeRowMemoed = useMemo(() => {
@@ -66,15 +66,15 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
 
   useEffect(() => {
     const updateTimeLength = () => {
-      setTimeLength(App.chart!.beatDuration);
+      setTimeLength(Chart.beatDuration);
     };
 
-    App.events.once('chart.audioClip.loaded', updateTimeLength);
-    App.events.on('chart.bpms.updated', updateTimeLength);
+    Chart.events.once('music.loaded', updateTimeLength);
+    Chart.events.on('bpms.updated', updateTimeLength);
 
     return (() => {
-      App.events.off('chart.audioClip.loaded', updateTimeLength);
-      App.events.off('chart.bpms.updated', updateTimeLength);
+      Chart.events.off('music.loaded', updateTimeLength);
+      Chart.events.off('bpms.updated', updateTimeLength);
     });
   }, []);
 
@@ -83,9 +83,9 @@ const TimelineRightPanel: React.FC<TimelineRightPanelProps> = ({
       setTimeOffset(offsetBeat);
     };
 
-    App.events.on('chart.offset.updated', updateTimeOffset);
+    Chart.events.on('offset.updated', updateTimeOffset);
     return (() => {
-      App.events.off('chart.offset.updated', updateTimeOffset);
+      Chart.events.off('offset.updated', updateTimeOffset);
     });
   });
 

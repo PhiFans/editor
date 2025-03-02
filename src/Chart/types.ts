@@ -8,6 +8,11 @@ export type ChartInfo = {
   designer: string,
 };
 
+export type ChartInfoWithFile = ChartInfo & {
+  music: Blob,
+  background: Blob,
+};
+
 export type ChartBookmark = {
   id: string;
   beatNum: number;

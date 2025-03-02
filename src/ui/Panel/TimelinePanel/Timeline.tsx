@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import SplitPane from 'react-split-pane';
 import TimelineFooter from './Footer';
-import App from '@/App/App';
+import Chart from '@/Chart/Chart';
 import ChartJudgeline from '@/Chart/Judgeline';
 import TimelineLeftPanel from './LeftPanel/LeftPanel';
 import TimelineRightPanel from './RightPanel/RightPanel';
@@ -21,9 +21,9 @@ const Timeline: React.FC = () => {
     const updateLineList = (newLines: ChartJudgeline[]) => {
       setLineList([ ...newLines ]);
     };
-    App.events.on('chart.lines.updated', updateLineList);
+    Chart.events.on('lines.updated', updateLineList);
     return (() => {
-      App.events.off('chart.lines.updated', updateLineList);
+      Chart.events.off('lines.updated', updateLineList);
     });
   }, []);
 

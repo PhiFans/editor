@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import App from '@/App/App';
+import Chart from '@/Chart/Chart';
 import ChartBPM from '@/Chart/BPM';
 import './styles.css';
 import BPMList from './List';
@@ -8,38 +8,38 @@ import NumberInput from '@/ui/components/NumberInput';
 
 const BPMPanel = () => {
   const [ defaultOffset, setDefaultOffset ] = useState(0);
-  const [ bpmList, setBPMList ] = useState<ChartBPM[]>(App.chart ? [ ...App.chart.bpm ] : []);
+  const [ bpmList, setBPMList ] = useState<ChartBPM[]>(Chart.info !== null ? [ ...Chart.bpm ] : []);
 
   const handleOffsetUpdate = (value: number) => {
-    if (!App.chart) return;
-    App.chart.offset = value;
+    if (!Chart.info) return;
+    Chart.offset = value;
   };
 
   const handleBPMUpdate = useCallback(() => {
-    setBPMList([ ...App.chart!.bpm ]);
+    setBPMList([ ...Chart.bpm ]);
   }, []);
 
   const handleChartSet = useCallback(() => {
-    setDefaultOffset(App.chart!.offset);
+    setDefaultOffset(Chart.offset);
     handleBPMUpdate();
   }, [handleBPMUpdate]);
 
   const handleAddBPM = useCallback(() => {
-    if (!App.chart) return;
-    const lastBPM = App.chart.bpm[App.chart.bpm.length - 1];
+    if (!Chart.info) return;
+    const lastBPM = Chart.bpm[Chart.bpm.length - 1];
     const newBeat: BeatArray = [ ...lastBPM.beat ];
     newBeat[0] += 1;
-    App.chart.addBPM(newBeat, lastBPM.bpm);
+    Chart.addBPM(newBeat, lastBPM.bpm);
   }, []);
 
   useEffect(() => {
-    App.events.on('chart.set', handleChartSet);
-    App.events.on('chart.bpms.updated', handleBPMUpdate);
+    Chart.events.on('loaded', handleChartSet);
+    Chart.events.on('bpms.updated', handleBPMUpdate);
 
     return (() => {
-      App.events.off('chart.set', handleChartSet);
-      App.events.off('chart.bpms.updated', handleBPMUpdate);
-    })
+      Chart.events.off('loaded', handleChartSet);
+      Chart.events.off('bpms.updated', handleBPMUpdate);
+    });
   }, [handleChartSet, handleBPMUpdate]);
 
   return (

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { v4 as uuid } from 'uuid';
-import App from '@/App/App';
+import Chart from '@/Chart/Chart';
 import { useProps } from '../PropsContext';
 import { useTempo } from '@/ui/contexts/Tempo';
 import { BeatArrayToNumber, BeatNumberToArray, GridValue, parseDoublePrecist } from '@/utils/math';
@@ -50,7 +50,7 @@ const useWrite = ({
 
   const posToTime = useCallback((pos: number) => {
     const hitTime = GridValue(height - pos, beatGrid) / beatGrid / tempo - timeOffset;
-    const gridResult = GridValue(App.chart!.beatNum + hitTime, tempoGrid);
+    const gridResult = GridValue(Chart.beatNum + hitTime, tempoGrid);
     return parseDoublePrecist(gridResult, 6, -1);
   }, [height, timeOffset, tempoGrid, beatGrid, tempo]);
 

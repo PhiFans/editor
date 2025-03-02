@@ -1,5 +1,5 @@
-import GlobalApp from '@/App/App';
 import TempoContext from './contexts/Tempo';
+import Chart from '@/Chart/Chart';
 import PanelDock from './Panel/PanelDock';
 import { PopupReadFiles, ReadFileAsText } from '@/utils/file';
 import { Nullable } from '@/utils/types';
@@ -27,34 +27,41 @@ function App() {
 
   const onCreateChart = () => {
     if (!importedMusic) return;
-    if (GlobalApp.chart) return;
+    if (Chart.info) return;
 
-    GlobalApp.createChart({
+    Chart.create({
       name: 'test',
       artist: 'test',
       illustration: 'test',
       level: 'test',
-      designer: 'test'
-    }, importedMusic, importedMusic, true);
+      designer: 'test',
+      music: importedMusic,
+      background: importedMusic
+    });
   };
 
   const onLoadChart = () => {
     if (!importedMusic) return;
-    if (GlobalApp.chart) return;
+    if (Chart.info) return;
 
     PopupReadFiles(false)
       .then(async (files) => {
         if (!files || files.length === 0) return;
         const chartRaw = JSON.parse(await ReadFileAsText(files[0])) as ChartExported;
-        GlobalApp.loadChart(chartRaw, importedMusic!, importedMusic!);
+        Chart.load({
+          ...chartRaw.info,
+          music: importedMusic!,
+          background: importedMusic!,
+        }, chartRaw);
       })
       .catch((e) => console.error(e));
   };
 
   const onExportChart = () => {
-    if (!GlobalApp.chart) return;
+    if (!Chart.info) return;
 
-    const chartText = JSON.stringify(GlobalApp.chart.json, null, 4);
+    const chartJson = Chart.json!;
+    const chartText = JSON.stringify(chartJson, null, 4);
     const chartBlob = new Blob([ chartText ], { type: 'text/json' });
     const chartUrl = URL.createObjectURL(chartBlob);
 

@@ -1,7 +1,7 @@
 import { Application, ApplicationRef, extend } from '@pixi/react';
 import { Container, Rectangle } from 'pixi.js';
 import { useCallback, useEffect, useRef } from 'react';
-import App from '@/App/App';
+import Chart from '@/Chart/Chart';
 import { CalculateRendererSize } from '@/utils/renderer';
 import { Nullable, RendererSize } from '@/utils/types';
 
@@ -27,11 +27,11 @@ const PreviewCanvas = () => {
     app.resize();
     const size = CalculateRendererSize(clientWidth, clientHeight);
     sizeRef.current = size;
-    if (App.chart) App.chart.resize(size);
+    Chart.resize(size);
   }, []);
 
   const handleChartChanged = () => {
-    if (!App.chart) return;
+    if (!Chart.info) return;
     if (!appContainerRef.current) return;
 
     const container = appContainerRef.current;
@@ -41,8 +41,8 @@ const PreviewCanvas = () => {
       }
     }
 
-    App.chart.resize(sizeRef.current);
-    container.addChild(App.chart.container);
+    Chart.resize(sizeRef.current);
+    container.addChild(Chart.container);
   };
 
   useEffect(() => {
@@ -60,9 +60,9 @@ const PreviewCanvas = () => {
   }, [handleResize]);
 
   useEffect(() => {
-    App.events.on('chart.set', handleChartChanged);
+    Chart.events.on('loaded', handleChartChanged);
     return (() => {
-      App.events.off('chart.set', handleChartChanged);
+      Chart.events.off('loaded', handleChartChanged);
     });
   }, []);
 

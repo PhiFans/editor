@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import App from '@/App/App';
+import Chart from '@/Chart/Chart';
 import { useTempo } from '../../contexts/Tempo';
 import { GridValue } from '@/utils/math';
 
@@ -21,32 +21,32 @@ const PreviewController = () => {
         <div className="control-group control-group-center">
           <button
             onClick={() => {
-              if (!App.chart) return;
-              App.chart.beatNum = GridValue(App.chart.beatNum - 1, 1);
+              if (!Chart.info) return;
+              Chart.beatNum = GridValue(Chart.beatNum - 1, 1);
             }}
           >Prev beat</button>
           <button
             onClick={() => {
-              if (!App.chart) return;
-              App.chart.beatNum = GridValue(App.chart.beatNum - tempoGrid, tempoGrid);
+              if (!Chart.info) return;
+              Chart.beatNum = GridValue(Chart.beatNum - tempoGrid, tempoGrid);
             }}
           >Prev tempo</button>
           <button
             onClick={() => {
-              if (!App.chart) return;
-              App.chart.playOrPause().catch(() => void 0);
+              if (!Chart.info) return;
+              Chart.playOrPause().catch(() => void 0);
             }}
           >Play/Pause</button>
           <button
             onClick={() => {
-              if (!App.chart) return;
-              App.chart.beatNum = GridValue(App.chart.beatNum + tempoGrid, tempoGrid);
+              if (!Chart.info) return;
+              Chart.beatNum = GridValue(Chart.beatNum + tempoGrid, tempoGrid);
             }}
           >Next tempo</button>
           <button
             onClick={() => {
-              if (!App.chart) return;
-              App.chart.beatNum = GridValue(App.chart.beatNum + 1, 1);
+              if (!Chart.info) return;
+              Chart.beatNum = GridValue(Chart.beatNum + 1, 1);
             }}
           >Next beat</button>
         </div>

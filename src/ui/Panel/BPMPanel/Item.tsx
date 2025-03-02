@@ -1,4 +1,4 @@
-import App from '@/App/App';
+import Chart from '@/Chart/Chart';
 import ChartBPM from "@/Chart/BPM";
 import BeatInput from '@/ui/components/BeatInput';
 import NumberInput from '@/ui/components/NumberInput';
@@ -23,7 +23,7 @@ const BPMListItem = ({
   }, [onChanged]);
 
   const handleDelete = () => {
-    App.chart!.removeBPM(bpm.id);
+    Chart.removeBPM(bpm.id);
   };
 
   return (

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import App from '@/App/App';
+import Chart from '@/Chart/Chart';
 import ChartBPM from "@/Chart/BPM";
 import BPMListItem from "./Item";
 import { BeatArray } from "@/utils/types";
@@ -12,8 +12,8 @@ const BPMList = ({
   bpms
 }: BPMListProps) => {
   const handleBPMChanged = useCallback((id: string, beat?: BeatArray, bpm?: number) => {
-    if (!App.chart) return;
-    App.chart.editBPM(id, beat, bpm);
+    if (!Chart.info) return;
+    Chart.editBPM(id, beat, bpm);
   }, []);
 
   return (

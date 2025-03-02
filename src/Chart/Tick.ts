@@ -1,4 +1,4 @@
-import Chart from './Chart';
+import { Chart } from './Chart';
 import { getLinePropValue } from '@/utils/chart';
 import { NoteType } from './types';
 
