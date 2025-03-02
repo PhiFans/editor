@@ -10,6 +10,8 @@ import DockLayout from 'rc-dock';
 import SettingsPanel from './Panel/SettingsPanel/SettingsPanel';
 import { ChartExported } from '@/Chart/Chart';
 import NumberInput from './components/NumberInput';
+import TopBar from './Bar/TopBar/TopBar';
+import DialogProvider from './contexts/Dialog/Provider';
 
 function App() {
   const dockRef = useRef<Nullable<DockLayout>>(null);
@@ -91,42 +93,45 @@ function App() {
 
   return (
     <>
-      <SettingsProvider>
-        <AppBar>
-          <div className="files">
-            <button onClick={() => onImportAudio()}>Import music</button>
-            <button onClick={() => onCreateChart()}>Create chart</button>
-            <button onClick={onLoadChart}>Load chart</button>
-            <button onClick={() => onExportChart()}>Export chart</button>
-          </div>
-          <span className='hr'>|</span>
-          <div>
-            <button onClick={showSettingsPanel}>Settings</button>
-          </div>
-        </AppBar>
-        <TempoContext.Provider value={tempo}>
-          <PanelDock
-            ref={dockRef}
-          />
-        </TempoContext.Provider>
-        <AppBar>
-          <div className="settings">
-            <label>
-              Set tempo: 1/
-              <NumberInput
-                min={1}
-                defaultValue={4}
-                step={1}
-                dragStep={0.1}
-                onChanged={handleTempoUpdate}
-                style={{
-                  width: 50
-                }}
-              />
-            </label>
-          </div>
-        </AppBar>
-      </SettingsProvider>
+      <DialogProvider>
+        <SettingsProvider>
+          <AppBar>
+            <div className="files">
+              <button onClick={() => onImportAudio()}>Import music</button>
+              <button onClick={() => onCreateChart()}>Create chart</button>
+              <button onClick={onLoadChart}>Load chart</button>
+              <button onClick={() => onExportChart()}>Export chart</button>
+            </div>
+            <span className='hr'>|</span>
+            <div>
+              <button onClick={showSettingsPanel}>Settings</button>
+            </div>
+            <TopBar />
+          </AppBar>
+          <TempoContext.Provider value={tempo}>
+            <PanelDock
+              ref={dockRef}
+            />
+          </TempoContext.Provider>
+          <AppBar>
+            <div className="settings">
+              <label>
+                Set tempo: 1/
+                <NumberInput
+                  min={1}
+                  defaultValue={4}
+                  step={1}
+                  dragStep={0.1}
+                  onChanged={handleTempoUpdate}
+                  style={{
+                    width: 50
+                  }}
+                />
+              </label>
+            </div>
+          </AppBar>
+        </SettingsProvider>
+      </DialogProvider>
     </>
   );
 }

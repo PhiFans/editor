@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Card } from '@blueprintjs/core';
 import { ChartInfo } from '@/Chart/types';
 import ProjectInput from './Input';
 
@@ -40,47 +39,45 @@ const ProjectPanel = ({
       overflowX: 'hidden',
       overflowY: 'auto',
     }}>
-      <Card>
       <ProjectInput
-          type='name'
-          label='Name'
-          placeholder='Song name'
-          onInput={handleInfoInput}
-          onBlur={handleInputBlur}
-        />
+        type='name'
+        label='Name'
+        placeholder='Song name'
+        onInput={handleInfoInput}
+        onBlur={handleInputBlur}
+      />
 
-        <ProjectInput
-          type='artist'
-          label='Artist'
-          placeholder='Song artist'
-          onInput={handleInfoInput}
-          onBlur={handleInputBlur}
-        />
+      <ProjectInput
+        type='artist'
+        label='Artist'
+        placeholder='Song artist'
+        onInput={handleInfoInput}
+        onBlur={handleInputBlur}
+      />
 
-        <ProjectInput
-          type='illustration'
-          label='Illustrator'
-          placeholder='Background illustrator'
-          onInput={handleInfoInput}
-          onBlur={handleInputBlur}
-        />
+      <ProjectInput
+        type='illustration'
+        label='Illustrator'
+        placeholder='Background illustrator'
+        onInput={handleInfoInput}
+        onBlur={handleInputBlur}
+      />
 
-        <ProjectInput
-          type='level'
-          label='Level'
-          placeholder='SP Lv.?'
-          onInput={handleInfoInput}
-          onBlur={handleInputBlur}
-        />
+      <ProjectInput
+        type='level'
+        label='Level'
+        placeholder='SP Lv.?'
+        onInput={handleInfoInput}
+        onBlur={handleInputBlur}
+      />
 
-        <ProjectInput
-          type='designer'
-          label='Designer'
-          placeholder='Song charter'
-          onInput={handleInfoInput}
-          onBlur={handleInputBlur}
-        />
-      </Card>
+      <ProjectInput
+        type='designer'
+        label='Designer'
+        placeholder='Song charter'
+        onInput={handleInfoInput}
+        onBlur={handleInputBlur}
+      />
     </div>
   );
 };
