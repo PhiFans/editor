@@ -1,7 +1,10 @@
 import { Container, Sprite, Texture, Ticker } from 'pixi.js';
 import { EventEmitter } from 'eventemitter3';
+import { v4 as uuid } from 'uuid';
 import Audio from '@/Audio/Audio';
 import AudioClip, { EAudioClipStatus } from '@/Audio/Clip';
+import Database from '@/Database/Database';
+import StorageFile from '@/Storage/File';
 import ChartBPMList from './BPMList';
 import ChartJudgeline, { ChartJudgelineExported } from './Judgeline';
 import ChartNote from './Note';
@@ -13,6 +16,11 @@ import { ChartBPMExported } from './BPM';
 import ChartHistory from './History/History';
 import { TChartJudgelineProps } from './JudgelineProps';
 import { ChartKeyframeExported } from './Keyframe';
+import { TProject } from '@/Database/types';
+
+type $ChartInfo = ChartInfoWithFile & {
+  id: string,
+};
 
 export type ChartExported = {
   info: ChartInfo,
@@ -41,7 +49,8 @@ class Chart {
   readonly tick = ChartTick.bind(this);
 
   // Resources
-  private _info: Nullable<ChartInfoWithFile> = null;
+  private _info: Nullable<$ChartInfo> = null;
+  private _id: Nullable<string> = null;
   private _music: Nullable<AudioClip> = null;
   private _background: Nullable<Sprite> = null;
 
@@ -55,7 +64,11 @@ class Chart {
   create(infoWithFile: ChartInfoWithFile) {
     if (this._info !== null) return;
 
-    this._info = infoWithFile;
+    this._info = {
+      ...infoWithFile,
+      id: uuid(),
+    };
+    this._id = null;
 
     this.addBPM([ 0, 0, 1 ], 120, false, false);
     this.addLine(true, false);
@@ -64,7 +77,7 @@ class Chart {
     this.events.emit('loaded', this);
   }
 
-  load(infoWithFile: ChartInfoWithFile, chartJson: ChartExported) {
+  load(infoWithFile: ChartInfoWithFile, chartJson: ChartExported, projectID = uuid(), chartID = uuid()) {
     if (this._info !== null) return;
 
     const addKeyframesToLine = (line: ChartJudgeline, type: keyof TChartJudgelineProps, keyframes: ChartKeyframeExported[]) => {
@@ -73,7 +86,11 @@ class Chart {
       }
     };
 
-    this._info = infoWithFile;
+    this._info = {
+      ...infoWithFile,
+      id: projectID,
+    };
+    this._id = chartID;
     this._offset = chartJson.offset / 1000;
 
     for (const bpm of chartJson.bpm) {
@@ -102,6 +119,45 @@ class Chart {
     this.events.emit('loaded', this);
   }
 
+  save(): Promise<Nullable<TProject>> {return new Promise(async (res) => {
+    if (!this._info) return res(null);
+    
+    const oldProject = await Database.project.get(this._info.id);
+    if (oldProject) {
+      const projectInfo: ChartInfo & Partial<$ChartInfo> & Partial<TProject> = {
+        ...oldProject,
+        ...this._info,
+      };
+
+      delete projectInfo.music;
+      delete projectInfo.background;
+
+      await StorageFile.update(this._id!, new Blob([ JSON.stringify(this.json) ]));
+      await Database.project.update(projectInfo.id!, projectInfo as TProject);
+
+      return res(projectInfo as TProject);
+    } else {
+      const { id: musicID } = await StorageFile.add(this._info.music);
+      const { id: backgroundID } = await StorageFile.add(this._info.background);
+      const { id: chartID } = await StorageFile.add(new Blob([ JSON.stringify(this.json) ]));
+
+      this._id = chartID;
+
+      const projectInfo: ChartInfo & Partial<$ChartInfo> & Partial<TProject> = { ...this._info };
+
+      delete projectInfo.music;
+      delete projectInfo.background;
+
+      projectInfo.chartID = chartID;
+      projectInfo.musicID = musicID;
+      projectInfo.backgroundID = backgroundID;
+      projectInfo.filesID = uuid(); // TODO
+
+      await Database.project.add(projectInfo as TProject);
+      return res(projectInfo as TProject);
+    }
+  })}
+
   clear() {
     if (!this._info) return;
 
@@ -113,6 +169,7 @@ class Chart {
     this._music = null;
     this._background = null;
     this._info = null;
+    this._id = null;
 
     this.bpm.length = 0;
     this.lines.length = 0;
@@ -339,14 +396,14 @@ class Chart {
       })
       .catch((e) => { throw e });
     
-    // createImageBitmap(this._info.background)
-    //   .then((bitmap) => {
-    //     this._background = Sprite.from(Texture.from(bitmap));
-    //     this._background.anchor.set(0.5);
+    createImageBitmap(this._info.background)
+      .then((bitmap) => {
+        this._background = Sprite.from(Texture.from(bitmap));
+        this._background.anchor.set(0.5);
 
-    //     this.events.emit('background.loaded', this._background);
-    //   })
-    //   .catch((e) => { throw e });
+        this.events.emit('background.loaded', this._background);
+      })
+      .catch((e) => { throw e });
   }
 
   private waitAudio(): Promise<AudioClip> {return new Promise((res) => {
@@ -375,5 +432,7 @@ class Chart {
 }
 
 const chart = new Chart();
+console.log(chart);
+
 export default chart;
 export { Chart };

@@ -9,11 +9,10 @@ class StorageFile {
     structures: [
       { name: 'id', options: { key: true, unique: true } },
       { name: 'md5', options: { unique: true, index: true } },
-      { name: 'blob' },
     ]
   });
 
-  add(blob: Blob): Promise<{ md5: string }> {return new Promise(async (res, rej) => {
+  add(blob: Blob): Promise<{ md5: string, id: string }> {return new Promise(async (res, rej) => {
     const id = uuid();
     const md5 = await GetFileMD5(blob);
     const fileData = await this.db.get(md5);
@@ -21,7 +20,7 @@ class StorageFile {
 
     this.db.add({
       id, md5, blob
-    }).then(() => res({ md5 }))
+    }).then(() => res({ md5, id }))
       .catch(e => rej(e));
   })}
 
