@@ -17,6 +17,8 @@ import ChartHistory from './History/History';
 import { TChartJudgelineProps } from './JudgelineProps';
 import { ChartKeyframeExported } from './Keyframe';
 import { TProject } from '@/Database/types';
+import { ReadFileAsText } from '@/utils/file';
+import { TStorageFile } from '@/Storage/types';
 
 type $ChartInfo = ChartInfoWithFile & {
   id: string,
@@ -119,7 +121,7 @@ class Chart {
     this.events.emit('loaded', this);
   }
 
-  save(): Promise<Nullable<TProject>> {return new Promise(async (res) => {
+  saveToDatabase(): Promise<Nullable<TProject>> {return new Promise(async (res) => {
     if (!this._info) return res(null);
     
     const oldProject = await Database.project.get(this._info.id);
@@ -176,6 +178,38 @@ class Chart {
 
     this.events.emit('clear', null);
   }
+
+  loadFromDatabase(projectID: string) {return new Promise(async (res, rej) => {
+    if (this._info !== null) return res(null);
+
+    const projectMeta = await Database.project.get(projectID);
+    if (!projectMeta) return rej(`No project found: ${projectID}`);
+
+    const musicFile = await StorageFile.get(projectMeta.musicID) as Nullable<TStorageFile>;
+    if (!musicFile) return rej(`No file found: ${projectMeta.musicID}`);
+
+    const backgroundFile = await StorageFile.get(projectMeta.backgroundID) as Nullable<TStorageFile>;
+    if (!backgroundFile) return rej(`No file found: ${projectMeta.backgroundID}`);
+
+    const chartFile = await StorageFile.get(projectMeta.chartID) as Nullable<TStorageFile>;
+    if (!chartFile) return rej(`No file found: ${projectMeta.chartID}`);
+
+    // TODO: Extra files
+
+    const chartText = await ReadFileAsText(chartFile.blob);
+    const chartJson = JSON.parse(chartText) as ChartExported;
+
+    this.load({
+      name: projectMeta.name,
+      artist: projectMeta.artist,
+      illustration: projectMeta.illustration,
+      level: projectMeta.level,
+      designer: projectMeta.designer,
+      music: musicFile.blob,
+      background: backgroundFile.blob,
+    }, chartJson, projectMeta.id, projectMeta.chartID);
+    res(this);
+  })}
 
   async play() {
     if (!this._info) return;
@@ -313,6 +347,16 @@ class Chart {
     delete chartInfo.background;
 
     return chartInfo;
+  }
+
+  get files() {
+    if (!this._info) return null;
+
+    return {
+      music: this._info.music,
+      background: this._info.background,
+      chart: new Blob([ JSON.stringify(this.json) ]),
+    };
   }
 
   get json(): Nullable<ChartExported> {
