@@ -5,7 +5,7 @@
   "identifier": "io.github.phifans.editor",
   "build": {
     "frontendDist": "../dist",
-    "devUrl": "http://127.0.0.1:5173/",
+    "devUrl": "http://localhost:5173/",
     "beforeDevCommand": "pnpm run dev",
     "beforeBuildCommand": "pnpm run build"
   },
