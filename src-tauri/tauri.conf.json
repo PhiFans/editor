@@ -6,8 +6,8 @@
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173/",
-    "beforeDevCommand": "pnpm run dev",
-    "beforeBuildCommand": "pnpm run build"
+    "beforeDevCommand": "pnpm dev --config vite.config.tauri.ts",
+    "beforeBuildCommand": "pnpm build --config vite.config.tauri.ts"
   },
   "app": {
     "windows": [

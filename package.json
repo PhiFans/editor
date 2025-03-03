@@ -8,12 +8,12 @@
     "url": "https://github.com/PhiFans/editor.git"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --config vite.config.web.ts",
     "dev:tauri": "tauri dev",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build --config vite.config.web.ts",
     "build:tauri": "tauri build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview --config vite.config.web.ts"
   },
   "dependencies": {
     "@blueprintjs/core": "^5.16.4",
