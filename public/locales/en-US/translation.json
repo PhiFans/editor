@@ -1,0 +1,16 @@
+{
+  "note_panel": {
+    "title": "Note Panel",
+    "no_line_selected": "Select a line to continue",
+    "scale": "Scale:",
+    "align": "Align:",
+    "mode_select": {
+      "title": "Mode:",
+      "select": "Select",
+      "tap": "Tap",
+      "drag": "Drag",
+      "hold": "Hold",
+      "flick": "Flick"
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import { ChangeEvent, useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Grid from './Grid';
 import './styles.css';
 import PropsContext from './PropsContext';
@@ -8,6 +9,7 @@ import { NoteType } from '@/Chart/types';
 import NumberInput from '@/ui/components/NumberInput';
 
 const NotePanel = () => {
+  const { t } = useTranslation();
   const [, setSelectedItem ] = useSelectedItem()!;
   const [ writeMode, setWriteMode ] = useState<Nullable<NoteType>>(null);
   const [ scale, setScale ] = useState(200);
@@ -33,7 +35,7 @@ const NotePanel = () => {
     <div className="note-panel">
       <div className='note-panel-controls'>
         <div>
-          Mode:
+        {t('note_panel.mode_select.title')}
           <label>
             <input
               type='radio'
@@ -41,7 +43,7 @@ const NotePanel = () => {
               checked={writeMode === null}
               onChange={updateWriteMode}
             />
-            Select
+            {t('note_panel.mode_select.select')}
           </label>
           <label>
             <input
@@ -50,7 +52,7 @@ const NotePanel = () => {
               checked={writeMode === NoteType.TAP}
               onChange={updateWriteMode}
             />
-            Tap
+            {t('note_panel.mode_select.tap')}
           </label>
           <label>
             <input
@@ -59,7 +61,7 @@ const NotePanel = () => {
               checked={writeMode === NoteType.DRAG}
               onChange={updateWriteMode}
             />
-            Drag
+            {t('note_panel.mode_select.drag')}
           </label>
           <label>
             <input
@@ -68,7 +70,7 @@ const NotePanel = () => {
               checked={writeMode === NoteType.HOLD}
               onChange={updateWriteMode}
             />
-            Hold
+            {t('note_panel.mode_select.hold')}
           </label>
           <label>
             <input
@@ -77,7 +79,7 @@ const NotePanel = () => {
               checked={writeMode === NoteType.FLICK}
               onChange={updateWriteMode}
             />
-            Flick
+            {t('note_panel.mode_select.flick')}
           </label>
         </div>
       </div>
@@ -90,7 +92,7 @@ const NotePanel = () => {
       </PropsContext.Provider>
       <div className="note-panel-controls">
         <label>
-          Scale:
+          {t('note_panel.scale')}
           <input
             type='range'
             min={0}
@@ -100,7 +102,7 @@ const NotePanel = () => {
           />
         </label>
         <label>
-          Align:
+        {t('note_panel.align')}
           <NumberInput
             min={1}
             defaultValue={8}
