@@ -1,12 +1,12 @@
 {
   "note_panel": {
-    "title": "Note 面板",
-    "no_line_selected": "请先选择一根判定线",
-    "scale": "缩放：",
-    "align": "对齐网格：",
+    "title": "Note Panel",
+    "no_line_selected": "Select a line to continue",
+    "scale": "Scale:",
+    "align": "Align:",
     "mode_select": {
-      "title": "模式：",
-      "select": "选择",
+      "title": "Mode:",
+      "select": "Select",
       "tap": "Tap",
       "drag": "Drag",
       "hold": "Hold",
