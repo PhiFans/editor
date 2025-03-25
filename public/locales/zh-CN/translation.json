@@ -3,7 +3,8 @@
     "time": "时间",
     "type": "类型",
     "scale": "缩放",
-    "align": "对齐网格"
+    "align": "对齐网格",
+    "offset": "延迟"
   },
   "keyframe": {
     "value": "值",
@@ -33,5 +34,9 @@
   "edit_panel": {
     "title": "编辑面板",
     "placeholder": "选择一个项目来编辑"
+  },
+  "bpm_panel": {
+    "title": "BPM 面板",
+    "add": "添加 BPM"
   }
 }

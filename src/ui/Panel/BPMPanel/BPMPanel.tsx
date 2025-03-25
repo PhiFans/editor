@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Chart from '@/Chart/Chart';
 import ChartBPM from '@/Chart/BPM';
 import './styles.css';
@@ -7,6 +8,7 @@ import { BeatArray } from '@/utils/types';
 import NumberInput from '@/ui/components/NumberInput';
 
 const BPMPanel = () => {
+  const { t } = useTranslation();
   const [ defaultOffset, setDefaultOffset ] = useState(0);
   const [ bpmList, setBPMList ] = useState<ChartBPM[]>(Chart.info !== null ? [ ...Chart.bpm ] : []);
 
@@ -46,7 +48,7 @@ const BPMPanel = () => {
     <div className='bpm-panel'>
       <div className='bpm-offset'>
         <div className='bpm-prop'>
-          <div className='bpm-prop-name'>Offset</div>
+          <div className='bpm-prop-name'>{t('common.offset')}</div>
           <div className='bpm-prop-input'>
             <NumberInput
               step={1}
@@ -58,7 +60,7 @@ const BPMPanel = () => {
       </div>
       <BPMList bpms={bpmList} />
       <div className='bpm-panel-actions'>
-        <button onClick={handleAddBPM}>Add BPM</button>
+        <button onClick={handleAddBPM}>{t('bpm_panel.add')}</button>
       </div>
     </div>
   );

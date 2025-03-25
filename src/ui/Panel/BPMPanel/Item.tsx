@@ -3,6 +3,7 @@ import ChartBPM from "@/Chart/BPM";
 import BeatInput from '@/ui/components/BeatInput';
 import NumberInput from '@/ui/components/NumberInput';
 import { useCallback } from "react";
+import { useTranslation } from 'react-i18next';
 import { BeatArray } from "@/utils/types";
 import { Button } from "@blueprintjs/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,6 +18,7 @@ const BPMListItem = ({
   bpm,
   onChanged,
 }: BPMListItemProps) => {
+  const { t } = useTranslation();
 
   const handleUpdate = useCallback((beat?: BeatArray, bpm?: number) => {
     onChanged(beat, bpm);
@@ -30,7 +32,7 @@ const BPMListItem = ({
     <div className="bpm-list-item">
       <div className="bpm-props">
         <div className="bpm-prop">
-          <div className="bpm-prop-name">Time</div>
+          <div className="bpm-prop-name">{t('common.time')}</div>
           <div className="bpm-prop-input">
             <BeatInput
               beat={bpm.beat}
