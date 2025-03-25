@@ -52,7 +52,7 @@ const NotePanel = () => {
               checked={writeMode === NoteType.TAP}
               onChange={updateWriteMode}
             />
-            {t('note_panel.mode_select.tap')}
+            {t('note.type.tap')}
           </label>
           <label>
             <input
@@ -61,7 +61,7 @@ const NotePanel = () => {
               checked={writeMode === NoteType.DRAG}
               onChange={updateWriteMode}
             />
-            {t('note_panel.mode_select.drag')}
+            {t('note.type.drag')}
           </label>
           <label>
             <input
@@ -70,7 +70,7 @@ const NotePanel = () => {
               checked={writeMode === NoteType.HOLD}
               onChange={updateWriteMode}
             />
-            {t('note_panel.mode_select.hold')}
+            {t('note.type.hold')}
           </label>
           <label>
             <input
@@ -79,7 +79,7 @@ const NotePanel = () => {
               checked={writeMode === NoteType.FLICK}
               onChange={updateWriteMode}
             />
-            {t('note_panel.mode_select.flick')}
+            {t('note.type.flick')}
           </label>
         </div>
       </div>
@@ -92,7 +92,7 @@ const NotePanel = () => {
       </PropsContext.Provider>
       <div className="note-panel-controls">
         <label>
-          {t('note_panel.scale')}
+          {t('common.scale')}:
           <input
             type='range'
             min={0}
@@ -102,7 +102,7 @@ const NotePanel = () => {
           />
         </label>
         <label>
-        {t('note_panel.align')}
+        {t('common.align')}:
           <NumberInput
             min={1}
             defaultValue={8}

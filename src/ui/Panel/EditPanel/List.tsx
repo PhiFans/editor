@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import InputBoolean, { BooleanProps } from "./Item/Boolean";
 import InputDropdown, { DropdownProps } from "./Item/Dropdown";
 import InputNumber, { NumberProps } from "./Item/Number";
@@ -12,6 +13,7 @@ type EditPanelItemBase = {
   key: string,
   label: string,
   type: 'number' | 'string' | 'boolean' | 'dropdown' | 'beat',
+  i18n: string,
 };
 
 type EditPanelItemNumber = EditPanelItemBase & {
@@ -52,6 +54,8 @@ const EditPanelList = ({
   items,
   onChanged,
 }: EditPanelListProps) => {
+  const { t } = useTranslation();
+
   const handleValueChanged = useCallback((key: string, value: string | number | boolean | BeatArray) => {
     const newProp: Record<string, string | number | boolean | BeatArray> = {};
     newProp[key] = value;
@@ -66,16 +70,16 @@ const EditPanelList = ({
         const itemKey = `${id}.${item.key}`;
 
         if (item.type === 'beat') return (
-          <InputBeat label={item.label} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={itemKey} />
+          <InputBeat label={t(item.i18n)} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={itemKey} />
         );
         if (item.type === 'number') return (
-          <InputNumber label={item.label} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={itemKey} />
+          <InputNumber label={t(item.i18n)} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={itemKey} />
         );
         if (item.type === 'boolean') return (
-          <InputBoolean label={item.label} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={itemKey} />
+          <InputBoolean label={t(item.i18n)} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={itemKey} />
         );
         if (item.type === 'dropdown') return (
-          <InputDropdown label={item.label} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={itemKey} />
+          <InputDropdown label={t(item.i18n)} {...item.props} onChanged={(e) => handleValueChanged(item.key, e)} key={itemKey} />
         );
         return null;
       })}

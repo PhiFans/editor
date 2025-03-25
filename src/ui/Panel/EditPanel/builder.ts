@@ -7,6 +7,7 @@ import ChartKeyframe from "@/Chart/Keyframe";
 export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelItem[] => {
   const valueItem: EditPanelItem = {
     label: 'Value',
+    i18n: 'keyframe.value',
     type: 'number',
     key: 'value',
     props: {
@@ -17,6 +18,7 @@ export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelIt
   const result: EditPanelItem[] = [
     {
       label: 'Time',
+      i18n: 'common.time',
       type: 'beat',
       key: 'beat',
       props: {
@@ -26,6 +28,7 @@ export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelIt
     valueItem,
     {
       label: 'Continuous',
+      i18n: 'keyframe.continuous',
       type: 'boolean',
       key: 'continuous',
       props: {
@@ -42,6 +45,7 @@ export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelIt
 
   if (keyframe.type !== 'speed') result.push({
     label: 'Easing',
+    i18n: 'keyframe.easing',
     type: 'dropdown',
     key: 'easing',
     props: {
@@ -62,6 +66,7 @@ export const KeyframePanelBuilderSingle = (keyframe: ChartKeyframe): EditPanelIt
 export const NotePanelBuilderSingle = (note: ChartNote): EditPanelItem[] => ([
   {
     label: 'Type',
+    i18n: 'common.type',
     type: 'dropdown',
     key: 'type',
     props: {
@@ -89,6 +94,7 @@ export const NotePanelBuilderSingle = (note: ChartNote): EditPanelItem[] => ([
   },
   {
     label: 'Time',
+    i18n: 'common.time',
     type: 'beat',
     key: 'beat',
     props: {
@@ -97,6 +103,7 @@ export const NotePanelBuilderSingle = (note: ChartNote): EditPanelItem[] => ([
   },
   {
     label: 'Speed',
+    i18n: 'note.speed',
     type: 'number',
     key: 'speed',
     props: {
@@ -105,6 +112,7 @@ export const NotePanelBuilderSingle = (note: ChartNote): EditPanelItem[] => ([
   },
   {
     label: 'Above line',
+    i18n: 'note.above_line',
     type: 'boolean',
     key: 'isAbove',
     props: {
@@ -113,6 +121,7 @@ export const NotePanelBuilderSingle = (note: ChartNote): EditPanelItem[] => ([
   },
   {
     label: 'Position X',
+    i18n: 'note.position_x',
     type: 'number',
     key: 'positionX',
     props: {
@@ -122,6 +131,7 @@ export const NotePanelBuilderSingle = (note: ChartNote): EditPanelItem[] => ([
   },
   {
     label: 'Hold end time',
+    i18n: 'note.hold_end_time',
     type: 'beat',
     key: 'holdEndBeat',
     props: {

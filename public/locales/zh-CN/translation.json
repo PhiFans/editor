@@ -1,16 +1,37 @@
 {
-  "note_panel": {
-    "title": "Note 面板",
-    "no_line_selected": "请先选择一根判定线",
-    "scale": "缩放：",
-    "align": "对齐网格：",
-    "mode_select": {
-      "title": "模式：",
-      "select": "选择",
+  "common": {
+    "time": "时间",
+    "type": "类型",
+    "scale": "缩放",
+    "align": "对齐网格"
+  },
+  "keyframe": {
+    "value": "值",
+    "continuous": "连续性",
+    "easing": "缓动"
+  },
+  "note": {
+    "type": {
       "tap": "Tap",
       "drag": "Drag",
       "hold": "Hold",
       "flick": "Flick"
+    },
+    "speed": "速度",
+    "above_line": "在线上方",
+    "position_x": "判定线 X 轴位置",
+    "hold_end_time": "Hold 结束时间"
+  },
+  "note_panel": {
+    "title": "Note 面板",
+    "no_line_selected": "请先选择一根判定线",
+    "mode_select": {
+      "title": "模式：",
+      "select": "选择"
     }
+  },
+  "edit_panel": {
+    "title": "编辑面板",
+    "placeholder": "选择一个项目来编辑"
   }
 }

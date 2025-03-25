@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelectedItem } from '../../contexts/SelectedItem';
 import List from './List';
 import { BeatArray, Nullable } from '@/utils/types';
@@ -27,6 +28,7 @@ type ItemNote = {
 type Item = ItemKeyframe | ItemNote;
 
 const EditPanel: React.FC = () => {
+  const { t } = useTranslation();
   const [ selectedItem, ] = useSelectedItem()!;
   const [ item, setItem ] = useState<Nullable<Item>>(null);
   const [ id, setId ] = useState<Nullable<string>>(null);
@@ -122,7 +124,7 @@ const EditPanel: React.FC = () => {
         />
       ): (
         <div className="edit-panel-placeholder">
-          Select an item to edit it.
+          {t('edit_panel.placeholder')}
         </div>
       )}
     </div>
