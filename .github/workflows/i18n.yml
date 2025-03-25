@@ -29,7 +29,7 @@ jobs:
           create_pull_request: true
           pull_request_title: 'i18n: Sync from Crowdin'
           pull_request_body: 'https://crowdin.com/project/phifans-editor'
-          pull_request_base_branch_name: 'master'
+          crowdin_branch_name: master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
