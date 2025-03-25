@@ -1,6 +1,6 @@
 import i18n, { InitOptions } from 'i18next';
 import ChainedBackend, { ChainedBackendOptions } from 'i18next-chained-backend';
-import LocalStorageBackend from 'i18next-localstorage-backend';
+// import LocalStorageBackend from 'i18next-localstorage-backend';
 import HttpBackend from 'i18next-http-backend';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -20,12 +20,12 @@ export const I18nConfig: InitOptions<ChainedBackendOptions> = {
   fallbackLng: 'en-US',
 };
 
-if (!__IS_TAURI__) {
-  I18nConfig.backend!.backends!.unshift(LocalStorageBackend);
-  I18nConfig.backend!.backendOptions!.unshift({
-    prefix: 'i18n_cache_',
-  });
-}
+// if (!__IS_TAURI__) {
+//   I18nConfig.backend!.backends!.unshift(LocalStorageBackend);
+//   I18nConfig.backend!.backendOptions!.unshift({
+//     prefix: 'i18n_cache_',
+//   });
+// }
 
 i18n
   .use(ChainedBackend)
