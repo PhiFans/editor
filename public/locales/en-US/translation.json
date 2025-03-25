@@ -1,16 +1,42 @@
 {
-  "note_panel": {
-    "title": "Note Panel",
-    "no_line_selected": "Select a line to continue",
-    "scale": "Scale:",
-    "align": "Align:",
-    "mode_select": {
-      "title": "Mode:",
-      "select": "Select",
+  "common": {
+    "time": "Time",
+    "type": "Type",
+    "scale": "Scale",
+    "align": "Align",
+    "offset": "Offset"
+  },
+  "keyframe": {
+    "value": "Value",
+    "continuous": "Continuous",
+    "easing": "Easing"
+  },
+  "note": {
+    "type": {
       "tap": "Tap",
       "drag": "Drag",
       "hold": "Hold",
       "flick": "Flick"
+    },
+    "speed": "Speed",
+    "above_line": "Above line",
+    "position_x": "Position X",
+    "hold_end_time": "Hold end time"
+  },
+  "note_panel": {
+    "title": "Note Panel",
+    "no_line_selected": "Select a line to continue",
+    "mode_select": {
+      "title": "Mode:",
+      "select": "Select"
     }
+  },
+  "edit_panel": {
+    "title": "Edit Panel",
+    "placeholder": "Select an item to edit"
+  },
+  "bpm_panel": {
+    "title": "BPM Panel",
+    "add": "Add BPM"
   }
 }
