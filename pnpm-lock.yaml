@@ -26,8 +26,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2(@fortawesome/fontawesome-svg-core@6.7.2)(react@19.0.0)
       '@pixi/react':
-        specifier: 8.0.0-beta.24
-        version: 8.0.0-beta.24(@types/react@19.0.7)(pixi.js@8.6.6)(react@19.0.0)
+        specifier: 8.0.0
+        version: 8.0.0(@types/react@19.0.7)(pixi.js@8.6.6)(react@19.0.0)
       '@types/node':
         specifier: ^22.10.5
         version: 22.10.5
@@ -400,8 +400,8 @@ packages:
   '@pixi/colord@2.9.6':
     resolution: {integrity: sha512-nezytU2pw587fQstUu1AsJZDVEynjskwOL+kibwcdxsMBFqPsFFNA7xl0ii/gXuDi6M0xj3mfRJj8pBSc2jCfA==}
 
-  '@pixi/react@8.0.0-beta.24':
-    resolution: {integrity: sha512-QPu2Pocu9TWYQ3xK5WIOCwUlQfgTAyMb5Oxm81MkMCifb+BOnTVyL+2wumgFGZvwdj69NNn/AxFvLNFIMidz2Q==}
+  '@pixi/react@8.0.0':
+    resolution: {integrity: sha512-PKmhnX1KCz8tEfNCx2n2EcDBZFSxPVW3ta3gCr56n0obuHcFRFH6l76PEkNwX4VcOTGsAqd/LAqPa3dvmxbbPQ==}
     peerDependencies:
       pixi.js: ^8.2.6
       react: '>=19.0.0'
@@ -2174,7 +2174,7 @@ snapshots:
 
   '@pixi/colord@2.9.6': {}
 
-  '@pixi/react@8.0.0-beta.24(@types/react@19.0.7)(pixi.js@8.6.6)(react@19.0.0)':
+  '@pixi/react@8.0.0(@types/react@19.0.7)(pixi.js@8.6.6)(react@19.0.0)':
     dependencies:
       its-fine: 1.2.5(@types/react@19.0.7)(react@19.0.0)
       pixi.js: 8.6.6
