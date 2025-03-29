@@ -1,0 +1,42 @@
+{
+  "common": {
+    "time": "時間",
+    "type": "タイプ",
+    "scale": "スケル",
+    "align": "アライメント",
+    "offset": "オフセット"
+  },
+  "keyframe": {
+    "value": "値",
+    "continuous": "連続",
+    "easing": "イージング"
+  },
+  "note": {
+    "type": {
+      "tap": "Tap",
+      "drag": "Drag",
+      "hold": "Hold",
+      "flick": "Flick"
+    },
+    "speed": "スピード",
+    "above_line": "判定線の上",
+    "position_x": "判定線 X 位置",
+    "hold_end_time": "Hold 終了時間"
+  },
+  "note_panel": {
+    "title": "ノートパネル",
+    "no_line_selected": "まず1つ判定線を選択してください",
+    "mode_select": {
+      "title": "モード：",
+      "select": "選択"
+    }
+  },
+  "edit_panel": {
+    "title": "編集パネル",
+    "placeholder": "編集するアイテムを選択してください"
+  },
+  "bpm_panel": {
+    "title": "BPM パネル",
+    "add": "BPMを追加"
+  }
+}
